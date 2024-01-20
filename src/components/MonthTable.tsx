@@ -121,9 +121,11 @@ const MonthTable: React.FC<MonthTableProps> = ({ year, month, objectId, unavaila
 
 
   const handleDayClick = (clickedDate: Date): void => {
+    
     if (selectedDayStart && clickedDate.getTime() === selectedDayStart.getTime() && !selectedDayEnd) {
       // Deselect the currently selected day
-      setSelectedDayStart(null);
+      // setSelectedDayStart(null);
+      alertSelection(selectedDayStart, clickedDate);
       return;
     }
 
@@ -193,6 +195,28 @@ const MonthTable: React.FC<MonthTableProps> = ({ year, month, objectId, unavaila
   }, []);
 
 
+  const getDayCellData = (date: Date): { isUnavailable: boolean, cellState: CellState['state'], hasSelection: boolean, tooltip: string | null } => {
+    let cellState: CellState['state'] = 'avail';
+    let hasSelection = false;
+
+    const { isUnavailable, isUnavailStart, isUnavailEnd, tooltip } = getUnavailableDayInfo(date);
+
+    if (isUnavailable) {
+      cellState = isUnavailStart ? 'unavail-start' : isUnavailEnd ? 'unavail-end' : 'unavail';
+    } else if (selectedDayStart && selectedDayEnd) {
+      const { isSelected, isSelectedStart, isSelectedEnd } = getSelectedDayInfo(date, selectedDayStart, selectedDayEnd);
+
+      if (isSelected) {
+        hasSelection = true;
+        cellState = isSelectedStart ? 'select-start' : isSelectedEnd ? 'select-end' : 'select';
+      }
+    }
+
+    return { isUnavailable, cellState, hasSelection, tooltip };
+  };
+
+
+
   return (
     <table className="min-w-full">
       <thead>
@@ -215,30 +239,12 @@ const MonthTable: React.FC<MonthTableProps> = ({ year, month, objectId, unavaila
       <tbody ref={tableBodyRef}>
         <tr>
           {days.map((date, index) => {
-
-            let cellState: CellState['state'] = 'avail';
-            let hasSelection = false;
-            const { isUnavailable, isUnavailStart, isUnavailEnd, tooltip } = getUnavailableDayInfo(date);
-
-            if (isUnavailable) {
-              cellState = isUnavailStart ? 'unavail-start' : isUnavailEnd ? 'unavail-end' : 'unavail';
-            } else {
-
-              if (selectedDayStart && selectedDayEnd) {
-                const { isSelected, isSelectedStart, isSelectedEnd } = getSelectedDayInfo(date, selectedDayStart, selectedDayEnd);
-
-                if (isSelected) {
-                  hasSelection = true;
-                  cellState = isSelectedStart ? 'select-start' : isSelectedEnd ? 'select-end' : 'select';
-                }
-
-              }
-
-            }
+            
+            const { isUnavailable,cellState, hasSelection, tooltip } = getDayCellData(date);
 
             return (
               <DayCell
-                key={index}
+                key={`day_${index}_${objectId}`}
                 date={date}
                 objectId={objectId}
                 isDayInRange={isDayInRange}
