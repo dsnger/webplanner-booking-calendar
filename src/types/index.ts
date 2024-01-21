@@ -4,7 +4,5 @@ export interface DayColumnProps {
 }
 
 
-export interface CellState {
-  state: 'avail' | 'unavail' | 'unavail-start' | 'unavail-end' | 'select-start' | 'select-end' | 'select';
-}
+export type CellState = ('is-available' | 'is-unavailable' | 'is-start' | 'is-end' | 'is-selected')[];
 

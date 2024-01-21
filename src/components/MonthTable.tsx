@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { isSameDay, isWithinInterval, eachDayOfInterval, startOfMonth, endOfMonth, format } from 'date-fns';
-import { de, is } from 'date-fns/locale';
+import { de } from 'date-fns/locale';
 import DayCell from "./DayCell";
 import { CellState } from "../types";
 
@@ -29,7 +29,9 @@ const MonthTable: React.FC<MonthTableProps> = ({ year, month, objectId, unavaila
   // States to track the start and end of the selected range
   const [selectedDayStart, setSelectedDayStart] = useState<Date | null>(null);
   const [selectedDayEnd, setSelectedDayEnd] = useState<Date | null>(null);
+  // const [cellState, setCellState] = useState<CellState | null>(['is-available']); // 'avail' is the default state
   const tableBodyRef = useRef<HTMLTableSectionElement>(null); // Ref for the table body
+            
 
 
   const days = eachDayOfInterval({
@@ -91,7 +93,7 @@ const MonthTable: React.FC<MonthTableProps> = ({ year, month, objectId, unavaila
   };
 
 
-  const getSelectedDayInfo = (date: Date, selectedDayStart?: Date | undefined, selectedDayEnd?: Date | undefined): { isSelectedStart: boolean, isSelectedEnd: boolean, isSelected: boolean } => {
+  const getSelectedDayInfo = (date: Date, selectedDayStart?: Date | null, selectedDayEnd?: Date | null): { isSelectedStart: boolean, isSelectedEnd: boolean, isSelected: boolean } => {
 
     let isSelectedStart = selectedDayStart && isSameDay(date, selectedDayStart);
     let isSelectedEnd = selectedDayEnd && isSameDay(date, selectedDayEnd);
@@ -120,15 +122,8 @@ const MonthTable: React.FC<MonthTableProps> = ({ year, month, objectId, unavaila
   };
 
 
-  const handleDayClick = (clickedDate: Date): void => {
-    
-    if (selectedDayStart && clickedDate.getTime() === selectedDayStart.getTime() && !selectedDayEnd) {
-      // Deselect the currently selected day
-      // setSelectedDayStart(null);
-      alertSelection(selectedDayStart, clickedDate);
-      return;
-    }
-
+  const handleDayClick  = (clickedDate: Date): void => {
+   
     if (selectedDayStart === null || (selectedDayStart !== null && selectedDayEnd !== null)) {
       // Start a new selection
       setSelectedDayStart(clickedDate);
@@ -142,16 +137,16 @@ const MonthTable: React.FC<MonthTableProps> = ({ year, month, objectId, unavaila
         // Deselect the first day and set clickedDate as the new start
         setSelectedDayStart(clickedDate);
         setSelectedDayEnd(null);
+       
       } else {
         // Set the end of the selection range
         setSelectedDayEnd(clickedDate);
-
         // Swap dates if selected in reverse order
         if (clickedDate < selectedDayStart) {
           setSelectedDayEnd(selectedDayStart);
           setSelectedDayStart(clickedDate);
         }
-        alertSelection(selectedDayStart, clickedDate);
+        //alertSelection(selectedDayStart, clickedDate);
       }
     }
   };
@@ -195,24 +190,29 @@ const MonthTable: React.FC<MonthTableProps> = ({ year, month, objectId, unavaila
   }, []);
 
 
-  const getDayCellData = (date: Date): { isUnavailable: boolean, cellState: CellState['state'], hasSelection: boolean, tooltip: string | null } => {
-    let cellState: CellState['state'] = 'avail';
+  const getDayCellData = (date: Date): { dayCellState:CellState, isUnavailable: boolean, hasSelection: boolean, tooltip: string | null } => {
+   
     let hasSelection = false;
+    let dayCellState: CellState = ['is-available'];
 
     const { isUnavailable, isUnavailStart, isUnavailEnd, tooltip } = getUnavailableDayInfo(date);
-
+    
     if (isUnavailable) {
-      cellState = isUnavailStart ? 'unavail-start' : isUnavailEnd ? 'unavail-end' : 'unavail';
-    } else if (selectedDayStart && selectedDayEnd) {
+      hasSelection = true;
+      dayCellState = isUnavailStart ? ['is-unavailable','is-start'] : isUnavailEnd ? ['is-unavailable','is-end'] : ['is-unavailable'];
+    }
+
+    if (!isUnavailable && selectedDayStart) {
+
       const { isSelected, isSelectedStart, isSelectedEnd } = getSelectedDayInfo(date, selectedDayStart, selectedDayEnd);
 
       if (isSelected) {
         hasSelection = true;
-        cellState = isSelectedStart ? 'select-start' : isSelectedEnd ? 'select-end' : 'select';
+        dayCellState = isSelectedStart ? ['is-selected', 'is-start'] : isSelectedEnd ? ['is-selected', 'is-end'] : ['is-selected'];
       }
-    }
+    } 
 
-    return { isUnavailable, cellState, hasSelection, tooltip };
+    return { dayCellState, isUnavailable, hasSelection, tooltip };
   };
 
 
@@ -239,8 +239,8 @@ const MonthTable: React.FC<MonthTableProps> = ({ year, month, objectId, unavaila
       <tbody ref={tableBodyRef}>
         <tr>
           {days.map((date, index) => {
-            
-            const { isUnavailable,cellState, hasSelection, tooltip } = getDayCellData(date);
+
+            const { dayCellState, isUnavailable, hasSelection, tooltip } = getDayCellData(date);
 
             return (
               <DayCell
@@ -252,7 +252,7 @@ const MonthTable: React.FC<MonthTableProps> = ({ year, month, objectId, unavaila
                 formatDate={formatDate}
                 isUnavailable={isUnavailable}
                 isSelected={hasSelection}
-                cellState={{ state: cellState }}
+                cellState={dayCellState}
                 tooltip={tooltip}
               />
             );
@@ -261,6 +261,8 @@ const MonthTable: React.FC<MonthTableProps> = ({ year, month, objectId, unavaila
       </tbody>
     </table>
   );
+
+
 
 
 
