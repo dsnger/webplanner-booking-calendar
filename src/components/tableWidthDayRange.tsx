@@ -3,8 +3,6 @@ import { isSameDay, endOfMonth, eachDayOfInterval, getMonth, format, startOfYear
 import { getMonthName, getDayName, formatDate } from "../utils";
 
 type CellCoordinates = { rowIndex: number; colIndex: number } | null;
-type HoverDirection = 'right' | 'left' | null;
-
 
 interface TableWithDateRangeProps {
   year: number; // Replace 'any' with the appropriate type for your rows
@@ -15,6 +13,8 @@ const TableWithDateRange: React.FC<TableWithDateRangeProps> = ({ year, bookingOb
   const [selectedCell, setSelectedCell] = useState<CellCoordinates>(null);
   const [secondSelectedCell, setSecondSelectedCell] = useState<{ rowIndex: number; colIndex: number } | null>(null);
   const [hoveredCell, setHoveredCell] = useState<CellCoordinates>(null);
+  const [selectedDayStart, setSelectedDayStart] = useState<Date | null>(null);
+  const [selectedDayEnd, setSelectedDayEnd] = useState<Date | null>(null);
   const [cellClasses, setCellClasses] = useState<{ rowIndex: number; colIndex: number; classes: string[] }[]>([]);
   const tableBodyRef = useRef<HTMLTableSectionElement>(null); // Ref for the table body
 
@@ -43,6 +43,7 @@ const TableWithDateRange: React.FC<TableWithDateRangeProps> = ({ year, bookingOb
   };
 
   const handleCellClick = (rowIndex: number, colIndex: number) => {
+    
     if (selectedCell && secondSelectedCell) {
       // If a range is already selected, start a new selection
       setSelectedCell({ rowIndex, colIndex });
@@ -53,7 +54,7 @@ const TableWithDateRange: React.FC<TableWithDateRangeProps> = ({ year, bookingOb
       // If only one cell is selected, set the second selected cell to complete the range
       setSecondSelectedCell({ rowIndex, colIndex });
       // Determine the range of cells to set as selected
-      const startColIndex = Math.min(selectedCell.colIndex, colIndex);
+      const startColIndex = Math.min(selectedCell.colIndex, colIndex); 
       const endColIndex = Math.max(selectedCell.colIndex, colIndex);  
       setHighlightedRange(rowIndex, startColIndex, endColIndex);
       
@@ -69,7 +70,6 @@ const TableWithDateRange: React.FC<TableWithDateRangeProps> = ({ year, bookingOb
 
   const setHighlightedRange = (rowIndex: number, startColIndex: number, endColIndex: number): void => {
     for (let colIndex = startColIndex; colIndex <= endColIndex; colIndex++) {
-      console.log(rowIndex, colIndex);
       // Apply the "is-selected" class to the cell at rowIndex and colIndex
       applyClassToCell( rowIndex, colIndex, 'is-selected' );
     }
