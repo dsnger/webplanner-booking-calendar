@@ -4,7 +4,7 @@ import { de } from 'date-fns/locale';
 import DayCell from "./DayCell";
 import { CellState } from "../types";
 
-interface DateRangeString {
+interface BlockedDateRangeInfo {
   start: string;
   end: string;
   tooltip?: string;
@@ -21,7 +21,7 @@ interface MonthTableProps {
   year: number;
   month: number; // Note: month is zero-indexed (0 for January, 1 for February, etc.)
   objectId: number;
-  unavailableRanges?: DateRangeString[];
+  unavailableRanges?: BlockedDateRangeInfo[];
 };
 
 const MonthTable: React.FC<MonthTableProps> = ({ year, month, objectId, unavailableRanges = [] }): JSX.Element => {
