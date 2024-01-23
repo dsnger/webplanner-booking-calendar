@@ -153,26 +153,26 @@ const MonthTable: React.FC<MonthTableProps> = ({ year, month, objectId, unavaila
 
 
   // Function to alert the selected date or date range
-  const alertSelection = (startDate: Date, endDate: Date) => {
-    // Check if startDate is after endDate, if so, swap them
-    let start = startDate;
-    let end = endDate;
-    if (start > end) {
-      [start, end] = [end, start];
-    }
+  // const alertSelection = (startDate: Date, endDate: Date) => {
+  //   // Check if startDate is after endDate, if so, swap them
+  //   let start = startDate;
+  //   let end = endDate;
+  //   if (start > end) {
+  //     [start, end] = [end, start];
+  //   }
 
-    // Format dates after ensuring correct order
-    const startDateString = formatDate(start);
-    const endDateString = formatDate(end);
+  //   // Format dates after ensuring correct order
+  //   const startDateString = formatDate(start);
+  //   const endDateString = formatDate(end);
 
-    setTimeout(() => {
-      if (start.toDateString() === end.toDateString()) {
-        alert(`Selected date: ${startDateString}`);
-      } else {
-        alert(`Selected date range: ${startDateString} to ${endDateString}`);
-      }
-    }, 300);
-  };
+  //   setTimeout(() => {
+  //     if (start.toDateString() === end.toDateString()) {
+  //       alert(`Selected date: ${startDateString}`);
+  //     } else {
+  //       alert(`Selected date range: ${startDateString} to ${endDateString}`);
+  //     }
+  //   }, 300);
+  // };
 
 
   useEffect(() => {
