@@ -5,7 +5,7 @@ export interface DayColumnProps {
 
 export type CellState = ('is-available' | 'is-unavailable' | 'is-start' | 'is-end' | 'is-selected')[];
 
-export type DateRangeType = ('booked' | 'available' | 'unavailable' | 'on-request' | 'closed');
+export type DateRangeType = ('booked' | 'unavailable' | 'on-request' | 'closed');
 
 export interface DateRange {
   start: Date;

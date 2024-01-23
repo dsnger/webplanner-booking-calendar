@@ -1,14 +1,14 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { isSameDay, startOfDay, endOfMonth, eachDayOfInterval, getDay, getMonth, format, startOfYear, endOfYear, isWithinInterval, parseISO } from 'date-fns';
 import { getMonthName, getDayName, formatDate } from "../utils";
-import { BookingObject, DateRange, BlockedDateRangeInfo } from "../types";
+import { BookingObject, BlockedDateRangeInfo } from "../types";
 import Legend from "./Legend";
 
 type CellCoordinates = { rowIndex: number; colIndex: number } | null;
 
 interface TableWithDateRangeProps {
-  year: number; // Replace 'any' with the appropriate type for your rows
-  bookingObjects: BookingObject[]; // Replace 'any' with the appropriate type for your days
+  year: number;
+  bookingObjects: BookingObject[];
 }
 
 const TableWithDateRange: React.FC<TableWithDateRangeProps> = ({ year, bookingObjects }): JSX.Element => {
