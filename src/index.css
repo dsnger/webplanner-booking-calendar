@@ -76,8 +76,39 @@ button:focus-visible {
 
 /* styles.css or your stylesheet file */
 .cell {
-  @apply p-1 border-l border-b border-gray-500
+  @apply border-l border-b border-gray-500
 }
+
+.cell-marker{
+  @apply cursor-pointer w-full h-full
+}
+
+.object-titles,
+.cell-day {
+  @apply h-9 min-w-9 
+}
+
+.cell-day {
+  @apply h-9 min-w-9 border-l border-r border-b border-gray-500 box-border
+}
+
+.cell-day-date,
+.cell-month-date {
+  @apply p-1 h-7 
+}
+
+.cell-day-date {
+  @apply border-l border-r border-b border-gray-500
+}
+
+.cell.last-of-month {
+  @apply border-r-2
+}
+
+.cell.first-of-month {
+  @apply border-l-2
+}
+
 
 .cell.highlight {
   background-color: lightblue; /* Style for highlighted cells */
@@ -87,6 +118,9 @@ button:focus-visible {
   background-color: blue; /* Style for the selected cell */
 }
 
+.object-titles {
+  @apply text-left p-1 m-0 border border-r border-l-0 border-gray-500 truncate 
+}
 
 /* Add custom CSS for smooth scrolling and touch-friendly scrollbar */
 .overflow-x-auto {

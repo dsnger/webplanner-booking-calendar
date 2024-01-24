@@ -1,7 +1,6 @@
 
 import './App.css'
 import TableWithDateRange from "./components/tableWidthDayRange";
-import { BookingObject } from "./types";
 
 function App() {
 
@@ -55,8 +54,8 @@ function App() {
       title: 'Angebot 3',
       blockedDateRanges: [
         {
-          start: '2024-01-01', // January 1, 2024
-          end: '2024-01-02', // January 2, 2024
+          start: '2024-03-01', // January 1, 2024
+          end: '2024-03-02', // January 2, 2024
           type: 'on-request' as DateRangeType,
         }
       ]
