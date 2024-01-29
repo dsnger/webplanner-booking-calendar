@@ -1,23 +1,10 @@
 
 import './App.css'
 import TableWithDateRange from "./components/tableWidthDayRange";
+import { AppProps,BookingObject,DateRangeType } from "./types";
 
-function App() {
+function App(props: AppProps) {
 
-  interface BlockedDateRangeInfo {
-    start: string;
-    end: string;
-    type: DateRangeType;
-    tooltip?: string;
-  }
-
-  type DateRangeType = 'booked' | 'closed' | 'on-request';
-
-  interface BookingObject {
-    id: string;
-    title: string;
-    blockedDateRanges: BlockedDateRangeInfo[];
-  }
 
   const exampleBookingObjects: BookingObject[] = [
     {
@@ -62,12 +49,11 @@ function App() {
     }
   ];
 
+  const bookingObjects = props.bookingObjects || exampleBookingObjects;
 
   return (
     <>
-      {/* <MonthTable year={2024} month={1} objectId={12345} unavailableRanges={unavailableRanges} /> */}
-
-      <TableWithDateRange year={2024} bookingObjects={exampleBookingObjects} />
+      <TableWithDateRange year={2024} bookingObjects={bookingObjects} />
     </>
   )
 }
