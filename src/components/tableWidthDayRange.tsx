@@ -12,14 +12,14 @@ interface TableWithDateRangeProps {
 }
 
 const TableWithDateRange: React.FC<TableWithDateRangeProps> = ({ year, bookingObjects }): JSX.Element => {
-  const [unavailableCells, setUnavailableCells] = useState<{rowIndex: number, colIndex: number}[]>([]);
-
   const [selectedCell, setSelectedCell] = useState<CellCoordinates>(null);
   const [secondSelectedCell, setSecondSelectedCell] = useState<{ rowIndex: number; colIndex: number } | null>(null);
   const [hoveredCell, setHoveredCell] = useState<CellCoordinates>(null);
   const [selectedDayStart, setSelectedDayStart] = useState<Date | null>(null);
   const [selectedDayEnd, setSelectedDayEnd] = useState<Date | null>(null);
   const [cellClasses, setCellClasses] = useState<{ rowIndex: number; colIndex: number; classes: string[] }[]>([]);
+  
+  const bookingCalendarWrapperRef = useRef<HTMLDivElement>(null);
   const tableBodyRef = useRef<HTMLTableSectionElement>(null);
   const tableRef = useRef<HTMLTableElement>(null);
   const scrollContainer = useRef<HTMLDivElement>(null);
@@ -137,7 +137,7 @@ const isDateUnavailable = (date: Date, objectId: string): boolean => {
   };
 
 
-  const handleDayClick = (clickedDate: Date, objectId:string, rowIndex: number, colIndex: number): void => {
+  const handleDayClick = (clickedDate: Date, rowIndex: number, colIndex: number): void => {
     // Date selection logic
     if (selectedDayStart === null || (selectedDayStart !== null && selectedDayEnd !== null)) {
       setSelectedDayStart(clickedDate);
@@ -290,7 +290,7 @@ const isDateUnavailable = (date: Date, objectId: string): boolean => {
   useEffect(() => {
     const handleOutsideClick = (event: MouseEvent) => {
       // Check if the click is outside of the table body
-      if (tableBodyRef.current && !tableBodyRef.current.contains(event.target as Node)) {
+      if (bookingCalendarWrapperRef.current && !bookingCalendarWrapperRef.current.contains(event.target as Node)) {
         setSelectedCell(null);
         setSecondSelectedCell(null);
         setCellClasses([]);
@@ -305,7 +305,7 @@ const isDateUnavailable = (date: Date, objectId: string): boolean => {
 
 
   return (
-    <div className="w-full">
+    <div className="booking-calendar-wrapper w-full" ref={bookingCalendarWrapperRef}>
       <div className="py-2 flex justify-end items-center">
         <button onClick={scrollLeft} className="mx-2 p-1 border border-gray-300 rounded">&lt;</button>
         <button onClick={scrollToCurrentDay} className="mx-2 p-1 border border-gray-300 rounded">Today</button>
@@ -379,7 +379,7 @@ const isDateUnavailable = (date: Date, objectId: string): boolean => {
                       if (isUnavailable === true) {
                           console.log(date)
                           // setUnavailableCells(prev => [...prev, {rowIndex, colIndex}]);
-                          const { tooltip, isUnavailStart, isUnavailEnd } = getBlockedDateRangeInfo(date, bookingObject.id);
+                          const { isUnavailStart, isUnavailEnd } = getBlockedDateRangeInfo(date, bookingObject.id);
                           unavailableClassNames = [
                             isUnavailable ? 'bg-red-100/60 is-unavailable' : '',
                             isUnavailStart ? 'is-unavail-start' : '',
@@ -402,7 +402,7 @@ const isDateUnavailable = (date: Date, objectId: string): boolean => {
                         <td
                           key={`${rowIndex}-${colIndex}`}
                           id={isSameDay(date, currentDate) ? 'isToday' : `${rowIndex}-${colIndex}`}
-                          onClick={() => handleDayClick(date, bookingObject.id, rowIndex, colIndex)}
+                          onClick={() => handleDayClick(date, rowIndex, colIndex)}
                           onMouseEnter={() => handleCellHover(rowIndex, colIndex, !isUnavailable)}
                           className={`${cellClassNames.join(' ')} ${unavailableClassNames.join(' ')} `}
                         >
