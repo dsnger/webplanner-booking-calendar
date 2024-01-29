@@ -5,13 +5,22 @@ export interface DayColumnProps {
 
 export type CellState = ('is-available' | 'is-unavailable' | 'is-start' | 'is-end' | 'is-selected')[];
 
-export interface DateRange {
-  start: Date;
-  end: Date;
-}
-
 export type DateRangeType = 'booked' | 'closed' | 'on-request';
 
+export interface BlockedDateRangeInfo {
+  start: string;
+  end: string;
+  type: DateRangeType;
+  tooltip?: string;
+}
+
+// export interface AppProps {
+//   settings?: {
+//     showBlockedDates: boolean;
+//     showBlockedDatesTooltips: boolean;
+//   },
+//   bookingObjects?: BookingObject[];
+// }
 
 export interface BlockedDateRangeInfo {
   start: string;
@@ -20,31 +29,56 @@ export interface BlockedDateRangeInfo {
   tooltip?: string;
 }
 
+
+export interface BookingCalendarSettings {
+  calendarRange: CalendarRange;
+  colorSettings: ColorSettings;
+  bookingObjects: BookingObject[];
+}
+
+export interface CalendarRange {
+  startDate: string;
+  endDate?: string;
+  duration?: Duration;
+  clickMode: 'day' | 'range';
+}
+
+export interface Duration {
+  monthCount?: number;
+  yearCount?: number;
+}
+
+export interface ColorSettings {
+  booked: string;
+  available: string;
+  notAvailable: string;
+  onRequest: string;
+  closed: string;
+}
+
 export interface BookingObject {
-  id: string;
+  objId: string;
   title: string;
-  blockedDateRanges: BlockedDateRangeInfo[];
+  blockedDateRanges: DateRange[];
+  dayStates: DayStates;
 }
 
-export interface AppProps {
-  settings?: {
-    showBlockedDates: boolean;
-    showBlockedDatesTooltips: boolean;
-  },
-  bookingObjects?: BookingObject[];
-}
-
-export interface BlockedDateRangeInfo {
+export interface DateRange {
   start: string;
   end: string;
-  type: DateRangeType;
-  tooltip?: string;
+  type: string;
+  tooltip: string;
+}
+
+export interface DayStates {
+  arrivalDays: DaySetting;
+  departureDays: DaySetting;
+}
+
+export interface DaySetting {
+  exclusive: boolean; // Include other modes if they exist
+  dates: string[];
 }
 
 
-export interface BookingObject {
-  id: string;
-  title: string;
-  blockedDateRanges: BlockedDateRangeInfo[];
-}
 

@@ -1,75 +1,107 @@
 
 import './App.css'
-import TableWithDateRange from "./components/tableWidthDayRange";
-import { AppProps,BookingObject,DateRangeType } from "./types";
+import BookingCalendar from "./components/BookingCalendar";
+import { BookingCalendarSettings } from "./types";
 
-function App(props: AppProps) {
+function App() {
 
-
-  const calendarSettings = [
-    { 
-      calendarRange: {
-        startDate: '2024-01-01', // Required: Starting date of the calendar
-        endDate: '2024-12-31',   // Optional: Ending date of the calendar. If omitted, could default to a set duration from startDate
-        duration: {
-          monthCount: 20,        // Optional: Number of months to display from startDate, ignored if endDate is set
-          yearCount: 2           // Optional: Number of years to display from startDate, ignored if monthCount or endDate is set
-        },
-        clickMode: 'day',        // Required: 'day' for single day selection, 'range' for a range of dates
+  const exampleCalendarSettings: BookingCalendarSettings = {
+    calendarRange: {
+      startDate: '2024-01-01',
+      endDate: '',
+      duration: {
+        monthCount: 20,
+        yearCount: 2
       },
-      
-      colorSettings: {
-        available: '#00FF00',    // Green color for available dates
-        notAvailable: '#FF0000', // Red color for not available dates
-        onRequest: '#FFFF00',    // Yellow color for dates that are on request
-        closed: '#000000',       // Black color for closed dates
-      }
-    }
+      clickMode: 'day',
+    },
 
-  ]
-  
+    colorSettings: {
+      booked: '#00ff',
+      available: '#00FF00',
+      notAvailable: '#FF0000',
+      onRequest: '#FFFF00',
+      closed: '#aaa',
+    },
 
-  const exampleBookingObjects: BookingObject[] = [
-    {
-      id: '1111',
-      title: 'Angebot 1',
-      blockedDateRanges: [
-        {
-          start: '2024-02-05',
-          end: '2024-02-10',
-          type: 'booked',
-          tooltip: 'Blocked for maintenance'
-        },
-        {
-          start: '2024-03-15',
-          end: '2024-03-20',
-          type: 'booked',
-          tooltip: 'Reserved for event'
+    bookingObjects: [
+      {
+        objId: '1111',
+        title: 'Angebot 1',
+        blockedDateRanges: [
+          {
+            start: '2024-02-05',
+            end: '2024-02-10',
+            type: 'unavailable',
+            tooltip: 'Blocked for maintenance'
+          },
+          {
+            start: '2024-03-15',
+            end: '2024-03-20',
+            type: 'booked',
+            tooltip: 'Reserved for event'
+          },
+          {
+            start: '2024-06-11',
+            end: '2024-06-22',
+            type: 'booked',
+            tooltip: 'Reserved for event'
+          }
+        ],
+        dayStates: {
+          arrivalDays: {
+            exclusive: true,
+            dates: ['2024-02-05', '2024-02-06', '2024-02-07']
+          },
+          departureDays: {
+            exclusive: true,
+            dates: ['2024-02-10', '2024-02-11', '2024-02-12']
+          }
         }
-      ],
-      dayStates: {
-        arrivalDays: {
-          exclusive: true,
-          dates: ['2024-02-05', '2024-02-06', '2024-02-07'] // Example dates
-        },
-        departureDays: {
-          exclusive: true,
-          dates: ['2024-02-10', '2024-02-11', '2024-02-12'] // Example dates
+      },
+      {
+        objId: '2222',
+        title: 'Angebot 2',
+        blockedDateRanges: [
+          {
+            start: '2024-03-05',
+            end: '2024-03-10',
+            type: 'unavailable',
+            tooltip: 'Blocked for maintenance'
+          },
+          {
+            start: '2024-07-15',
+            end: '2024-07-20',
+            type: 'booked',
+            tooltip: 'Reserved for event'
+          },
+          {
+            start: '2024-11-11',
+            end: '2024-11-22',
+            type: 'booked',
+            tooltip: 'Reserved for event'
+          }
+        ],
+        dayStates: {
+          arrivalDays: {
+            exclusive: true,
+            dates: ['2024-02-05', '2024-02-06', '2024-02-07']
+          },
+          departureDays: {
+            exclusive: true,
+            dates: ['2024-02-10', '2024-02-11', '2024-02-12']
+          }
         }
       }
-    }
-  ];
-  
-
-  const bookingObjects = props.bookingObjects || exampleBookingObjects;
+    ]
+  }
 
   return (
     <>
-      <TableWithDateRange year={2024} bookingObjects={bookingObjects} />
+      <BookingCalendar calSettings={exampleCalendarSettings} />
     </>
   )
 }
-
 
 
 export default App

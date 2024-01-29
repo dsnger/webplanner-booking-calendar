@@ -142,7 +142,7 @@ const isDateUnavailable = (date: Date, objId: string): boolean => {
     };
   };
 
-  const handleDayClick = (clickedDate: Date, rowIndex: number, colIndex: number): void => {
+  const handleDateSelection = (clickedDate: Date, rowIndex: number, colIndex: number): void => {
     // Date selection logic
     if (selectedDayStart === null || (selectedDayStart !== null && selectedDayEnd !== null)) {
       
@@ -163,7 +163,7 @@ const isDateUnavailable = (date: Date, objId: string): boolean => {
         setSelectedCell({ rowIndex, colIndex });
 
         // Cell selection logic (if needed separately)
-        handleCellClick(rowIndex, colIndex, unavailableDaysBetween);
+        handleCellSelection(rowIndex, colIndex, unavailableDaysBetween);
         
       } else {
         setSelectedDayEnd(clickedDate);
@@ -177,13 +177,13 @@ const isDateUnavailable = (date: Date, objId: string): boolean => {
           setHighlightedRange(selectedCell.rowIndex, selectedCell.colIndex, colIndex);
         }
         // Cell selection logic (if needed separately)
-        handleCellClick(rowIndex, colIndex, false);
+        handleCellSelection(rowIndex, colIndex, false);
       }
     }
       
   };
 
-  const handleCellClick = (rowIndex: number, colIndex: number, areBlockedDaysBetween: boolean): void => {
+  const handleCellSelection = (rowIndex: number, colIndex: number, areBlockedDaysBetween: boolean): void => {
     
     //zweite Auswahl, aber andere Zeile
     if (selectedCell && (secondSelectedCell && rowIndex === selectedCell.rowIndex)) {
@@ -411,7 +411,7 @@ const isDateUnavailable = (date: Date, objId: string): boolean => {
                         <td
                           key={`${rowIndex}-${colIndex}`}
                           id={isSameDay(date, currentDate) ? 'isToday' : `${rowIndex}-${colIndex}`}
-                          onClick={() => handleCellClick(rowIndex, colIndex, false)}
+                          onClick={() => handleDateSelection(date, rowIndex, colIndex)}
                           onMouseEnter={() => handleCellHover(rowIndex, colIndex, !isUnavailable)}
                           className={`${cellClassNames.join(' ')} ${unavailableClassNames.join(' ')} `}
                         >
