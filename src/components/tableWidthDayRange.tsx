@@ -104,8 +104,6 @@ const isDateUnavailable = (date: Date, objectId: string): boolean => {
   });
 };
 
-  
-
   const getBlockedDateRangeInfo = (date: Date, objectId:string): { isUnavailable: boolean; tooltip: string | null, isUnavailStart: boolean, isUnavailEnd: boolean } => {
     let isUnavailStart = false;
     let isUnavailEnd = false;
@@ -135,7 +133,6 @@ const isDateUnavailable = (date: Date, objectId: string): boolean => {
       isUnavailEnd
     };
   };
-
 
   const handleDayClick = (clickedDate: Date, rowIndex: number, colIndex: number): void => {
     // Date selection logic
@@ -176,7 +173,6 @@ const isDateUnavailable = (date: Date, objectId: string): boolean => {
       
   };
 
-
   const handleCellClick = (rowIndex: number, colIndex: number, areBlockedDaysBetween: boolean): void => {
     // If a range is already selected, start a new selection
     if (selectedCell && (secondSelectedCell && rowIndex === secondSelectedCell.rowIndex)) {
@@ -205,14 +201,12 @@ const isDateUnavailable = (date: Date, objectId: string): boolean => {
     setHoveredCell(null);
   };
 
-
   const setHighlightedRange = (rowIndex: number, startColIndex: number, endColIndex: number): void => {
     for (let colIndex = startColIndex; colIndex <= endColIndex; colIndex++) {
       // Apply the "is-selected" class to the cell at rowIndex and colIndex
       applyClassToCell(rowIndex, colIndex, 'is-selected');
     }
   };
-
 
   // Helper function to apply class to a cell
   const applyClassToCell = (rowIndex: number, colIndex: number, className: string) => {
@@ -233,7 +227,6 @@ const isDateUnavailable = (date: Date, objectId: string): boolean => {
     }
   };
 
-
   // Helper function to manage hover selection
   const handleCellHover = (rowIndex: number, colIndex: number, isAvailable: boolean) => {
     if (selectedCell && !secondSelectedCell && isAvailable) {
@@ -241,7 +234,6 @@ const isDateUnavailable = (date: Date, objectId: string): boolean => {
       setHoveredCell({ rowIndex, colIndex });
     }
   };
-
 
   // Helper function to manage hover selection
   const isCellInRange = (rowIndex: number, colIndex: number, isAvailable: boolean ) => {
@@ -255,7 +247,6 @@ const isDateUnavailable = (date: Date, objectId: string): boolean => {
     const endColIndex = Math.max(selectedCell.colIndex, endCell.colIndex);
     return colIndex >= startColIndex && colIndex <= endColIndex;
   };
-
 
   // Functions to handle scrolling
   const scrollToCurrentDay = () => {
