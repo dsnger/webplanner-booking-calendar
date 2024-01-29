@@ -1,4 +1,4 @@
-import poweredByLogoUrl from '/public/powered-by-logo.png';
+import poweredByLogoUrl from '../img/powered-by-logo.png';
 
 const Legend = () => {
   return (
