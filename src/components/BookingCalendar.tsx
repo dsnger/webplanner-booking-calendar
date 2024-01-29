@@ -103,18 +103,42 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ calSettings }): JSX.E
 
   
 
-const isDateUnavailable = (date: Date, objId: string): boolean => {
-  return blockedRangeDatesLookup[objId].some(range => {
-    const rangeStart = parseISO(range.start);
-    const rangeEnd = parseISO(range.end);
+  // const isDateUnavailable = (date: Date, objId: string): boolean => {
+  //   return blockedRangeDatesLookup[objId].some(range => {
+  //     const rangeStart = parseISO(range.start);
+  //     const rangeEnd = parseISO(range.end);
 
-    return isWithinInterval(date, { start: rangeStart, end: rangeEnd });
-  });
-};
+  //     return isWithinInterval(date, { start: rangeStart, end: rangeEnd });
+  //   });
+  // };
+    
 
-  const getBlockedDateRangeInfo = (date: Date, objId:string): { isUnavailable: boolean; tooltip: string | null, isUnavailStart: boolean, isUnavailEnd: boolean } => {
+  
+  const isDateType = (date: Date, objId: string, type: 'arrival' | 'departure'): boolean => {
+    const bookingObject = bookingObjects.find(obj => obj.objId === objId);
+  
+    if (!bookingObject) {
+      return false;
+    }
+  
+    const dateStrings = type === 'arrival'
+      ? bookingObject.dayTypes.arrivalDays.dates
+      : bookingObject.dayTypes.departureDays.dates;
+  
+    return dateStrings.some(dateString => {
+      const day = new Date(dateString);
+      return day.getFullYear() === date.getFullYear() &&
+             day.getMonth() === date.getMonth() &&
+             day.getDate() === date.getDate();
+    });
+  };
+  
+  
+
+  const isBlockedDateRange = (date: Date, objId:string): { isUnavailable: boolean; tooltip: string | null, isUnavailStart: boolean, isUnavailEnd: boolean } => {
     let isUnavailStart = false;
     let isUnavailEnd = false;
+    let isUnavailable = false;
 
     const range = blockedRangeDatesLookup[objId].find(range => {
       if (isSameDay(date, range.start)) {
@@ -126,16 +150,15 @@ const isDateUnavailable = (date: Date, objId: string): boolean => {
         return true;
       }
 
-      // if (isWithinInterval(date, { start: range.start, end: range.end })) {
-
-      //   setUnavailableCells(prev => [...prev, {rowIndex: rowIndex, colIndex: colIndex, objId}]); 
-      //   return true;
-      // };
+      if (isWithinInterval(date, { start: parseISO(range.start), end: parseISO(range.end) })) {
+        isUnavailable = true;
+        return true;
+      }
+     
     });
 
-
     return {
-      isUnavailable: !!range,
+      isUnavailable,
       tooltip: range?.tooltip || null,
       isUnavailStart,
       isUnavailEnd
@@ -382,20 +405,19 @@ const isDateUnavailable = (date: Date, objId: string): boolean => {
                   <tr key={rowIndex}>
                     {days.map((date, colIndex) => {
 
-                        let unavailableClassNames:string[] = [];
-                        const isUnavailable = isDateUnavailable(date, bookingObject.objId);
-                        
-                      if (isUnavailable === true) {
-                          // console.log(date)
-                          // setUnavailableCells(prev => [...prev, {rowIndex, colIndex}]);
-                          const { isUnavailStart, isUnavailEnd } = getBlockedDateRangeInfo(date, bookingObject.objId);
-                          unavailableClassNames = [
-                            isUnavailable ? 'is-unavailable' : '',
-                            isUnavailStart ? 'is-start' : '',
-                            isUnavailEnd ? 'is-end' : '',
-                          ]
-                        }
+                        let dayTypesClassNames:string[] = [];
+                        const { isUnavailable, isUnavailStart, isUnavailEnd } = isBlockedDateRange(date, bookingObject.objId);
+                        const isArrival = isDateType(date, bookingObject.objId, 'arrival');
+                        const isDeparture = isDateType(date, bookingObject.objId, 'departure');
                       
+                        dayTypesClassNames = [
+                          isArrival ? 'is-arrival' : '',
+                          isDeparture ? 'is-departure' : '',
+                          isUnavailable ? 'is-unavailable' : 'is-available',
+                          isUnavailStart ? 'is-unavailable is-start' : '',
+                          isUnavailEnd ? 'is-unavailable is-end' : '',
+                        ]
+                        
                   
                       const cellClassNames = [
                         'cell cell-day',
@@ -413,7 +435,7 @@ const isDateUnavailable = (date: Date, objId: string): boolean => {
                           id={isSameDay(date, currentDate) ? 'isToday' : `${rowIndex}-${colIndex}`}
                           onClick={() => handleDateSelection(date, rowIndex, colIndex)}
                           onMouseEnter={() => handleCellHover(rowIndex, colIndex, !isUnavailable)}
-                          className={`${cellClassNames.join(' ')} ${unavailableClassNames.join(' ')} `}
+                          className={`${dayTypesClassNames.join(' ')}${cellClassNames.join(' ')}  `}
                         >
                           <div
                             className="cell-marker"

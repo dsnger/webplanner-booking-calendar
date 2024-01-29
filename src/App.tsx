@@ -48,14 +48,14 @@ function App() {
             tooltip: 'Reserved for event'
           }
         ],
-        dayStates: {
+        dayTypes: {
           arrivalDays: {
             exclusive: true,
-            dates: ['2024-02-05', '2024-02-06', '2024-02-07']
+            dates: ['2024-01-05', '2024-02-06', '2024-02-07']
           },
           departureDays: {
             exclusive: true,
-            dates: ['2024-02-10', '2024-02-11', '2024-02-12']
+            dates: ['2024-01-10', '2024-02-11', '2024-03-12','2024-04-12']
           }
         }
       },
@@ -82,14 +82,14 @@ function App() {
             tooltip: 'Reserved for event'
           }
         ],
-        dayStates: {
+        dayTypes: {
           arrivalDays: {
             exclusive: true,
-            dates: ['2024-02-05', '2024-02-06', '2024-02-07']
+            dates: ['2024-02-05', '2024-04-06', '2024-05-07']
           },
           departureDays: {
             exclusive: true,
-            dates: ['2024-02-10', '2024-02-11', '2024-02-12']
+            dates: ['2024-02-10', '2024-03-11', '2024-04-12']
           }
         }
       }

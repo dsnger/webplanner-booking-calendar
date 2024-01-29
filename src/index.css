@@ -147,12 +147,14 @@ button:focus-visible {
   background-color: var(--day-booked);
 }
 
-.cell.is-available .cell-marker {
+/* .cell.is-available .cell-marker {
   background-color: var(--day-available);
-}
+  opacity: .1;
+} */
 
-.cell.is-unavailable .cell-marker{
+.cell.is-unavailable .cell-marker {
   background-color: var(--day-unavailable,red)!important;
+  z-index: 1;
 }
 
 .cell.is-closed .cell-marker{
@@ -162,6 +164,13 @@ button:focus-visible {
 .cell.is-onrequest .cell-marker {
   background-color: var(--day-onrequest);
 }
+
+.cell.is-arrival .cell-marker,
+.cell.is-departure .cell-marker {
+  background-color: var(--day-available);
+}
+
+
 
 .object-titles {
   @apply text-left p-1 m-0 border border-r border-l-0 border-gray-500 truncate 

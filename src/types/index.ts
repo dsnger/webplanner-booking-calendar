@@ -60,7 +60,7 @@ export interface BookingObject {
   objId: string;
   title: string;
   blockedDateRanges: DateRange[];
-  dayStates: DayStates;
+  dayTypes: dayTypes;
 }
 
 export interface DateRange {
@@ -70,7 +70,7 @@ export interface DateRange {
   tooltip: string;
 }
 
-export interface DayStates {
+export interface dayTypes {
   arrivalDays: DaySetting;
   departureDays: DaySetting;
 }
