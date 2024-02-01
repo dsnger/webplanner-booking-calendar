@@ -16,15 +16,16 @@ The WebPlanner Booking Calendar is a React-based component designed to offer a d
 - [x] ~~Calendar Date Range (years | year | months)~~
 - [x] ~~Color Settings~~
 - [x] ~~Legend Settings (Unavailable States)~~
-- [] Submitting Selection
-- [] Localization
+- [ ] Submitting Selection
+- [ ] Localization
 - [x] ~~das Ende des scrollens muss begrenzt sein auf Jahr/Monat-Basis.~~
 - [x] ~~Standard ist das aktuelles Jahr + 2 volle Jahre. Manche Kunden aber 3 Jahre und andere nur 1~~
-- [] Tage können 'disabled' sein. Unabhängig von Ihrer Farbe sind diese dann blasser und nicht klickbar.
-- [] Tage können als Anreisetag gekennzeichnet sein (eigene Klasse, die dann einfach nen Rahmen um den Tag setzt). Dies ist nur eine optische Kennzeichnung, die Funktion kommt über disabled.
-- [] Neu, da ja jetzt das Nacheinander-Klicken von Anfangsdatum und Enddatum kommt: Tage können Anreisetag aber ggf kein Abreisetag sein. Da brauchts 2 Disabled-Zustände.
+- [ ] Tage können 'disabled' sein. Unabhängig von Ihrer Farbe sind diese dann blasser und nicht klickbar.
+- [ ] Tage können als Anreisetag gekennzeichnet sein (eigene Klasse, die dann einfach nen Rahmen um den Tag setzt). Dies ist nur eine optische Kennzeichnung, die Funktion kommt über disabled.
+- [ ] Neu, da ja jetzt das Nacheinander-Klicken von Anfangsdatum und Enddatum kommt: Tage können Anreisetag aber ggf kein Abreisetag sein. Da brauchts 2 Disabled-Zustände.
 Und der Modus Nacheinander-Klicken oder Einmal-klick und direkt Formular öffnen muss im Script setzbar sein. Manche Kunden bieten Party-Locations oä an, die man nur einen Tag bucht.
-- [] Kalender-Auswahl übergeben
+- [ ] Kalender-Auswahl übergeben
+- [ ] Mobile Support / Responsiv
 
 
 
