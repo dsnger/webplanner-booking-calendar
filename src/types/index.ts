@@ -29,23 +29,22 @@ export interface BlockedDateRangeInfo {
   tooltip?: string;
 }
 
-
 export interface BookingCalendarSettings {
-  calendarRange: CalendarRange;
-  colorSettings: ColorSettings;
+  calendarRange?: CalendarRange;
+  colorSettings?: ColorSettings;
   bookingObjects: BookingObject[];
 }
 
 export interface CalendarRange {
   startDate: string;
-  endDate?: string;
+  endDate?: string | '';
   duration?: Duration;
   clickMode: 'day' | 'range';
 }
 
 export interface Duration {
-  monthCount?: number;
-  yearCount?: number;
+  monthCount?: number | null;
+  yearCount?: number | null;
 }
 
 export interface ColorSettings {

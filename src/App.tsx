@@ -7,16 +7,16 @@ function App() {
 
   const exampleCalendarSettings: BookingCalendarSettings = {
     calendarRange: {
-      startDate: '2024-01-01',
-      endDate: '',
-      duration: {
-        monthCount: 20,
-        yearCount: 2
+      startDate: '2024-01-01', // oder aktuelles Datum
+      endDate: '',    // optional
+      duration: {     // wenn kein Enddatum gesetzt ist
+        monthCount: null,  // optional
+        yearCount: 2      // optional
       },
       clickMode: 'day',
     },
 
-    colorSettings: {
+    colorSettings: { // ggf weitere
       booked: '#00ff',
       available: '#00FF00',
       notAvailable: '#FF0000',
@@ -24,16 +24,16 @@ function App() {
       closed: '#aaa',
     },
 
-    bookingObjects: [
+    bookingObjects: [ 
       {
-        objId: '1111',
+        objId: '1111',      // Objectdaten ggf weitere
         title: 'Angebot 1',
-        blockedDateRanges: [
+        blockedDateRanges: [   // blockierte Tage
           {
             start: '2024-02-05',
-            end: '2024-02-10',
+            end: '2024-02-10', //optional dann start = end
             type: 'unavailable',
-            tooltip: 'Blocked for maintenance'
+            tooltip: 'Blocked for maintenance' //optional
           },
           {
             start: '2024-03-15',
@@ -84,12 +84,12 @@ function App() {
         ],
         dayTypes: {
           arrivalDays: {
-            exclusive: true,
-            dates: ['2024-02-05', '2024-04-06', '2024-05-07']
+            exclusive: true, //is NUR Anreisetag (keine Abreise)
+            dates: ['2024-02-05', '2024-04-06', '2024-05-07'] //Array aller daten in der Calendar range
           },
-          departureDays: {
-            exclusive: true,
-            dates: ['2024-02-10', '2024-03-11', '2024-04-12']
+          departureDays: { 
+            exclusive: true, //is NUR Abreisetag (keine Anreise)
+            dates: ['2024-02-10', '2024-03-11', '2024-04-12'] //Array aller daten in der Calendar range
           }
         }
       }
@@ -98,7 +98,7 @@ function App() {
 
   return (
     <>
-      <BookingCalendar calSettings={exampleCalendarSettings} />
+      <BookingCalendar fewoOwnID={10745} lang={'de'} />
     </>
   )
 }

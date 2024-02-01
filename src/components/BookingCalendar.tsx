@@ -1,13 +1,14 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
-import { isSameDay, startOfDay, endOfMonth, eachDayOfInterval, getDay, getMonth, getYear, format, startOfYear, endOfYear, isWithinInterval, parseISO, isBefore, parse } from 'date-fns';
-import { getMonthName, getDayName, formatDate } from "../utils";
-import { BlockedDateRangeInfo, BookingCalendarSettings, DateRangeType, ColorSettings } from "../types";
+import { isSameDay, startOfDay, endOfMonth, eachDayOfInterval, getDay, getMonth, getYear, format, startOfYear, endOfYear, isWithinInterval, parseISO, isBefore, parse, addMonths, addYears } from 'date-fns';
+import { getMonthName, getDayName, formatDate, fetchCalendarSettings } from "../utils";
+import { BlockedDateRangeInfo, BookingCalendarSettings, DateRangeType, ColorSettings, CalendarRange } from "../types";
 import Legend from "./Legend";
 
 type CellCoordinates = { rowIndex: number; colIndex: number } | null;
 
 interface BookingCalendarProps {
-  calSettings: BookingCalendarSettings;
+  fewoOwnID: number;
+  lang: string;
 }
 
 
@@ -17,13 +18,47 @@ const updateGlobalStyles = (colorSettings: ColorSettings) => {
   root.style.setProperty('--day-booked', colorSettings.booked);
   root.style.setProperty('--day-available', colorSettings.available);
   root.style.setProperty('--day-unavailable', colorSettings.notAvailable);
-  root.style.setProperty('--day-on-request', colorSettings.onRequest);
+  root.style.setProperty('--day-onrequest', colorSettings.onRequest);
   root.style.setProperty('--day-closed', colorSettings.closed);
 };
 
 
-const BookingCalendar: React.FC<BookingCalendarProps> = ({ calSettings }): JSX.Element => {
-  const { calendarRange, colorSettings, bookingObjects } = calSettings;
+const BookingCalendar: React.FC<BookingCalendarProps> = ({ fewoOwnID, lang }): JSX.Element => {
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [calendarSettings, setCalendarSettings] = useState<BookingCalendarSettings | null>(null);
+  
+  useEffect(() => {
+    setIsLoading(true);
+    setError(null);
+    const getCalendarSettings = async () => {
+      try {
+        const data = await fetchCalendarSettings(fewoOwnID, lang);
+        setCalendarSettings(data);
+        setIsLoading(false);
+      } catch (error) {
+        // Handle or display the error as needed
+        console.error("Fetching calendar settings failed", error);
+        setError("Failed to fetch calendar settings");
+        setIsLoading(false);
+      }
+    };
+
+    getCalendarSettings();
+  }, [fewoOwnID, lang]); // Depend on fewoOwnID and lang to refetch if either changes
+
+  
+  if ( calendarSettings === null || calendarSettings.calendarRange === undefined) {
+    return <div>No calendar settings available.</div>;
+  }
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+ 
+  const { calendarRange, colorSettings, bookingObjects } = calendarSettings;
 
   const [selectedCell, setSelectedCell] = useState<CellCoordinates>(null);
   const [secondSelectedCell, setSecondSelectedCell] = useState<{ rowIndex: number; colIndex: number } | null>(null);
@@ -37,18 +72,67 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ calSettings }): JSX.E
   const tableRef = useRef<HTMLTableElement>(null);
   const scrollContainer = useRef<HTMLDivElement>(null);
   const scrollContainerWrapper = useRef<HTMLDivElement>(null);
-  
-  
   const currentDate = startOfDay(new Date());
   const parsedStartDate = parse(calendarRange.startDate, 'yyyy-mm-dd', new Date());
   const year = getYear(parsedStartDate);
 
+ 
 
-  // Generate an array of days for the specified year
-  const days = eachDayOfInterval({
-    start: startOfYear(new Date(year, 0, 1)),
-    end: endOfYear(new Date(year, 0, 1))
-  });
+
+
+  if (colorSettings === null) {
+    useEffect(() => {
+      updateGlobalStyles(colorSettings);
+    }, [colorSettings, cellClasses]);
+  }
+
+  useEffect(() => {
+    const handleOutsideClick = (event: MouseEvent) => {
+      // Check if the click is outside of the table body
+      if (bookingCalendarWrapperRef.current && !bookingCalendarWrapperRef.current.contains(event.target as Node)) {
+        setSelectedCell(null);
+        setSecondSelectedCell(null);
+        setCellClasses([]);
+      }
+    };
+    document.addEventListener('mousedown', handleOutsideClick);
+    return () => {
+      document.removeEventListener('mousedown', handleOutsideClick);
+    };
+  }, []);
+
+
+  const generateCalendarDays = (calendarRange: CalendarRange): Date[] => {
+    const { startDate, endDate, duration } = calendarRange;
+  
+    // Parse the start date or use the start of the current year if not provided
+    let start = startDate ? parseISO(startDate) : startOfYear(new Date());
+  
+    let end;
+    if (endDate) {
+      // Parse the end date if provided
+      end = parseISO(endDate);
+    } else if (duration) {
+      // Use duration to calculate the end date if endDate is not provided
+      if (duration.monthCount) {
+        end = addMonths(start, duration.monthCount );
+      } else if (duration.yearCount) {
+        end = addYears(start, duration.yearCount);
+      } else {
+        // Default to end of the year if neither monthCount nor yearCount is provided
+        end = endOfYear(start);
+      }
+    } else {
+      // Default to end of the year if neither endDate nor duration is provided
+      end = endOfYear(start);
+    }
+  
+    const days = eachDayOfInterval({ start, end });
+    return days;
+  };
+  
+  // Usage
+  const days = generateCalendarDays(calendarRange);
 
 
   // Group dates by month
@@ -89,7 +173,6 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ calSettings }): JSX.E
   
 
   const blockedRangeDatesLookup: { [key: string]: BlockedDateRangeInfo[] } = {};
-
   bookingObjects.forEach(bookingObject => {
     blockedRangeDatesLookup[bookingObject.objId] = bookingObject.blockedDateRanges.map(range => {
       return {
@@ -102,7 +185,6 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ calSettings }): JSX.E
   });
 
   
-
   // const isDateUnavailable = (date: Date, objId: string): boolean => {
   //   return blockedRangeDatesLookup[objId].some(range => {
   //     const rangeStart = parseISO(range.start);
@@ -112,7 +194,6 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ calSettings }): JSX.E
   //   });
   // };
     
-
   
   const isDateType = (date: Date, objId: string, type: 'arrival' | 'departure'): boolean => {
     const bookingObject = bookingObjects.find(obj => obj.objId === objId);
@@ -132,7 +213,6 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ calSettings }): JSX.E
              day.getDate() === date.getDate();
     });
   };
-  
   
 
   const isBlockedDateRange = (date: Date, objId:string): { isUnavailable: boolean; tooltip: string | null, isUnavailStart: boolean, isUnavailEnd: boolean } => {
@@ -164,6 +244,7 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ calSettings }): JSX.E
       isUnavailEnd
     };
   };
+
 
   const handleDateSelection = (clickedDate: Date, rowIndex: number, colIndex: number): void => {
     // Date selection logic
@@ -262,7 +343,6 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ calSettings }): JSX.E
     setCellClasses(newCellClasses);
   };
   
-
   // Helper function to manage hover selection
   const handleCellHover = (rowIndex: number, colIndex: number, isAvailable: boolean) => {
     if (selectedCell && !secondSelectedCell && isAvailable) {
@@ -314,26 +394,7 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ calSettings }): JSX.E
   };
 
 
-  useEffect(() => {
-    updateGlobalStyles(colorSettings);
-  }, [colorSettings,cellClasses]);
-
-
-  useEffect(() => {
-    const handleOutsideClick = (event: MouseEvent) => {
-      // Check if the click is outside of the table body
-      if (bookingCalendarWrapperRef.current && !bookingCalendarWrapperRef.current.contains(event.target as Node)) {
-        setSelectedCell(null);
-        setSecondSelectedCell(null);
-        setCellClasses([]);
-      }
-    };
-    document.addEventListener('mousedown', handleOutsideClick);
-    return () => {
-      document.removeEventListener('mousedown', handleOutsideClick);
-    };
-  }, []);
-
+  
 
 
   return (
@@ -453,7 +514,7 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ calSettings }): JSX.E
           </div>
         </div>
       </div>
-      <Legend colorSettings={colorSettings } />
+      {/* <Legend colorSettings={ colorSettings } /> */}
     </div>
   );
 
