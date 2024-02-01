@@ -1,63 +1,107 @@
 
 import './App.css'
-import TableWithDateRange from "./components/tableWidthDayRange";
-import { AppProps,BookingObject,DateRangeType } from "./types";
+import BookingCalendar from "./components/BookingCalendar";
+import { BookingCalendarSettings } from "./types";
 
-function App(props: AppProps) {
+function App() {
 
-
-  const exampleBookingObjects: BookingObject[] = [
-    {
-      id: '1111',
-      title: 'Angebot 1',
-      blockedDateRanges: [
-        {
-          start: '2024-02-05', // February 5, 2024
-          end: '2024-02-10', // February 10, 2024
-          type: 'booked' as DateRangeType,
-          tooltip: 'Blocked for maintenance'
-        },
-        {
-          start: '2024-03-15', // March 15, 2024
-          end: '2024-03-20', // March 20, 2024
-          type: 'booked' as DateRangeType,
-          tooltip: 'Reserved for event'
-        }
-      ]
+  const exampleCalendarSettings: BookingCalendarSettings = {
+    calendarRange: {
+      startDate: '2024-01-01', // oder aktuelles Datum
+      endDate: '',    // optional
+      duration: {     // wenn kein Enddatum gesetzt ist
+        monthCount: null,  // optional
+        yearCount: 2      // optional
+      },
+      clickMode: 'day',
     },
-    {
-      id: '2222',
-      title: 'Angebot 2',
-      blockedDateRanges: [
-        {
-          start: '2024-05-01', // May 1, 2024
-          type: 'closed' as DateRangeType,
-          end: '2024-05-05', // May 5, 2024
-        }
-      ]
-    },
-    {
-      id: '3333',
-      title: 'Angebot 3',
-      blockedDateRanges: [
-        {
-          start: '2024-03-01', // January 1, 2024
-          end: '2024-03-02', // January 2, 2024
-          type: 'on-request' as DateRangeType,
-        }
-      ]
-    }
-  ];
 
-  const bookingObjects = props.bookingObjects || exampleBookingObjects;
+    colorSettings: { // ggf weitere
+      booked: '#00ff',
+      available: '#00FF00',
+      notAvailable: '#FF0000',
+      onRequest: '#FFFF00',
+      closed: '#aaa',
+    },
+
+    bookingObjects: [ 
+      {
+        objId: '1111',      // Objectdaten ggf weitere
+        title: 'Angebot 1',
+        blockedDateRanges: [   // blockierte Tage
+          {
+            start: '2024-02-05',
+            end: '2024-02-10', //optional dann start = end
+            type: 'unavailable',
+            tooltip: 'Blocked for maintenance' //optional
+          },
+          {
+            start: '2024-03-15',
+            end: '2024-03-20',
+            type: 'booked',
+            tooltip: 'Reserved for event'
+          },
+          {
+            start: '2024-06-11',
+            end: '2024-06-22',
+            type: 'booked',
+            tooltip: 'Reserved for event'
+          }
+        ],
+        dayTypes: {
+          arrivalDays: {
+            exclusive: true,
+            dates: ['2024-01-05', '2024-02-06', '2024-02-07']
+          },
+          departureDays: {
+            exclusive: true,
+            dates: ['2024-01-10', '2024-02-11', '2024-03-12','2024-04-12']
+          }
+        }
+      },
+      {
+        objId: '2222',
+        title: 'Angebot 2',
+        blockedDateRanges: [
+          {
+            start: '2024-03-05',
+            end: '2024-03-10',
+            type: 'unavailable',
+            tooltip: 'Blocked for maintenance'
+          },
+          {
+            start: '2024-07-15',
+            end: '2024-07-20',
+            type: 'booked',
+            tooltip: 'Reserved for event'
+          },
+          {
+            start: '2024-11-11',
+            end: '2024-11-22',
+            type: 'booked',
+            tooltip: 'Reserved for event'
+          }
+        ],
+        dayTypes: {
+          arrivalDays: {
+            exclusive: true, //is NUR Anreisetag (keine Abreise)
+            dates: ['2024-02-05', '2024-04-06', '2024-05-07'] //Array aller daten in der Calendar range
+          },
+          departureDays: { 
+            exclusive: true, //is NUR Abreisetag (keine Anreise)
+            dates: ['2024-02-10', '2024-03-11', '2024-04-12'] //Array aller daten in der Calendar range
+          }
+        }
+      }
+    ]
+  }
 
   return (
     <>
-      <TableWithDateRange year={2024} bookingObjects={bookingObjects} />
+      <BookingCalendar fewoOwnID={10745} lang={'de'} />
     </>
   )
 }
-
 
 
 export default App
