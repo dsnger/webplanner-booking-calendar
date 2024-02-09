@@ -10,44 +10,32 @@ export type DateRangeType = 'booked' | 'closed' | 'on-request';
 export interface BlockedDateRangeInfo {
   start: string;
   end: string;
-  type: DateRangeType;
-  tooltip?: string;
-}
-
-// export interface AppProps {
-//   settings?: {
-//     showBlockedDates: boolean;
-//     showBlockedDatesTooltips: boolean;
-//   },
-//   bookingObjects?: BookingObject[];
-// }
-
-export interface BlockedDateRangeInfo {
-  start: string;
-  end: string;
+  starthalf: boolean;
+  endhalf: boolean;
   type: DateRangeType;
   tooltip?: string;
 }
 
 export interface BookingCalendarSettings {
-  calendarRange?: CalendarRange;
-  colorSettings?: ColorSettings;
+  calendarRange: CalendarRange;
+  colorSettings: ColorSettings;
   bookingObjects: BookingObject[];
 }
 
-export interface CalendarRange {
+export type CalendarRange = {
   startDate: string;
+  minDate?: string | '';
   endDate?: string | '';
-  duration?: Duration;
   clickMode: 'day' | 'range';
+  daprtureMode: string | '';
 }
 
-export interface Duration {
+export type Duration = {
   monthCount?: number | null;
   yearCount?: number | null;
 }
 
-export interface ColorSettings {
+export type ColorSettings = {
   booked: string;
   available: string;
   notAvailable: string;
@@ -55,9 +43,12 @@ export interface ColorSettings {
   closed: string;
 }
 
+
 export interface BookingObject {
   objId: string;
   title: string;
+  extLink: string;
+  bookingLink: string;
   blockedDateRanges: DateRange[];
   dayTypes: dayTypes;
 }
@@ -65,6 +56,8 @@ export interface BookingObject {
 export interface DateRange {
   start: string;
   end: string;
+  starthalf: boolean;
+  endhalf: boolean;
   type: string;
   tooltip: string;
 }

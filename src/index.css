@@ -86,28 +86,6 @@ button:focus-visible {
   @apply border-l border-b border-gray-500 p-0 m-0 cursor-pointer;
 }
 
-.cell-marker{
-  @apply w-full h-full pointer-events-none
-}
-
-.object-titles,
-.cell-day {
-  @apply h-9 min-w-9 
-}
-
-.cell-day {
-  @apply h-9 min-w-9 border-l border-r border-b border-gray-500 box-border
-}
-
-.cell-day-date,
-.cell-month-date {
-  @apply p-1 h-7 
-}
-
-.cell-day-date {
-  @apply border-l border-r border-b border-gray-500
-}
-
 .cell.last-of-month {
   @apply border-r-2
 }
@@ -170,11 +148,6 @@ button:focus-visible {
   background-color: var(--day-available);
 }
 
-
-
-.object-titles {
-  @apply text-left p-1 m-0 border border-r border-l-0 border-gray-500 truncate 
-}
 
 /* Add custom CSS for smooth scrolling and touch-friendly scrollbar */
 .overflow-x-auto {
