@@ -2,6 +2,9 @@
 
 The WebPlanner Booking Calendar is a React-based component designed to offer a dynamic and interactive booking calendar experience. It integrates seamlessly into web applications, providing functionalities for displaying availability, handling bookings, and visualizing custom date ranges and settings.
 
+## Demo
+http://webplanner.smilefx.de/bookingcalendar/
+
 ## Features
 
 - Dynamic calendar generation based on provided settings.
