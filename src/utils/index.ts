@@ -1,5 +1,5 @@
 // dateUtils.ts
-import { eachDayOfInterval, startOfMonth, endOfMonth, format, parseISO, startOfYear, endOfYear, isSameDay } from 'date-fns';
+import { eachDayOfInterval, startOfMonth, endOfMonth, format, parseISO, startOfYear, endOfYear } from 'date-fns';
 import { de } from 'date-fns/locale';
 import { BookingCalendarSettings, CalendarRange } from "../types";
 
@@ -54,7 +54,7 @@ export const isDayInRange = (date: Date, selectedDayStart: Date | null, selected
 
 
 export const generateCalendarDays = (calendarRange: CalendarRange): Date[] => {
-  const { startDate, minDate, endDate} = calendarRange;
+  const { startDate, endDate} = calendarRange;
 
   // Parse the start date or use the start of the current year if not provided
   let start = startDate ? parseISO(startDate) : startOfYear(new Date());

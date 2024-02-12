@@ -1,9 +1,9 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
-import { startOfDay, getMonth, getYear, parseISO } from 'date-fns';
+import { getMonth, getYear } from 'date-fns';
 import { fetchCalendarSettings, generateCalendarDays } from "../utils";
 import { BookingCalendarSettings, ColorSettings, CellCoordinates } from "../types";
 import Legend from "./Legend";
-import BookingObjectsTable from "./bookingObjectsTable";
+import BookingObjectsTable from "./BookingObjectsTable"
 import BookingCalendarScrollContainer, { ScrollContainerRefs } from "./BookingCalendarScrollContainer";
 import ScrollPaginationButtons from "./ScrollPaginationButtons";
 import BookingCalendarTable from "./BookingCalendarTable";
@@ -34,20 +34,20 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ fewoOwnID, lang }): J
   const [calendarSettings, setCalendarSettings] = useState<BookingCalendarSettings[]>([]);
 
   const [selectedCell, setSelectedCell] = useState<CellCoordinates>(null);
-  const [secondSelectedCell, setSecondSelectedCell] = useState<{ rowIndex: number; colIndex: number } | null>(null);
-  const [hoveredCell, setHoveredCell] = useState<CellCoordinates>(null);
-  const [selectedDayStart, setSelectedDayStart] = useState<Date | null>(null);
-  const [selectedDayEnd, setSelectedDayEnd] = useState<Date | null>(null);
+  // const [secondSelectedCell, setSecondSelectedCell] = useState<{ rowIndex: number; colIndex: number } | null>(null);
+  // const [hoveredCell, setHoveredCell] = useState<CellCoordinates>(null);
+  // const [selectedDayStart, setSelectedDayStart] = useState<Date | null>(null);
+  // const [selectedDayEnd, setSelectedDayEnd] = useState<Date | null>(null);
   const [cellClasses, setCellClasses] = useState<{ rowIndex: number; colIndex: number; classes: string[] }[]>([]);
 
 
 
-  const tableBodyRef = useRef<HTMLTableSectionElement>(null);
-  const tableRef = useRef<HTMLTableElement>(null);
+  // const tableBodyRef = useRef<HTMLTableSectionElement>(null);
+  // const tableRef = useRef<HTMLTableElement>(null);
   const bookingCalendarWrapperRef = useRef<HTMLDivElement>(null);
-  const scrollParentRef = useRef<ScrollContainerRefs>(null);
+  // const scrollParentRef = useRef<ScrollContainerRefs>(null);
   const scrollRef = useRef<ScrollContainerRefs>(null);
-  const currentDate = startOfDay(new Date());
+  // const currentDate = startOfDay(new Date());
 
 
   // Fetch calendar settings
@@ -80,30 +80,30 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ fewoOwnID, lang }): J
 
 
 
-  const year = useMemo(() => {
-    if (calendarSettings.length === 0 || !calendarSettings[0]?.calendarRange || days.length === 0) {
-      return new Date().getFullYear();
-    }
-    const parsedStartDate = parseISO(calendarSettings[0].calendarRange.startDate)
-    return getYear(parsedStartDate)
-  }, [calendarSettings]);
+  // const year = useMemo(() => {
+  //   if (calendarSettings.length === 0 || !calendarSettings[0]?.calendarRange || days.length === 0) {
+  //     return new Date().getFullYear();
+  //   }
+  //   const parsedStartDate = parseISO(calendarSettings[0].calendarRange.startDate)
+  //   return getYear(parsedStartDate)
+  // }, [calendarSettings]);
 
 
 
   // Group date by year
-  const years = useMemo(() => {
-    if (!days.length) return []; // Early return if days is empty
+  // const years = useMemo(() => {
+  //   if (!days.length) return []; // Early return if days is empty
   
-    const yearMap = new Map<number, number>();
-    days.forEach(date => {
-      const year = getYear(date); // Extract the year from each date
-      const count = yearMap.get(year) || 0; // Get the current count for this year, defaulting to 0
-      yearMap.set(year, count + 1); // Increment the count for this year
-    });
+  //   const yearMap = new Map<number, number>();
+  //   days.forEach(date => {
+  //     const year = getYear(date); // Extract the year from each date
+  //     const count = yearMap.get(year) || 0; // Get the current count for this year, defaulting to 0
+  //     yearMap.set(year, count + 1); // Increment the count for this year
+  //   });
   
-    return Array.from(yearMap, ([year, count]) => ({ year, count }));
-    // Optionally, you can return an array of objects for easier consumption: [{ year, count }]
-  }, [days]);
+  //   return Array.from(yearMap, ([year, count]) => ({ year, count }));
+  //   // Optionally, you can return an array of objects for easier consumption: [{ year, count }]
+  // }, [days]);
 
 
   const months = useMemo(() => {
@@ -138,7 +138,7 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ fewoOwnID, lang }): J
       // Check if the click is outside of the table body
       if (bookingCalendarWrapperRef.current && !bookingCalendarWrapperRef.current.contains(event.target as Node)) {
         setSelectedCell(null);
-        setSecondSelectedCell(null);
+        // setSecondSelectedCell(null);
         setCellClasses([]);
       }
     };
@@ -161,7 +161,7 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ fewoOwnID, lang }): J
     return <div>No calendar settings available.</div>;
   }
 
-  const { calendarRange, colorSettings, bookingObjects } = calendarSettings[0];
+  const { colorSettings, bookingObjects } = calendarSettings[0];
 
 
   return (

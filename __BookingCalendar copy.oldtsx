@@ -1,8 +1,8 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { isSameDay, startOfDay, endOfMonth, getDay, getMonth, getYear, format, isWithinInterval, parseISO, isBefore } from 'date-fns';
-import { getMonthName, getDayName, formatDate, fetchCalendarSettings, generateCalendarDays } from "../utils";
-import { BlockedDateRangeInfo, BookingCalendarSettings, DateRangeType, ColorSettings } from "../types";
-import Legend from "./Legend";
+import { getMonthName, getDayName, formatDate, fetchCalendarSettings, generateCalendarDays } from "./src/utils";
+import { BlockedDateRangeInfo, BookingCalendarSettings, DateRangeType, ColorSettings } from "./src/types";
+import Legend from "./src/components/Legend";
 
 type CellCoordinates = { rowIndex: number; colIndex: number } | null;
 

@@ -8,12 +8,12 @@ interface BookingCalendarCellProps {
   objId: string;
   isSelected: boolean;
   content: React.ReactNode;
-  tooltip: string;
+  tooltip: string | null;
   onClick: () => void;
   statusFlags: {
     isToday: boolean;
     isUnavailable: boolean;
-    type: DateRangeType;
+    type: DateRangeType | null;
     isUnavailStart: boolean;
     isUnavailEnd: boolean;
     isArrival: boolean;
@@ -21,7 +21,7 @@ interface BookingCalendarCellProps {
   };
 }
 
-const BookingCalendarCell: React.FC<BookingCalendarCellProps> = React.memo(({ date, objId, isSelected, content, tooltip, onClick, statusFlags }) => {
+const BookingCalendarCell: React.FC<BookingCalendarCellProps> = React.memo(({ date, objId, isSelected, content, onClick, statusFlags }) => {
   
   const { isToday, isUnavailable, type, isUnavailStart, isUnavailEnd, isArrival, isDeparture } = statusFlags;
 

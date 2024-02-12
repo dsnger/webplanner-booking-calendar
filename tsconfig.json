@@ -20,6 +20,6 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src"],
+  "include": ["src", "__BookingCalendar copy.oldtsx"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
