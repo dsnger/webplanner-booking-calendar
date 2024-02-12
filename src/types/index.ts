@@ -8,11 +8,11 @@ export type CellState = ('is-available' | 'is-unavailable' | 'is-start' | 'is-en
 export type DateRangeType = 'booked' | 'closed' | 'on-request';
 
 export interface BlockedDateRangeInfo {
-  start: string;
-  end: string;
+  start: Date;
+  end: Date;
   starthalf: boolean;
   endhalf: boolean;
-  type: DateRangeType;
+  type: DateRangeType | '';
   tooltip?: string;
 }
 
@@ -43,6 +43,7 @@ export type ColorSettings = {
   closed: string;
 }
 
+export type CellCoordinates = { rowIndex: number; colIndex: number } | null;
 
 export interface BookingObject {
   objId: string;

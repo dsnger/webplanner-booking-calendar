@@ -67,7 +67,7 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
-@media (prefers-color-scheme: light) {
+/* @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
     background-color: #ffffff;
@@ -78,7 +78,7 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
-}
+} */
 
 
 /* styles.css or your stylesheet file */
@@ -86,30 +86,22 @@ button:focus-visible {
   @apply border-l border-b border-gray-500 p-0 m-0 cursor-pointer;
 }
 
-.cell.last-of-month {
-  @apply border-r-2
-}
-
-.cell.first-of-month {
-  @apply border-l-2
-}
-
 
 .highlight {
   background-color: lightblue; /* Style for highlighted cells */
 }
 
-.cell.is-start.is-departure-day{
+.cell.is-departure .cell-marker{
   background-color: var(--day-available);
-  /* clip-path: polygon(100% 0, 0% 100%, 100% 100%); */
+  clip-path: polygon(0 0, 0% 100%, 100% 0);
 }
 
-.cell.is-end.is-arrival-day{
+.cell.is-arrival .cell-marker{
   background-color: var(--day-available);
-  /* clip-path: polygon(100% 0, 0% 100%, 100% 100%); */
+  clip-path: polygon(100% 0, 0% 100%, 100% 100%);
 }
 
-.cell.is-start .cell-marker{
+.cell.cell-marker{
   clip-path: polygon(100% 0, 0% 100%, 100% 100%);
 }
 
@@ -121,19 +113,21 @@ button:focus-visible {
   background-color: blue; /* Style for the selected cell */
 }
 
-.cell.is-booked .cell-marker {
+
+.cell.is-available .cell-marker {
+  background-color: var(--day-available);
+  opacity: .1;
+}
+
+.cell.is-unavailable .cell-marker {
+  background-color: var(--day-unavailable,red);
+  z-index: 1;
+}
+
+.cell.is-unavailable.is-booked .cell-marker {
   background-color: var(--day-booked);
 }
 
-/* .cell.is-available .cell-marker {
-  background-color: var(--day-available);
-  opacity: .1;
-} */
-
-.cell.is-unavailable .cell-marker {
-  background-color: var(--day-unavailable,red)!important;
-  z-index: 1;
-}
 
 .cell.is-closed .cell-marker{
   background-color: var(--day-closed);

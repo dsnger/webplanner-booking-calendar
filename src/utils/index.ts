@@ -69,6 +69,6 @@ export const generateCalendarDays = (calendarRange: CalendarRange): Date[] => {
   }
 
   const days = eachDayOfInterval({ start, end });
-  console.log(days)
+  // console.log(days)
   return days;
 };

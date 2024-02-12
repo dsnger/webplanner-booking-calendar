@@ -1,16 +1,15 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
-import { isSameDay, startOfDay, endOfMonth, getDay, getMonth, getYear, format, isWithinInterval, parseISO, isBefore } from 'date-fns';
-import { getMonthName, getDayName, formatDate, fetchCalendarSettings, generateCalendarDays } from "../utils";
-import { BlockedDateRangeInfo, BookingCalendarSettings, DateRangeType, ColorSettings } from "../types";
+import { startOfDay, getMonth, getYear, parseISO } from 'date-fns';
+import { fetchCalendarSettings, generateCalendarDays } from "../utils";
+import { BookingCalendarSettings, ColorSettings, CellCoordinates } from "../types";
 import Legend from "./Legend";
 import BookingObjectsTable from "./bookingObjectsTable";
 import BookingCalendarScrollContainer, { ScrollContainerRefs } from "./BookingCalendarScrollContainer";
-import BookingCalendarTableHead from "./BookingCalendarTableHead";
-import BookingCalenderTableBody from "./BookingCalendarTableBody";
 import ScrollPaginationButtons from "./ScrollPaginationButtons";
+import BookingCalendarTable from "./BookingCalendarTable";
 
 
-type CellCoordinates = { rowIndex: number; colIndex: number } | null;
+
 
 interface BookingCalendarProps {
   fewoOwnID: number;
@@ -158,11 +157,9 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ fewoOwnID, lang }): J
     return <div>Error: {error}</div>;
   }
 
-
   if (calendarSettings.length === 0 || calendarSettings[0]?.calendarRange === undefined) {
     return <div>No calendar settings available.</div>;
   }
-
 
   const { calendarRange, colorSettings, bookingObjects } = calendarSettings[0];
 
@@ -175,20 +172,14 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ fewoOwnID, lang }): J
       <div className="flex">
         <BookingObjectsTable bookingObjects={bookingObjects} />
         <BookingCalendarScrollContainer ref={scrollRef}>
-          <table className="min-w-full" ref={tableRef}>
-            <BookingCalendarTableHead
-              months={months}
-              days={days}
-              currentDate={currentDate}
-            />
-            <BookingCalenderTableBody
-              bookingObjects={bookingObjects}
-              days={days}
-              selectedCell={selectedCell}
-              currentDate={new Date()}
-              cellClasses={cellClasses}
-            />
-          </table>
+        <BookingCalendarTable
+            months={months}
+            days={days}
+            bookingObjects={bookingObjects}
+            selectedCell={selectedCell}
+            currentDate={new Date()}
+            cellClasses={cellClasses}
+          />
         </BookingCalendarScrollContainer>
       </div>
       <Legend colorSettings={colorSettings}/>
