@@ -20,33 +20,6 @@ const ScrollPaginationButtons: React.FC<ScrollPaginationProps> = ({ scrollRef })
     scrollRef.current?.scrollRight();
   };
 
-
-  // Function to scroll to the current day
-  // const scrollToCurrentDay = () => {
-  //   if (scrollContainerRef.current) {
-  //     const dayElement = scrollContainerRef.current.querySelector(`#isToday`);
-  //     if (dayElement) {
-  //       dayElement.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
-  //     }
-  //   }
-  // };
-
-  // // Function to scroll left
-  // const scrollLeft = () => {
-  //   if (scrollContainerRef.current && scrollParentRef.current) {
-  //     let newScrollPosition = -scrollParentRef.current.offsetWidth / 2; // Adjust the scroll step size as needed
-  //     scrollContainerRef.current.scrollBy({ left: newScrollPosition, behavior: 'smooth' });
-  //   }
-  // };
-
-  // // Function to scroll right
-  // const scrollRight = () => {
-  //   if (scrollContainerRef.current && scrollParentRef.current) {
-  //     let newScrollPosition = scrollParentRef.current.offsetWidth / 2; // Adjust the scroll step size as needed
-  //     scrollContainerRef.current.scrollBy({ left: newScrollPosition, behavior: 'smooth' });
-  //   }
-  // };
-
   return (
     <div className="py-2 flex justify-end items-center">
       <button onClick={scrollLeft} className="mx-2 p-1 border border-gray-300 rounded">&lt;</button>

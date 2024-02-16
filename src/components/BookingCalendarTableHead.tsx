@@ -1,6 +1,6 @@
 import React from 'react';
 import { format, getDay, isLastDayOfMonth, isSameDay } from 'date-fns'; // Assuming you're using date-fns
-import { getDayName, getMonthName } from "../utils";
+import { getDayName, getMonthName } from "../utils/dateUtils";
 
 // Props type definition
 interface BookingCalendarTableHeadProps {
@@ -14,7 +14,7 @@ const BookingCalendarTableHead: React.FC<BookingCalendarTableHeadProps> = ({ mon
     <thead>
       <tr>
         {months.map(({ month, count, year }, index) => (
-          <th key={index} colSpan={count} className="p-1 h-10 border border-r-2 border-l-2 border-gray-500">
+          <th id={`month-${year}-${month + 1}`} key={index} colSpan={count} className="p-1 h-10 border border-r-2 border-l-2 border-gray-500">
             {getMonthName(year,month)} {year}
           </th>
         ))}

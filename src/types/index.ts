@@ -12,7 +12,7 @@ export interface BlockedDateRangeInfo {
   end: Date;
   starthalf: boolean;
   endhalf: boolean;
-  type: DateRangeType | '';
+  type: DateRangeType | null;
   tooltip?: string;
 }
 
@@ -73,5 +73,13 @@ export interface DaySetting {
   dates: string[];
 }
 
+export interface DayStatus {
+  isUnavailable: boolean;
+  type: DateRangeType | null;
+  isUnavailStart: boolean;
+  isUnavailEnd: boolean;
+  isArrival: boolean;
+  isDeparture: boolean;
+}
 
 

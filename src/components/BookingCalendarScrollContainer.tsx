@@ -9,6 +9,7 @@ export type ScrollContainerRefs = {
   scrollToCurrentDay: () => void;
   scrollLeft: () => void;
   scrollRight: () => void;
+  scrollToMonth: (year: number, month: number) => void;
 };
 
 const BookingCalendarScrollContainer = forwardRef<ScrollContainerRefs, BookingCalendarScrollContainerProps>(({ children }, ref) => {
@@ -36,7 +37,14 @@ const BookingCalendarScrollContainer = forwardRef<ScrollContainerRefs, BookingCa
         let newScrollPosition = scrollParentRef.current.offsetWidth / 2; // Adjust the scroll step size as needed
         scrollContainerRef.current.scrollBy({ left: newScrollPosition, behavior: 'smooth' });
       }
-    }
+    },
+
+    scrollToMonth: (year, month) => {
+      const monthStartElem = document.getElementById(`month-${year}-${month}`);
+      if (monthStartElem) {
+        monthStartElem.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    },
 
   }));
 

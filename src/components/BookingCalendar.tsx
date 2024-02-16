@@ -1,14 +1,13 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
-import { getMonth, getYear } from 'date-fns';
-import { fetchCalendarSettings, generateCalendarDays } from "../utils";
-import { BookingCalendarSettings, ColorSettings, CellCoordinates } from "../types";
+import { getMonth, getYear, parseISO } from 'date-fns';
+import { generateCalendarDays, preCalculateStatusFlags } from "../utils/dateUtils";
+import { BlockedDateRangeInfo, BookingCalendarSettings, ColorSettings, DateRangeType } from "../types";
 import Legend from "./Legend";
 import BookingObjectsTable from "./BookingObjectsTable"
 import BookingCalendarScrollContainer, { ScrollContainerRefs } from "./BookingCalendarScrollContainer";
 import ScrollPaginationButtons from "./ScrollPaginationButtons";
 import BookingCalendarTable from "./BookingCalendarTable";
-
-
+// import MonthPaginationButtons from "./MonthPaginationButtons";
 
 
 interface BookingCalendarProps {
@@ -32,41 +31,45 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ fewoOwnID, lang }): J
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [calendarSettings, setCalendarSettings] = useState<BookingCalendarSettings[]>([]);
+  //const [daysWithStatus, setDaysWithStatus] = useState<DayStatus[][]>([]);
 
-  const [selectedCell, setSelectedCell] = useState<CellCoordinates>(null);
+
+  // const [selectedCell, setSelectedCell] = useState<CellCoordinates>(null);
   // const [secondSelectedCell, setSecondSelectedCell] = useState<{ rowIndex: number; colIndex: number } | null>(null);
   // const [hoveredCell, setHoveredCell] = useState<CellCoordinates>(null);
   // const [selectedDayStart, setSelectedDayStart] = useState<Date | null>(null);
   // const [selectedDayEnd, setSelectedDayEnd] = useState<Date | null>(null);
-  const [cellClasses, setCellClasses] = useState<{ rowIndex: number; colIndex: number; classes: string[] }[]>([]);
-
-
-
+  // const [cellClasses, setCellClasses] = useState<{ rowIndex: number; colIndex: number; classes: string[] }[]>([]);
   // const tableBodyRef = useRef<HTMLTableSectionElement>(null);
   // const tableRef = useRef<HTMLTableElement>(null);
+  
   const bookingCalendarWrapperRef = useRef<HTMLDivElement>(null);
   // const scrollParentRef = useRef<ScrollContainerRefs>(null);
   const scrollRef = useRef<ScrollContainerRefs>(null);
   // const currentDate = startOfDay(new Date());
 
-
-  // Fetch calendar settings
   useEffect(() => {
     setIsLoading(true);
     setError(null);
-    const getCalendarSettings = async () => {
+    const fetchCalendarSettings = async () => {
+      const apiUrl = `https://www.webplanner.de/tools/belegungsplanerapi.php?fewoOwnID=${fewoOwnID}&lang=${lang}&anfrage=3`;
       try {
-        const data = await fetchCalendarSettings(fewoOwnID, lang);
+        const response = await fetch(apiUrl);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        console.log("Fetched data:", data);
         setCalendarSettings(Array.isArray(data) ? data : [data]); // Ensure it's always an array
         setIsLoading(false);
       } catch (error) {
-        console.error("Fetching calendar settings failed", error);
+        console.error("Failed to fetch calendar settings:", error);
         setError("Failed to fetch calendar settings");
         setIsLoading(false);
+        throw error;
       }
     };
-
-    getCalendarSettings();
+    fetchCalendarSettings();
   }, [fewoOwnID, lang]);
 
 
@@ -77,33 +80,13 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ fewoOwnID, lang }): J
     }
     return generateCalendarDays(calendarSettings[0].calendarRange);
   }, [calendarSettings]);
-
-
-
-  // const year = useMemo(() => {
-  //   if (calendarSettings.length === 0 || !calendarSettings[0]?.calendarRange || days.length === 0) {
-  //     return new Date().getFullYear();
-  //   }
-  //   const parsedStartDate = parseISO(calendarSettings[0].calendarRange.startDate)
-  //   return getYear(parsedStartDate)
-  // }, [calendarSettings]);
-
-
-
-  // Group date by year
-  // const years = useMemo(() => {
-  //   if (!days.length) return []; // Early return if days is empty
   
-  //   const yearMap = new Map<number, number>();
-  //   days.forEach(date => {
-  //     const year = getYear(date); // Extract the year from each date
-  //     const count = yearMap.get(year) || 0; // Get the current count for this year, defaulting to 0
-  //     yearMap.set(year, count + 1); // Increment the count for this year
-  //   });
-  
-  //   return Array.from(yearMap, ([year, count]) => ({ year, count }));
-  //   // Optionally, you can return an array of objects for easier consumption: [{ year, count }]
-  // }, [days]);
+
+   // Use useMemo to precalculate status flags for the generated days
+   const daysWithStatus = useMemo(() => {
+    if (days.length === 0 ) return [];
+    return preCalculateStatusFlags(calendarSettings[0]?.bookingObjects, days);
+   }, [days, calendarSettings]);
 
 
   const months = useMemo(() => {
@@ -133,21 +116,6 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ fewoOwnID, lang }): J
   }, [calendarSettings]);
 
 
-  useEffect(() => {
-    const handleOutsideClick = (event: MouseEvent) => {
-      // Check if the click is outside of the table body
-      if (bookingCalendarWrapperRef.current && !bookingCalendarWrapperRef.current.contains(event.target as Node)) {
-        setSelectedCell(null);
-        // setSecondSelectedCell(null);
-        setCellClasses([]);
-      }
-    };
-    document.addEventListener('mousedown', handleOutsideClick);
-    return () => {
-      document.removeEventListener('mousedown', handleOutsideClick);
-    };
-  }, []);
-
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -163,22 +131,37 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ fewoOwnID, lang }): J
 
   const { colorSettings, bookingObjects } = calendarSettings[0];
 
+  const blockedRangeDatesLookup: { [key: string]: BlockedDateRangeInfo[] } = {};
+   // Convert start and end dates to Date objects once
+   bookingObjects.forEach(bookingObject => {
+    const blockedRanges = bookingObject.blockedDateRanges || [];
+    blockedRangeDatesLookup[bookingObject.objId] = blockedRanges.map(range => ({
+      ...range,
+      start: parseISO(range.start),
+      end: parseISO(range.end),
+      endhalf: range.endhalf,
+      starthalf: range.starthalf,
+      type: range.type as DateRangeType, // Assuming type casting is not necessary if your types are correct
+      tooltip: range.tooltip,
+    }));
+  });
+
 
   return (
     <div className="booking-calendar-wrapper w-full" ref={bookingCalendarWrapperRef}>
        
+      {/* <MonthPaginationButtons scrollRef={scrollRef} months={months} /> */}
       <ScrollPaginationButtons scrollRef={scrollRef} />
       
       <div className="flex">
-        <BookingObjectsTable bookingObjects={bookingObjects} />
+      <BookingObjectsTable bookingObjects={bookingObjects} />
         <BookingCalendarScrollContainer ref={scrollRef}>
         <BookingCalendarTable
             months={months}
             days={days}
+            daysWithStatus={daysWithStatus}
             bookingObjects={bookingObjects}
-            selectedCell={selectedCell}
             currentDate={new Date()}
-            cellClasses={cellClasses}
           />
         </BookingCalendarScrollContainer>
       </div>
