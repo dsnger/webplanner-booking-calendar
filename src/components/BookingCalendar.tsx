@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
-import { getMonth, getYear, parseISO } from 'date-fns';
+import { getMonth, getYear } from 'date-fns';
 import { generateCalendarDays, preCalculateStatusFlags } from "../utils/dateUtils";
-import { BlockedDateRangeInfo, BookingCalendarSettings, ColorSettings, DateRangeType } from "../types";
+import { BookingCalendarSettings, ColorSettings } from "../types";
 import Legend from "./Legend";
 import BookingObjectsTable from "./BookingObjectsTable"
 import BookingCalendarScrollContainer, { ScrollContainerRefs } from "./BookingCalendarScrollContainer";
@@ -31,22 +31,11 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ fewoOwnID, lang }): J
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [calendarSettings, setCalendarSettings] = useState<BookingCalendarSettings[]>([]);
-  //const [daysWithStatus, setDaysWithStatus] = useState<DayStatus[][]>([]);
+  const [visibleMonth, setVisibleMonth] = useState(new Date().getMonth() + 1); // Adjust to initial visible month based on your app's logic
+  const [visibleYear, setVisibleYear] = useState(new Date().getFullYear());
 
-
-  // const [selectedCell, setSelectedCell] = useState<CellCoordinates>(null);
-  // const [secondSelectedCell, setSecondSelectedCell] = useState<{ rowIndex: number; colIndex: number } | null>(null);
-  // const [hoveredCell, setHoveredCell] = useState<CellCoordinates>(null);
-  // const [selectedDayStart, setSelectedDayStart] = useState<Date | null>(null);
-  // const [selectedDayEnd, setSelectedDayEnd] = useState<Date | null>(null);
-  // const [cellClasses, setCellClasses] = useState<{ rowIndex: number; colIndex: number; classes: string[] }[]>([]);
-  // const tableBodyRef = useRef<HTMLTableSectionElement>(null);
-  // const tableRef = useRef<HTMLTableElement>(null);
-  
   const bookingCalendarWrapperRef = useRef<HTMLDivElement>(null);
-  // const scrollParentRef = useRef<ScrollContainerRefs>(null);
   const scrollRef = useRef<ScrollContainerRefs>(null);
-  // const currentDate = startOfDay(new Date());
 
   useEffect(() => {
     setIsLoading(true);
@@ -116,7 +105,6 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ fewoOwnID, lang }): J
   }, [calendarSettings]);
 
 
-
   if (isLoading) {
     return <div>Loading...</div>;
   }
@@ -131,27 +119,23 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ fewoOwnID, lang }): J
 
   const { colorSettings, bookingObjects } = calendarSettings[0];
 
-  const blockedRangeDatesLookup: { [key: string]: BlockedDateRangeInfo[] } = {};
-   // Convert start and end dates to Date objects once
-   bookingObjects.forEach(bookingObject => {
-    const blockedRanges = bookingObject.blockedDateRanges || [];
-    blockedRangeDatesLookup[bookingObject.objId] = blockedRanges.map(range => ({
-      ...range,
-      start: parseISO(range.start),
-      end: parseISO(range.end),
-      endhalf: range.endhalf,
-      starthalf: range.starthalf,
-      type: range.type as DateRangeType, // Assuming type casting is not necessary if your types are correct
-      tooltip: range.tooltip,
-    }));
-  });
+   // Function to update visible month and year, based on scroll position
+   const updateVisibleMonthAndYear = (month: number, year: number) => {
+    setVisibleMonth(month);
+    setVisibleYear(year);
+  };
 
 
   return (
     <div className="booking-calendar-wrapper w-full" ref={bookingCalendarWrapperRef}>
        
       {/* <MonthPaginationButtons scrollRef={scrollRef} months={months} /> */}
-      <ScrollPaginationButtons scrollRef={scrollRef} />
+      <ScrollPaginationButtons
+        scrollRef={scrollRef}
+        visibleMonth={visibleMonth}
+        visibleYear={visibleYear}
+        updateVisibleMonthAndYear={updateVisibleMonthAndYear}
+      />
       
       <div className="flex">
       <BookingObjectsTable bookingObjects={bookingObjects} />

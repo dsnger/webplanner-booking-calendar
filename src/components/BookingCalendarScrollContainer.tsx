@@ -38,7 +38,6 @@ const BookingCalendarScrollContainer = forwardRef<ScrollContainerRefs, BookingCa
         scrollContainerRef.current.scrollBy({ left: newScrollPosition, behavior: 'smooth' });
       }
     },
-
     scrollToMonth: (year, month) => {
       const monthStartElem = document.getElementById(`month-${year}-${month}`);
       if (monthStartElem) {
