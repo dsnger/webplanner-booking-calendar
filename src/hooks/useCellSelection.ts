@@ -1,9 +1,9 @@
 import { useState, useCallback, useEffect, RefObject } from 'react';
-import { BookingObject, CellCoordinates } from "../types";
+import { CellCoordinates, DayStatus } from "../types";
 import { formatDate } from "../utils/dateUtils";
 import { useBookingObjects } from "../provider/BookingObjectsContext";
 
-export const useCellSelection = (bookingCalendarWrapperRef: RefObject<HTMLDivElement>) => {
+export const useCellSelection = (bookingCalendarWrapperRef: RefObject<HTMLDivElement>,daysWithStatus: DayStatus[][]) => {
   const [selectedDayStart, setSelectedDayStart] = useState<Date | null>(null);
   const [selectedDayEnd, setSelectedDayEnd] = useState<Date | null>(null);
   const [selectedCell, setSelectedCell] = useState<CellCoordinates | null>(null);
@@ -44,22 +44,33 @@ export const useCellSelection = (bookingCalendarWrapperRef: RefObject<HTMLDivEle
      
         console.log('start new ' + clickedDateString)
   
-        //Second day range: same row, other col
-      } else if (selectedCell && (rowIndex === selectedCell.rowIndex) && (colIndex !== selectedCell.colIndex) ) {
-        setSecondSelectedCell({ rowIndex, colIndex });
-        setCellClasses([{ rowIndex, colIndex, classes: ['is-selected'] }]);
-        setHighlightedRange(selectedCell.rowIndex, selectedCell.colIndex, colIndex);
-        setSelectedDayEnd(clickedDate);
-       
-        console.log('second ' + clickedDateString)
-        if (selectedDayStart != null && clickedDate < selectedDayStart) {
-          setSelectedDayEnd(selectedDayStart);
+      //Second day of range: same row, other col
+      } else if (selectedCell && (rowIndex === selectedCell.rowIndex) && (colIndex !== selectedCell.colIndex)) {
+        
+        if (areUnavailableDaysInRange(selectedCell.colIndex, colIndex, rowIndex) === true) {
+          setSelectedCell({ rowIndex, colIndex });
+          setSecondSelectedCell(null);
+          setCellClasses([{ rowIndex, colIndex, classes: ['is-selected'] }]);
           setSelectedDayStart(clickedDate);
-          sendDateSelection(rowIndex,clickedDate, selectedDayStart)
+          setSelectedDayEnd(null);
         } else {
-          sendDateSelection(rowIndex, selectedDayStart, clickedDate)
-        }
 
+          setSecondSelectedCell({ rowIndex, colIndex });
+          setCellClasses([{ rowIndex, colIndex, classes: ['is-selected'] }]);
+          setHighlightedRange(selectedCell.rowIndex, selectedCell.colIndex, colIndex);
+          setSelectedDayEnd(clickedDate);
+        
+          console.log('second ' + clickedDateString)
+          if (selectedDayStart != null && clickedDate < selectedDayStart) {
+            setSelectedDayEnd(selectedDayStart);
+            setSelectedDayStart(clickedDate);
+            sendDateSelection(rowIndex,clickedDate, selectedDayStart)
+          } else {
+            sendDateSelection(rowIndex, selectedDayStart, clickedDate)
+          }
+
+        }
+        
         //gleiche Zeile, gleicher Tag
       } else if (selectedCell && (rowIndex === selectedCell.rowIndex) && (colIndex === selectedCell.colIndex) ) {
         //same day twice click
@@ -82,32 +93,15 @@ export const useCellSelection = (bookingCalendarWrapperRef: RefObject<HTMLDivEle
   }, [selectedCell, secondSelectedCell, cellClasses]); 
   
 
-
-  // const alertSelection = (startDay: Date | null, endDay: Date | null = null) => {
-  //   setTimeout(() => {
-  //   const startDateString = startDay ? formatDate(startDay) : null;
-  //   const endDateString = endDay != null ? formatDate(endDay) : null;
-  //   if (startDay === endDay) {
-  //     alert(`Selected date: ${startDateString}`);
-  //   } else {
-  //     alert(`Selected date range: ${startDateString} to ${endDateString}`);
-  //   }
-  // }, 200); 
-  // }
-
-
   const sendDateSelection = async (objId: number, startDay: Date | null, endDay: Date | null = null) => {
     // Format your dates as needed
     
-    const startDateString = startDay ? formatDate(startDay) : null;
-    const endDateString = endDay != null ? formatDate(endDay) : null;
-    const baseUrl = bookingObjects[objId].bookingLink;
-  
-    // Construct the URL with query parameters
-    //const url = `mailer.php?lang=de&fewoOwnID=10745&boatID=22894&f=&perioden=3&startDate=${startDateString}&endDate=${endDateString}`;
-  
-    const url = `${baseUrl}&startDate=${startDateString}&endDate=${endDateString}`;
-    window.open(url, '_blank', 'width=785,height=720');
+    // const startDateString = startDay ? formatDate(startDay) : null;
+    // const endDateString = endDay != null ? formatDate(endDay) : null;
+    // const baseUrl = bookingObjects[objId].bookingLink;
+
+    // const url = `${baseUrl}&startDate=${startDateString}&endDate=${endDateString}`;
+    // window.open(url, '_blank', 'width=785,height=720');
    
   };
 
@@ -133,20 +127,37 @@ export const useCellSelection = (bookingCalendarWrapperRef: RefObject<HTMLDivEle
   };
 
 
-  // const areUnavailableDaysBetween = (start: Date, end: Date, rowIndex: number): boolean => {
-  //   // Ensure start is always before or equal to end
+  const areUnavailableDaysInRange = ( startColIndex: number, endColIndex: number, rowIndex: number): boolean => {
+    
+    const colIndexStart = Math.min(startColIndex, endColIndex);
+    const colIndexEnd =  Math.max(startColIndex, endColIndex);
+
+    for (let colIndex = colIndexStart; colIndex <= colIndexEnd; colIndex++) {
+      // Check if the day exists and has a status of 'unavailable'
+      const day = daysWithStatus[rowIndex]?.[colIndex];
+      if (day && day.isUnavailable === true) {
+        console.log('Unavailable day found at row:', rowIndex, 'col:', colIndex);
+        return true; // Found an unavailable day, return true
+      }
+    }
+    return false;
+  };
+
+
+  // const areUnavailableDaysBetween = (start: Date, end: Date, rowIndex: number): boolean => {;
+  //   // Ensure start is always before or equal to end;
   //   const actualStart = isBefore(start, end) ? start : end;
   //   const actualEnd = isBefore(start, end) ? end : start;
 
-  //   return bookingObjects[rowIndex].blockedDateRanges.some(range => {
+  //   return bookingObjects[rowIndex].blockedDateRanges.some(range => {;
 
   //     const rangeStart = parseISO(range.start);
   //     const rangeEnd = parseISO(range.end);
 
-  //     // Check if any day in the range of actualStart to actualEnd is within an unavailable date range
-  //     return isWithinInterval(actualStart, { start: rangeStart, end: rangeEnd }) ||
-  //       isWithinInterval(actualEnd, { start: rangeStart, end: rangeEnd }) ||
-  //       (actualStart < rangeStart && actualEnd > rangeEnd) ||
+  //     // Check if any day in the range of actualStart to actualEnd is within an unavailable date range;
+  //     return isWithinInterval(actualStart, { start: rangeStart, end: rangeEnd }) ||;
+  //       isWithinInterval(actualEnd, { start: rangeStart, end: rangeEnd }) ||;
+  //       (actualStart < rangeStart && actualEnd > rangeEnd) ||;
   //       (actualStart > rangeStart && actualEnd < rangeEnd);
   //   });
   // };

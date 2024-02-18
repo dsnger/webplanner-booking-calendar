@@ -24,7 +24,7 @@ const BookingCalenderTableBody: React.FC<TableBodyProps> = ({
   bookingCalendarWrapperRef
   }) => {
   
-  const { selectedCell, secondSelectedCell, cellClasses, handleCellSelection } = useCellSelection(bookingCalendarWrapperRef);
+  const { selectedCell, secondSelectedCell, cellClasses, handleCellSelection } = useCellSelection(bookingCalendarWrapperRef,daysWithStatus);
   const { isCellInRange, handleCellHover, } = useCellHighlighting();
   const tableBodyRef = useRef<HTMLTableSectionElement>(null);
 
@@ -41,6 +41,7 @@ const BookingCalenderTableBody: React.FC<TableBodyProps> = ({
             // Destructure the needed properties, providing default values
             const { isUnavailable = false, type = null, isUnavailStart = false, isUnavailEnd = false, isArrival = false, isDeparture = false } = dayStatus;
             const isHoverdCell = isCellInRange(rowIndex, colIndex, selectedCell,secondSelectedCell, !isUnavailable)
+            
             return (
               <BookingCalendarCell
                 key={`${rowIndex}-${colIndex}`}
