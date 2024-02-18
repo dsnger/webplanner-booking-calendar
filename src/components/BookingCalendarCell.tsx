@@ -47,12 +47,14 @@ const BookingCalendarCell: React.FC<BookingCalendarCellProps> = React.memo(({ da
     <td
       className={`${cellClassNames} ${isLastDayOfMonth(date) ? 'last-of-month border-r-2' : ''} ${selectClasses}`}
       onClick={onClick}
-      onMouseEnter={onMouseEnter}>
+      onMouseEnter={onMouseEnter}
+      data-object-id={objId}
+      data-date-string={formatDate(date)}
+    >
       <div
         className="cell-marker w-full h-full pointer-events-none"
-        data-object-id={objId}
-        data-date-string={formatDate(date)}>
-          {content}
+      >
+        {content}
       </div>
   
     </td>

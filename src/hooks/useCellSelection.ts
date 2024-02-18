@@ -1,6 +1,7 @@
 import { useState, useCallback, useEffect, RefObject } from 'react';
-import { CellCoordinates } from "../types";
+import { BookingObject, CellCoordinates } from "../types";
 import { formatDate } from "../utils/dateUtils";
+import { useBookingObjects } from "../provider/BookingObjectsContext";
 
 export const useCellSelection = (bookingCalendarWrapperRef: RefObject<HTMLDivElement>) => {
   const [selectedDayStart, setSelectedDayStart] = useState<Date | null>(null);
@@ -8,6 +9,7 @@ export const useCellSelection = (bookingCalendarWrapperRef: RefObject<HTMLDivEle
   const [selectedCell, setSelectedCell] = useState<CellCoordinates | null>(null);
   const [secondSelectedCell, setSecondSelectedCell] = useState<CellCoordinates | null>(null);
   const [cellClasses, setCellClasses] = useState<{ rowIndex: number; colIndex: number; classes: string[] }[]>([]);
+  const { bookingObjects } = useBookingObjects();
 
 
   useEffect(() => {
@@ -53,9 +55,9 @@ export const useCellSelection = (bookingCalendarWrapperRef: RefObject<HTMLDivEle
         if (selectedDayStart != null && clickedDate < selectedDayStart) {
           setSelectedDayEnd(selectedDayStart);
           setSelectedDayStart(clickedDate);
-          alertSelection(clickedDate, selectedDayStart)
+          sendDateSelection(rowIndex,clickedDate, selectedDayStart)
         } else {
-          alertSelection( selectedDayStart, clickedDate)
+          sendDateSelection(rowIndex, selectedDayStart, clickedDate)
         }
 
         //gleiche Zeile, gleicher Tag
@@ -65,7 +67,7 @@ export const useCellSelection = (bookingCalendarWrapperRef: RefObject<HTMLDivEle
         setSelectedDayEnd(clickedDate);
         console.log('same twice ' + clickedDateString)
 
-        alertSelection(clickedDate, selectedDayStart)
+        sendDateSelection(rowIndex, clickedDate, selectedDayStart)
        
       } else if ((selectedCell === null && secondSelectedCell === null) || secondSelectedCell !== null) {
         setSelectedCell({ rowIndex, colIndex });
@@ -81,17 +83,34 @@ export const useCellSelection = (bookingCalendarWrapperRef: RefObject<HTMLDivEle
   
 
 
-  const alertSelection = (startDay: Date | null, endDay: Date | null = null) => {
-    setTimeout(() => {
+  // const alertSelection = (startDay: Date | null, endDay: Date | null = null) => {
+  //   setTimeout(() => {
+  //   const startDateString = startDay ? formatDate(startDay) : null;
+  //   const endDateString = endDay != null ? formatDate(endDay) : null;
+  //   if (startDay === endDay) {
+  //     alert(`Selected date: ${startDateString}`);
+  //   } else {
+  //     alert(`Selected date range: ${startDateString} to ${endDateString}`);
+  //   }
+  // }, 200); 
+  // }
+
+
+  const sendDateSelection = async (objId: number, startDay: Date | null, endDay: Date | null = null) => {
+    // Format your dates as needed
+    
     const startDateString = startDay ? formatDate(startDay) : null;
     const endDateString = endDay != null ? formatDate(endDay) : null;
-    if (startDay === endDay) {
-      alert(`Selected date: ${startDateString}`);
-    } else {
-      alert(`Selected date range: ${startDateString} to ${endDateString}`);
-    }
-  }, 200); 
-  }
+    const baseUrl = bookingObjects[objId].bookingLink;
+  
+    // Construct the URL with query parameters
+    //const url = `mailer.php?lang=de&fewoOwnID=10745&boatID=22894&f=&perioden=3&startDate=${startDateString}&endDate=${endDateString}`;
+  
+    const url = `${baseUrl}&startDate=${startDateString}&endDate=${endDateString}`;
+    window.open(url, '_blank', 'width=785,height=720');
+   
+  };
+
 
   const setHighlightedRange = (rowIndex: number, colIndex1: number, colIndex2: number): void => {
     const startColIndex = Math.min(colIndex1, colIndex2);

@@ -7,6 +7,7 @@ import BookingObjectsTable from "./BookingObjectsTable"
 import BookingCalendarScrollContainer, { ScrollContainerRefs } from "./BookingCalendarScrollContainer";
 import ScrollPaginationButtons from "./ScrollPaginationButtons";
 import BookingCalendarTable from "./BookingCalendarTable";
+import { BookingObjectsProvider } from "../provider/BookingObjectsContext";
 // import MonthPaginationButtons from "./MonthPaginationButtons";
 
 
@@ -127,7 +128,7 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ fewoOwnID, lang }): J
 
   return (
     <div className="booking-calendar-wrapper w-full" ref={bookingCalendarWrapperRef}>
-       
+      <BookingObjectsProvider bookingObjects={ bookingObjects }>
       {/* <MonthPaginationButtons scrollRef={scrollRef} months={months} /> */}
       <ScrollPaginationButtons
         scrollRef={scrollRef}
@@ -151,7 +152,9 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ fewoOwnID, lang }): J
           />
         </BookingCalendarScrollContainer>
       </div>
-      <Legend colorSettings={colorSettings}/>
+        <Legend colorSettings={colorSettings} />
+        </BookingObjectsProvider>
+       
     </div>
   );
 
