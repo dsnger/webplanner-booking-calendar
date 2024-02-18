@@ -3,6 +3,7 @@ import { BookingObject, DayStatus } from "../types";
 import { isSameDay } from "date-fns";
 import BookingCalendarCell from "./BookingCalendarCell";
 import { useCellSelection } from "../hooks/useCellSelection";
+import { useCellHighlighting } from "../hooks/useCellHighlight";
 
 
 // Props type definition
@@ -22,6 +23,7 @@ const BookingCalenderTableBody: React.FC<TableBodyProps> = ({
   }) => {
   
   const { selectedCell, secondSelectedCell, cellClasses, handleCellSelection } = useCellSelection();
+  const { isCellInRange, handleCellHover, } = useCellHighlighting();
   const tableBodyRef = useRef<HTMLTableSectionElement>(null);
 
 
@@ -36,7 +38,7 @@ const BookingCalenderTableBody: React.FC<TableBodyProps> = ({
             const dayStatus = daysWithStatus[rowIndex]?.[colIndex] || {};
             // Destructure the needed properties, providing default values
             const { isUnavailable = false, type = null, isUnavailStart = false, isUnavailEnd = false, isArrival = false, isDeparture = false } = dayStatus;
-            
+            const isHoverdCell = isCellInRange(rowIndex, colIndex, selectedCell,secondSelectedCell, !isUnavailable)
             return (
               <BookingCalendarCell
                 key={`${rowIndex}-${colIndex}`}
@@ -47,7 +49,7 @@ const BookingCalenderTableBody: React.FC<TableBodyProps> = ({
                 content={``}
                 tooltip={''}
                 onClick={() => handleCellSelection(rowIndex, colIndex, false)}
-                // onClick={() => alert(rowIndex + colIndex)}
+                onMouseEnter={() => handleCellHover(rowIndex, colIndex, selectedCell, secondSelectedCell, !isUnavailable)}
               
                 statusFlags={{
                   isToday: isSameDay(date, currentDate),
@@ -57,6 +59,7 @@ const BookingCalenderTableBody: React.FC<TableBodyProps> = ({
                   isUnavailEnd,
                   isArrival,
                   isDeparture,
+                  isHoverdCell,
                 }}
               />
             );

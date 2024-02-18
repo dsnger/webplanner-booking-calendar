@@ -19,7 +19,7 @@ export const useCellSelection = () => {
       } else if (selectedCell && (rowIndex === selectedCell.rowIndex) && (colIndex !== selectedCell.colIndex) && areBlockedDaysBetween === false) {
         setSecondSelectedCell({ rowIndex, colIndex });
         setCellClasses([{ rowIndex, colIndex, classes: ['is-selected'] }]);
-        // setHighlightedRange(selectedCell.rowIndex, selectedCell.colIndex, colIndex);
+        setHighlightedRange(selectedCell.rowIndex, selectedCell.colIndex, colIndex);
         console.log('second')
   
         //gleiche Zeile, gleicher Tag
@@ -39,7 +39,30 @@ export const useCellSelection = () => {
   
       // setHoveredCell(null);
     
-  }, [selectedCell,secondSelectedCell]); 
+  }, [selectedCell, secondSelectedCell,cellClasses]); 
+  
+
+  const setHighlightedRange = (rowIndex: number, colIndex1: number, colIndex2: number): void => {
+    const startColIndex = Math.min(colIndex1, colIndex2);
+    const endColIndex = Math.max(colIndex1, colIndex2);
+
+    console.log(startColIndex + " " + endColIndex);
+
+    const newCellClasses = [...cellClasses];
+
+    for (let colIndex = startColIndex; colIndex <= endColIndex; colIndex++) {
+      const cellEntryIndex = newCellClasses.findIndex(entry => entry.rowIndex === rowIndex && entry.colIndex === colIndex);
+
+      if (cellEntryIndex !== -1) {
+        newCellClasses[cellEntryIndex].classes = ['is-selected'];
+      } else {
+        newCellClasses.push({ rowIndex, colIndex, classes: ['is-selected'] });
+      }
+    }
+
+    setCellClasses(newCellClasses);
+  };
+
 
   return {
     selectedCell,
@@ -48,63 +71,3 @@ export const useCellSelection = () => {
     handleCellSelection,
   };
 };
-
-
-  
-// const handleCellSelection = useCallback((rowIndex: number, colIndex: number, areBlockedDaysBetween: boolean) => {
-//   // Start by updating the selectedCell state
-//   setSelectedCell((currentSelectedCell) => {
-//     if (!currentSelectedCell || (secondSelectedCell && rowIndex === currentSelectedCell.rowIndex)) {
-//       // Case: No cell selected yet or second cell already selected in the same row
-//       console.log('first and second');
-//       return { rowIndex, colIndex };
-//     } else if (currentSelectedCell && rowIndex === currentSelectedCell.rowIndex && colIndex !== currentSelectedCell.colIndex && !areBlockedDaysBetween) {
-//       // Case: Same row, different day, and no blocked days in between
-//       console.log('second');
-//       return currentSelectedCell; // Keep the first selected cell
-//     } else if (currentSelectedCell && rowIndex === currentSelectedCell.rowIndex && colIndex === currentSelectedCell.colIndex && !areBlockedDaysBetween) {
-//       // Case: Same row, same day clicked twice, and no blocked days in between
-//       console.log('first twice');
-//       return currentSelectedCell; // Keep the selected cell as is
-//     } else {
-//       // Case: No selection or second selection in a different row
-//       console.log('first');
-//       return { rowIndex, colIndex };
-//     }
-//   });
-
-//   // Then, update the secondSelectedCell state based on the new selectedCell state
-//   setSecondSelectedCell((currentSecondSelectedCell) => {
-//     if (selectedCell && (rowIndex === selectedCell.rowIndex) && (colIndex !== selectedCell.colIndex) && !areBlockedDaysBetween) {
-//       return { rowIndex, colIndex };
-//     } else if (selectedCell && (rowIndex === selectedCell.rowIndex) && (colIndex === selectedCell.colIndex) && !areBlockedDaysBetween) {
-//       return { rowIndex, colIndex }; // Same day clicked twice
-//     } else {
-//       return null; // Reset or keep second selection as null in other cases
-//     }
-//   });
-
-//   // Lastly, update cellClasses conditionally
-//   setCellClasses((currentCellClasses) => {
-//     if (selectedCell && (rowIndex === selectedCell.rowIndex) && !areBlockedDaysBetween) {
-//       // For same row selections, update classes; reset in other cases
-//       const updatedCellClasses = currentCellClasses.filter(c => c.rowIndex !== rowIndex); // Remove current row's classes
-//       if (colIndex !== selectedCell.colIndex) {
-//         updatedCellClasses.push({ rowIndex, colIndex, classes: ['is-selected'] }); // Add new selection
-//       }
-//       return updatedCellClasses;
-//     } else {
-//       return []; // Reset cell classes in other cases
-//     }
-//   });
-
-// }, [selectedCell, secondSelectedCell]);
-
-
-//   return {
-//     selectedCell,
-//     secondSelectedCell,
-//     cellClasses,
-//     handleCellSelection,
-//   };
-// };

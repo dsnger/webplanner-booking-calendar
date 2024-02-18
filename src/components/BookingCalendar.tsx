@@ -139,7 +139,9 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ fewoOwnID, lang }): J
       
       <div className="flex">
       <BookingObjectsTable bookingObjects={bookingObjects} />
-        <BookingCalendarScrollContainer ref={scrollRef}>
+        <BookingCalendarScrollContainer
+          ref={scrollRef}
+          updateVisibleMonthAndYear={updateVisibleMonthAndYear}>
         <BookingCalendarTable
             months={months}
             days={days}

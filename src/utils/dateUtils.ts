@@ -75,12 +75,11 @@ const isBlockedDateRange = (
 
 } => {
   
+  let isUnavailable = false;
   let isUnavailStart = false;
   let isUnavailEnd = false;
-  let isUnavailable = false;
   let rangeType: DateRangeType | null = null;
   let rangeTooltip: string | null = null;
-
 
   if (!bookingObject) {
     return {
@@ -95,20 +94,22 @@ const isBlockedDateRange = (
   bookingObject.blockedDateRanges?.find(range => {
     const startDay = new Date(range.start);
     const endDay = new Date(range.end);
-
+    
     if (isSameDay(date, startDay)) {
-      isUnavailStart = true;
+      isUnavailStart = true; 
+      rangeType = range.type as DateRangeType;
     }
 
     if (isSameDay(date, endDay)) {
-      isUnavailEnd = true;
+      isUnavailEnd = true;  
+      //rangeType = range.type as DateRangeType;
     }
 
     if (isWithinInterval(date, { start: startDay, end: endDay })) {
       isUnavailable = true;
       rangeType = range.type as DateRangeType;
       rangeTooltip = range.tooltip;
-      return true; // Ensures the find method stops iterating once a match is found
+      return true;
     }
 
     return false; // Continue searching if none of the conditions are met

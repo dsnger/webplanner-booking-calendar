@@ -2,6 +2,7 @@ import React, { forwardRef, useRef, useImperativeHandle, useState, useEffect } f
 
 type BookingCalendarScrollContainerProps = {
   children: React.ReactNode;
+  updateVisibleMonthAndYear: (month: number, year: number) => void;
 };
 
 
@@ -10,9 +11,10 @@ export type ScrollContainerRefs = {
   scrollLeft: () => void;
   scrollRight: () => void;
   scrollToMonth: (year: number, month: number) => void;
+ 
 };
 
-const BookingCalendarScrollContainer = forwardRef<ScrollContainerRefs, BookingCalendarScrollContainerProps>(({ children }, ref) => {
+const BookingCalendarScrollContainer = forwardRef<ScrollContainerRefs, BookingCalendarScrollContainerProps>(({ children, updateVisibleMonthAndYear }, ref) => {
   const scrollParentRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -79,7 +81,6 @@ const BookingCalendarScrollContainer = forwardRef<ScrollContainerRefs, BookingCa
   };
 
 
-
   useEffect(() => {
     if (isDragging) {
       document.addEventListener('mousemove', onMouseMove);
@@ -96,14 +97,53 @@ const BookingCalendarScrollContainer = forwardRef<ScrollContainerRefs, BookingCa
   }, [isDragging, startX, scrollLeftStart]);
 
 
+  const handleScroll = () => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+  
+    let maxVisibleWidth = 0;
+    let mostVisibleMonthID = '';
+  
+    // Assuming your months are direct children of the container
+    const monthElements = container.querySelectorAll('[id^="month-"]');
+    monthElements.forEach((month) => {
+      const { left, right } = month.getBoundingClientRect();
+      const containerRect = container.getBoundingClientRect();
+  
+      // Calculate visible portion of the month within the container
+      const visibleLeft = Math.max(left, containerRect.left);
+      const visibleRight = Math.min(right, containerRect.right);
+      const visibleWidth = Math.max(0, visibleRight - visibleLeft);
+  
+      // Update most visible month if this month has a larger visible width
+      if (visibleWidth > maxVisibleWidth) {
+        maxVisibleWidth = visibleWidth;
+        mostVisibleMonthID = month.id; // or use month.dataset for data attributes
+      }
+    });
+
+    let year = 0, month = 0;
+    if (mostVisibleMonthID) {
+      const parts = mostVisibleMonthID.split('-');
+      year = parseInt(parts[1], 10); // Parse year as number
+      month = parseInt(parts[2], 10); // Parse month as number
+      updateVisibleMonthAndYear(month, year);
+    }
+  
+  };
+  
+
+
   return (
-    <div ref={scrollParentRef} className="w-full max-w-5xl">
-      <div
+    <div
+      ref={scrollParentRef}
+      className="w-full max-w-5xl"
+      >
+      <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-gray-900 pb-3"
         ref={scrollContainerRef}
         onMouseDown={onMouseDown}
-        style={{ cursor: isDragging ? 'grabbing' : 'unset' }}
-        className="overflow-x-auto scrollbar-thin scrollbar-thumb-gray-900 pb-3"
-      >
+        onScroll={handleScroll} 
+        >
         {children}
       </div>
     </div>

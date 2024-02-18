@@ -83,7 +83,7 @@ button:focus-visible {
 
 /* styles.css or your stylesheet file */
 .cell {
-  @apply border-l border-b border-gray-500 p-0 m-0 cursor-pointer;
+  @apply border-l border-b border-gray-500 p-0 m-0 hover:cursor-pointer;
 }
 
 .grabbing, .grabbing * {
@@ -122,7 +122,7 @@ button:focus-visible {
 }
 
 .cell.is-selected .cell-marker {
-  background-color: blue; /* Style for the selected cell */
+  background-color: pink; /* Style for the selected cell */
 }
 
 
