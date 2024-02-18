@@ -50,7 +50,7 @@ const BookingCalenderTableBody: React.FC<TableBodyProps> = ({
                 selectClasses={selectClasses}
                 content={``}
                 tooltip={''}
-                onClick={() => handleCellSelection(rowIndex, colIndex, false)}
+                onClick={() => handleCellSelection(date, rowIndex, colIndex)}
                 onMouseEnter={() => handleCellHover(rowIndex, colIndex, selectedCell, secondSelectedCell, !isUnavailable)}
               
                 statusFlags={{
