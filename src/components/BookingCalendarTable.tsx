@@ -1,26 +1,24 @@
 import React from 'react';
 import BookingCalendarTableHead from './BookingCalendarTableHead';
 import BookingCalendarTableBody from './BookingCalendarTableBody';
-import { BookingObject, CellCoordinates } from "../types";
+import { BookingObject, DayStatus } from "../types";
 
 // Assuming types for your props are defined elsewhere and imported accordingly
 interface BookingCalendarTableProps {
   months: { year: number; month: number; count: number }[];
   days: Date[];
   bookingObjects: BookingObject[];
-  selectedCell: CellCoordinates | null;
+  daysWithStatus: DayStatus[][];
   currentDate: Date;
-  cellClasses: { rowIndex: number; colIndex: number; classes: string[] }[];
 }
 
 
 const BookingCalendarTable: React.FC<BookingCalendarTableProps> = ({
   months,
   days,
+  daysWithStatus,
   bookingObjects,
-  selectedCell,
   currentDate,
-  cellClasses,
 }) => (
   <table className="min-w-full">
     <BookingCalendarTableHead
@@ -31,9 +29,8 @@ const BookingCalendarTable: React.FC<BookingCalendarTableProps> = ({
     <BookingCalendarTableBody
       bookingObjects={bookingObjects}
       days={days}
-      selectedCell={selectedCell}
+      daysWithStatus={daysWithStatus}
       currentDate={currentDate}
-      cellClasses={cellClasses}
     />
   </table>
 );
