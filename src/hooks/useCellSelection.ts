@@ -1,10 +1,28 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect, RefObject } from 'react';
 import { CellCoordinates } from "../types";
 
-export const useCellSelection = () => {
+export const useCellSelection = (bookingCalendarWrapperRef: RefObject<HTMLDivElement>) => {
   const [selectedCell, setSelectedCell] = useState<CellCoordinates | null>(null);
   const [secondSelectedCell, setSecondSelectedCell] = useState<CellCoordinates | null>(null);
   const [cellClasses, setCellClasses] = useState<{ rowIndex: number; colIndex: number; classes: string[] }[]>([]);
+
+
+  useEffect(() => {
+    const handleOutsideClick = (event: MouseEvent) => {
+      // Check if the click is outside of the table body
+      if (bookingCalendarWrapperRef.current && !bookingCalendarWrapperRef.current.contains(event.target as Node)) {
+        setSelectedCell(null);
+        setSecondSelectedCell(null);
+        setCellClasses([]);
+      }
+    };
+    document.addEventListener('mousedown', handleOutsideClick);
+    return () => {
+      document.removeEventListener('mousedown', handleOutsideClick);
+    };
+  }, []);
+
+
 
   const handleCellSelection = useCallback((rowIndex: number, colIndex: number, areBlockedDaysBetween: boolean) => {
    

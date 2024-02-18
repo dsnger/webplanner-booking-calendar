@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { RefObject } from 'react';
 import BookingCalendarTableHead from './BookingCalendarTableHead';
 import BookingCalendarTableBody from './BookingCalendarTableBody';
 import { BookingObject, DayStatus } from "../types";
@@ -10,6 +10,7 @@ interface BookingCalendarTableProps {
   bookingObjects: BookingObject[];
   daysWithStatus: DayStatus[][];
   currentDate: Date;
+  bookingCalendarWrapperRef: RefObject<HTMLDivElement>
 }
 
 
@@ -19,6 +20,7 @@ const BookingCalendarTable: React.FC<BookingCalendarTableProps> = ({
   daysWithStatus,
   bookingObjects,
   currentDate,
+  bookingCalendarWrapperRef
 }) => (
   <table className="min-w-full">
     <BookingCalendarTableHead
@@ -31,6 +33,7 @@ const BookingCalendarTable: React.FC<BookingCalendarTableProps> = ({
       days={days}
       daysWithStatus={daysWithStatus}
       currentDate={currentDate}
+      bookingCalendarWrapperRef={bookingCalendarWrapperRef}
     />
   </table>
 );

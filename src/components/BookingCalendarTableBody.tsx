@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { RefObject, useRef } from "react";
 import { BookingObject, DayStatus } from "../types";
 import { isSameDay } from "date-fns";
 import BookingCalendarCell from "./BookingCalendarCell";
@@ -12,6 +12,7 @@ interface TableBodyProps {
   days: Date[];
   daysWithStatus: DayStatus[][],
   currentDate: Date;
+  bookingCalendarWrapperRef: RefObject<HTMLDivElement>
 }
 
 
@@ -20,9 +21,10 @@ const BookingCalenderTableBody: React.FC<TableBodyProps> = ({
   days,
   daysWithStatus,
   currentDate,
+  bookingCalendarWrapperRef
   }) => {
   
-  const { selectedCell, secondSelectedCell, cellClasses, handleCellSelection } = useCellSelection();
+  const { selectedCell, secondSelectedCell, cellClasses, handleCellSelection } = useCellSelection(bookingCalendarWrapperRef);
   const { isCellInRange, handleCellHover, } = useCellHighlighting();
   const tableBodyRef = useRef<HTMLTableSectionElement>(null);
 

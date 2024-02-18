@@ -104,7 +104,6 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ fewoOwnID, lang }): J
     }
   }, [calendarSettings]);
 
-
   if (isLoading) {
     return <div>Loading...</div>;
   }
@@ -148,6 +147,7 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ fewoOwnID, lang }): J
             daysWithStatus={daysWithStatus}
             bookingObjects={bookingObjects}
             currentDate={new Date()}
+            bookingCalendarWrapperRef={bookingCalendarWrapperRef}
           />
         </BookingCalendarScrollContainer>
       </div>

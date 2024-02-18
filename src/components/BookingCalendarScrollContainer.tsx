@@ -127,6 +127,7 @@ const BookingCalendarScrollContainer = forwardRef<ScrollContainerRefs, BookingCa
       const parts = mostVisibleMonthID.split('-');
       year = parseInt(parts[1], 10); // Parse year as number
       month = parseInt(parts[2], 10); // Parse month as number
+
       updateVisibleMonthAndYear(month, year);
     }
   
