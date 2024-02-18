@@ -39,7 +39,7 @@ const BookingCalenderTableBody: React.FC<TableBodyProps> = ({
             // Directly access the corresponding day status using rowIndex and colIndex
             const dayStatus = daysWithStatus[rowIndex]?.[colIndex] || {};
             // Destructure the needed properties, providing default values
-            const { isUnavailable = false, type = null, isUnavailStart = false, isUnavailEnd = false, isArrival = false, isDeparture = false } = dayStatus;
+            const { isUnavailable = false, type = null, isUnavailStart = false, isUnavailEnd = false, isDisabled = false, isArrival = false, isDeparture = false } = dayStatus;
             const isHoverdCell = isCellInRange(rowIndex, colIndex, selectedCell,secondSelectedCell, !isUnavailable)
             
             return (
@@ -60,6 +60,7 @@ const BookingCalenderTableBody: React.FC<TableBodyProps> = ({
                   type,
                   isUnavailStart,
                   isUnavailEnd,
+                  isDisabled,
                   isArrival,
                   isDeparture,
                   isHoverdCell,

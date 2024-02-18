@@ -18,6 +18,7 @@ interface BookingCalendarCellProps {
     type: DateRangeType | null;
     isUnavailStart: boolean;
     isUnavailEnd: boolean;
+    isDisabled: boolean;
     isArrival: boolean;
     isDeparture: boolean;
     isHoverdCell: boolean
@@ -26,10 +27,11 @@ interface BookingCalendarCellProps {
 
 const BookingCalendarCell: React.FC<BookingCalendarCellProps> = React.memo(({ date, objId, selectClasses,content, onClick, onMouseEnter,statusFlags }) => {
   
-  const { isToday, isUnavailable, type, isUnavailStart, isUnavailEnd, isArrival, isDeparture, isHoverdCell } = statusFlags;
+  const { isToday, isUnavailable, type, isUnavailStart, isUnavailEnd, isDisabled, isArrival, isDeparture, isHoverdCell } = statusFlags;
 
   const cellClassNames = [
     'cell cell-day h-9 min-w-9',
+    isDisabled ? 'bg-gray-200 text-gray-30 ' : 'bg-green-300 text-green-600',
     // isSelected ? 'is-selected' : '',
     isHoverdCell ? 'bg-pink-100/50' : '',
     isToday ? 'bg-green-100/50 text-green-600' : '',

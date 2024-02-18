@@ -127,11 +127,9 @@ const isBlockedDateRange = (
 
 
 const isDateType = (bookingObject: BookingObject, date: Date, type: 'arrival' | 'departure'): boolean => {
- 
   if (!bookingObject) {
     return false;
   }
-
   // Using a fallback to an empty array if dateStrings are undefined
   const dateStrings = type === 'arrival'
     ? bookingObject.dayTypes.arrivalDays.dates || []
@@ -141,18 +139,53 @@ const isDateType = (bookingObject: BookingObject, date: Date, type: 'arrival' | 
 };
 
 
+const hasExclusiveDateTypes = (bookingObject: BookingObject, type: 'arrival' | 'departure'): boolean => {
+  if (!bookingObject) {
+    return false;
+  }
+
+  // Check for 'arrival' type
+  if (type === 'arrival') {
+    const isExclusive = bookingObject.dayTypes.arrivalDays.exclusive === true;
+    // Optionally, check if dates array exists and has entries if needed
+    const hasDates = bookingObject.dayTypes.arrivalDays.dates && bookingObject.dayTypes.arrivalDays.dates.length > 0;
+    return isExclusive && hasDates; // Now requires both conditions to be true
+  } 
+  // Check for 'departure' type
+  else if (type === 'departure') {
+    const isExclusive = bookingObject.dayTypes.departureDays.exclusive === true;
+    const hasDates = bookingObject.dayTypes.departureDays.dates && bookingObject.dayTypes.departureDays.dates.length > 0;
+    return isExclusive && hasDates; // Now requires both conditions to be true
+  }
+
+  // Fallback in case the type doesn't match 'arrival' or 'departure'
+  return false;
+};
+
+
+
+
+
 
 export const preCalculateStatusFlags = (bookingObjects: BookingObject[], days: Date[]): DayStatus[][] => {
     return bookingObjects.map((bookingObject) => 
       days.map((day) => {
 
         const blockedInfo = isBlockedDateRange(bookingObject, day);
+        const hasExclusiveArrivalDates = hasExclusiveDateTypes(bookingObject, 'arrival');
+        const hasExclusiveDepartureDates = hasExclusiveDateTypes(bookingObject, 'arrival');
+        const isArrivalDay = isDateType(bookingObject, day, 'arrival');
+        const isDepartureDay = isDateType(bookingObject, day, 'departure');
+
+        const isDisabled = (hasExclusiveDepartureDates && !isDepartureDay) || (hasExclusiveArrivalDates && !isArrivalDay);
+
         return {
           isUnavailable: blockedInfo.isUnavailable,
           type: blockedInfo.type,
           tooltip: blockedInfo.tooltip,
           isUnavailStart: blockedInfo.isUnavailStart,
           isUnavailEnd: blockedInfo.isUnavailEnd,
+          isDisabled: isDisabled,
           isArrival: isDateType(bookingObject, day, 'arrival'),
           isDeparture: isDateType(bookingObject, day, 'departure'),
         };
