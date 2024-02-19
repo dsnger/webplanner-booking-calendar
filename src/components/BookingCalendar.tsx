@@ -63,23 +63,30 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ fewoOwnID, lang }): J
   }, [fewoOwnID, lang]);
 
 
+
   // Compute days and year after ensuring calendarSettings[0] exists
   const days = useMemo(() => {
+    setIsLoading(true);
     if (calendarSettings.length === 0 || !calendarSettings[0]?.calendarRange) {
       return [];
     }
+    
     return generateCalendarDays(calendarSettings[0].calendarRange);
   }, [calendarSettings]);
   
 
    // Use useMemo to precalculate status flags for the generated days
-   const daysWithStatus = useMemo(() => {
-    if (days.length === 0 ) return [];
-    return preCalculateStatusFlags(calendarSettings[0]?.bookingObjects, days);
+  const daysWithStatus = useMemo(() => {
+    setIsLoading(true);
+     if (days.length === 0) return [];
+     setIsLoading(false);
+     return preCalculateStatusFlags(calendarSettings[0]?.bookingObjects, days);
+     
    }, [days, calendarSettings]);
 
 
   const months = useMemo(() => {
+    setIsLoading(true);
     if (!days.length) return []; // Early return if days is empty
   
     const monthMap = new Map();
@@ -89,7 +96,7 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ fewoOwnID, lang }): J
       const count = monthMap.get(yearMonthKey) || 0;
       monthMap.set(yearMonthKey, count + 1);
     });
-  
+    setIsLoading(false);
     // Convert the map into an array of [yearMonthKey, count] pairs
     return Array.from(monthMap.entries()).map(([yearMonthKey, count]) => {
       // Optionally, split the key back into year and month if needed for downstream processing
@@ -100,10 +107,15 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ fewoOwnID, lang }): J
 
 
   useEffect(() => {
+    setIsLoading(true);
     if (calendarSettings.length > 0 && calendarSettings[0].colorSettings) {
       updateGlobalStyles(calendarSettings[0].colorSettings);
+      setIsLoading(false);
     }
+
   }, [calendarSettings]);
+
+
 
   if (isLoading) {
     return <div>Loading...</div>;

@@ -64,9 +64,9 @@ export const useCellSelection = (bookingCalendarWrapperRef: RefObject<HTMLDivEle
           if (selectedDayStart != null && clickedDate < selectedDayStart) {
             setSelectedDayEnd(selectedDayStart);
             setSelectedDayStart(clickedDate);
-            sendDateSelection(rowIndex,clickedDate, selectedDayStart)
+            sendDateSelection(rowIndex,selectedDayEnd, selectedDayStart)
           } else {
-            sendDateSelection(rowIndex, selectedDayStart, clickedDate)
+            sendDateSelection(rowIndex, selectedDayEnd, clickedDate)
           }
 
         }
@@ -78,7 +78,7 @@ export const useCellSelection = (bookingCalendarWrapperRef: RefObject<HTMLDivEle
         setSelectedDayEnd(clickedDate);
         console.log('same twice ' + clickedDateString)
 
-        sendDateSelection(rowIndex, clickedDate, selectedDayStart)
+        sendDateSelection(rowIndex, selectedDayEnd, selectedDayStart)
        
       } else if ((selectedCell === null && secondSelectedCell === null) || secondSelectedCell !== null) {
         setSelectedCell({ rowIndex, colIndex });
@@ -94,14 +94,17 @@ export const useCellSelection = (bookingCalendarWrapperRef: RefObject<HTMLDivEle
   
 
   const sendDateSelection = async (objId: number, startDay: Date | null, endDay: Date | null = null) => {
-    // Format your dates as needed
+    //Format your dates as needed
     
-    // const startDateString = startDay ? formatDate(startDay) : null;
-    // const endDateString = endDay != null ? formatDate(endDay) : null;
-    // const baseUrl = bookingObjects[objId].bookingLink;
+    const startDateString = startDay ? formatDate(startDay) : null;
+    const endDateString = endDay != null ? formatDate(endDay) : null;
+    const baseUrl = bookingObjects[objId].bookingLink;
 
-    // const url = `${baseUrl}&startDate=${startDateString}&endDate=${endDateString}`;
-    // window.open(url, '_blank', 'width=785,height=720');
+    const url = `${baseUrl}&startDate=${startDateString}&endDate=${endDateString}`;
+    
+    setTimeout(() => {
+      window.open(url, '_blank', 'width=785,height=720');
+    }, 1000);
    
   };
 

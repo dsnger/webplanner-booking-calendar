@@ -103,54 +103,51 @@ button:focus-visible {
   background-color: lightblue; /* Style for highlighted cells */
 }
 
-.cell.is-departure .cell-marker{
+.is-departure {
   background-color: var(--day-available);
   clip-path: polygon(0 0, 0% 100%, 100% 0);
 }
 
-.cell.is-arrival .cell-marker{
+.is-arrival{
   background-color: var(--day-available);
+
   clip-path: polygon(100% 0, 0% 100%, 100% 100%);
 }
 
-.cell.cell-marker{
-  clip-path: polygon(100% 0, 0% 100%, 100% 100%);
-}
-
-.cell.is-end .cell-marker{
+.is-end {
   clip-path: polygon(0 0, 0% 100%, 100% 0);
 }
 
-.cell.is-selected .cell-marker {
-  background-color: pink; /* Style for the selected cell */
+.is-selected {
+  @apply bg-green-600
 }
 
 
-.cell.is-available .cell-marker {
+.is-available  {
   background-color: var(--day-available);
   opacity: .1;
 }
 
-.cell.is-unavailable .cell-marker {
+.is-unavailable {
   background-color: var(--day-unavailable,red);
   z-index: 1;
 }
 
-.cell.is-unavailable.is-booked .cell-marker {
+.is-unavailable.is-booked {
   background-color: var(--day-booked);
 }
 
 
-.cell.is-closed .cell-marker{
+.is-closed{
   background-color: var(--day-closed);
 }
 
-.cell.is-onrequest .cell-marker {
+.is-onrequest {
   background-color: var(--day-onrequest);
 }
 
-.cell.is-arrival .cell-marker,
-.cell.is-departure .cell-marker {
+.is-arrival ,
+.is-departure {
   background-color: var(--day-available);
 }
 

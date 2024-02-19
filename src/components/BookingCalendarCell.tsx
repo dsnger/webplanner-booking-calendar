@@ -21,19 +21,17 @@ interface BookingCalendarCellProps {
     isDisabled: boolean;
     isArrival: boolean;
     isDeparture: boolean;
-    isHoverdCell: boolean
+    isHoveredCell: boolean
   };
 }
 
 const BookingCalendarCell: React.FC<BookingCalendarCellProps> = React.memo(({ date, objId, selectClasses,content, onClick, onMouseEnter,statusFlags }) => {
   
-  const { isToday, isUnavailable, type, isUnavailStart, isUnavailEnd, isDisabled, isArrival, isDeparture, isHoverdCell } = statusFlags;
+  const { isToday, isUnavailable, type, isUnavailStart, isUnavailEnd, isDisabled, isArrival, isDeparture, isHoveredCell } = statusFlags;
 
   const cellClassNames = [
-    'cell cell-day h-9 min-w-9',
-    isDisabled ? 'bg-gray-200 text-gray-30 ' : 'bg-green-300 text-green-600',
-    // isSelected ? 'is-selected' : '',
-    isHoverdCell ? 'bg-pink-100/50' : '',
+    // 'cell cell-day h-9 min-w-9',
+    isDisabled && !isHoveredCell ? 'bg-gray-200 text-gray-30 ' : 'bg-green-300 hover:bg-green-500 text-green-600',
     isToday ? 'bg-green-100/50 text-green-600' : '',
     isUnavailable ? 'is-unavailable' : '',
     isUnavailStart ? 'is-unavailable is-unavail-start' : '',
@@ -41,20 +39,20 @@ const BookingCalendarCell: React.FC<BookingCalendarCellProps> = React.memo(({ da
     isUnavailEnd ? 'is-unavailable is-unavail-end' : '',
     isArrival ? 'is-arrival' : '',
     isDeparture ? 'is-departure' : '',
+    isHoveredCell ? 'bg-green-600/50' : '',
   ].filter(Boolean).join(' ');
-
 
 
   return (
     <td
-      className={`${cellClassNames} ${isLastDayOfMonth(date) ? 'last-of-month border-r-2' : ''} ${selectClasses}`}
+      className={`cell cell-day h-9 min-w-9 ${isLastDayOfMonth(date) ? 'last-of-month border-r-2' : ''} ${selectClasses}`}
       onClick={onClick}
       onMouseEnter={onMouseEnter}
       data-object-id={objId}
       data-date-string={formatDate(date)}
     >
       <div
-        className="cell-marker w-full h-full pointer-events-none"
+        className={`cell-marker w-full h-full ${cellClassNames} `}
       >
         {content}
       </div>

@@ -10,7 +10,6 @@ export const useCellHighlighting = () => {
     const endColIndex = Math.max(colIndex1, colIndex2);
 
     console.log(startColIndex + " " + endColIndex);
-
     const newCellClasses = [...cellClasses];
 
     for (let colIndex = startColIndex; colIndex <= endColIndex; colIndex++) {
@@ -26,8 +25,10 @@ export const useCellHighlighting = () => {
     setCellClasses(newCellClasses);
   };
 
+
   const handleCellHover = (rowIndex: number, colIndex: number, selectedCell:CellCoordinates, secondSelectedCell:CellCoordinates, isAvailable: boolean) => {
-    if (selectedCell  && !secondSelectedCell && isAvailable) {
+    
+    if (selectedCell && !secondSelectedCell && isAvailable) {
       setHoveredCell({ rowIndex, colIndex });
     }
   };
