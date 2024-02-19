@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { CellCoordinates } from "../types";
 
 export const useCellHighlighting = () => {
+  // const [cellHlClasses, setCellHlClasses] = useState<Array<{ rowIndex: number; colIndex: number; classes: string[] }>>([]);
   const [cellClasses, setCellClasses] = useState<Array<{ rowIndex: number; colIndex: number; classes: string[] }>>([]);
   const [hoveredCell, setHoveredCell] = useState<CellCoordinates | null>(null);
 
@@ -29,8 +30,39 @@ export const useCellHighlighting = () => {
   const handleCellHover = (rowIndex: number, colIndex: number, selectedCell:CellCoordinates, secondSelectedCell:CellCoordinates, isAvailable: boolean) => {
     
     if (selectedCell && !secondSelectedCell && isAvailable) {
+
+      // const startCellColIndex = selectedCell.colIndex;
+      // const startCellRowIndex = selectedCell.rowIndex;
+      // Determine the new class based on the direction
+      // const newClass = colIndex < startCellColIndex ? 'has-selection-left' : 'has-selection-right';
+
+      // Check for left direction (which should actually check if the hovered cell is to the left of the selected cell)
+      //setCellClasses([{ rowIndex: startCellRowIndex, colIndex: startCellColIndex, classes: [newClass] }]);
+ 
+      // Update cellClasses state
+      // setCellHlClasses(prevCellClasses => {
+      //   // Find the index of the cell in the existing state
+      //   const cellIndex = prevCellClasses.findIndex(cell => cell.rowIndex === startCellRowIndex && cell.colIndex === startCellColIndex);
+
+      //   if (cellIndex !== -1) {
+      //     // Cell exists, update its classes array if the new class is not already included
+      //     const cell = prevCellClasses[cellIndex];
+      //     const updatedClasses = cell.classes.includes(newClass) ? cell.classes : [...cell.classes, newClass];
+      //     // Create a new array with the updated cell
+      //     return [
+      //       ...prevCellClasses.slice(0, cellIndex),
+      //       { ...cell, classes: updatedClasses },
+      //       ...prevCellClasses.slice(cellIndex + 1)
+      //     ];
+      //   } else {
+      //     // Cell doesn't exist, add a new cell entry
+      //     return [...prevCellClasses, { rowIndex: startCellRowIndex, colIndex: startCellColIndex, classes: [newClass] }];
+      //   }
+      // });
+      
       setHoveredCell({ rowIndex, colIndex });
     }
+
   };
 
 

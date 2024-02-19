@@ -39,11 +39,12 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ fewoOwnID, lang }): J
   const scrollRef = useRef<ScrollContainerRefs>(null);
 
   useEffect(() => {
-    setIsLoading(true);
-    setError(null);
-    const fetchCalendarSettings = async () => {
-      const apiUrl = `https://www.webplanner.de/tools/belegungsplanerapi.php?fewoOwnID=${fewoOwnID}&lang=${lang}&anfrage=3`;
+    const init = async () => {
+      setIsLoading(true);
+      setError(null);
+  
       try {
+        const apiUrl = `https://www.webplanner.de/tools/belegungsplanerapi.php?fewoOwnID=${fewoOwnID}&lang=${lang}&anfrage=3`;
         const response = await fetch(apiUrl);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -62,8 +63,9 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ fewoOwnID, lang }): J
         setIsLoading(false);
         throw error;
       }
+      
     };
-    fetchCalendarSettings();
+    init();
   }, [fewoOwnID, lang]);
 
 
@@ -88,6 +90,7 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ fewoOwnID, lang }): J
      
    }, [days, calendarSettings]);
 
+  
 
   const months = useMemo(() => {
     setIsLoading(true);

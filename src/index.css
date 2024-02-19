@@ -122,6 +122,14 @@ button:focus-visible {
   @apply bg-green-600
 }
 
+.is-selected.has-selection-left {
+  clip-path: polygon(0 0, 0% 100%, 100% 0);
+}
+
+.is-selected.has-selection-right {
+  clip-path: polygon(100% 0, 0% 100%, 100% 100%);
+}
+
 
 .is-available  {
   background-color: var(--day-available);

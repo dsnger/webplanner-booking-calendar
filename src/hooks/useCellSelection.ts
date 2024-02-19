@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, RefObject } from 'react';
+import { useState, useCallback, useEffect, RefObject, useRef } from 'react';
 import { CellCoordinates, DayStatus } from "../types";
 import { formatDate } from "../utils/dateUtils";
 import { useBookingObjects } from "../provider/BookingObjectsContext";
@@ -10,6 +10,9 @@ export const useCellSelection = (bookingCalendarWrapperRef: RefObject<HTMLDivEle
   const [secondSelectedCell, setSecondSelectedCell] = useState<CellCoordinates | null>(null);
   const [cellClasses, setCellClasses] = useState<{ rowIndex: number; colIndex: number; classes: string[] }[]>([]);
   const { bookingObjects } = useBookingObjects();
+
+  // Use useRef to keep a reference to the opened window
+  const openedWindowRef = useRef<Window | null>(null);
 
 
   useEffect(() => {
@@ -61,23 +64,23 @@ export const useCellSelection = (bookingCalendarWrapperRef: RefObject<HTMLDivEle
           setSelectedDayEnd(clickedDate);
         
           console.log('second ' + clickedDateString)
+
           if (selectedDayStart != null && clickedDate < selectedDayStart) {
             setSelectedDayEnd(selectedDayStart);
             setSelectedDayStart(clickedDate);
-            sendDateSelection(rowIndex,selectedDayEnd, selectedDayStart)
+            sendDateSelection(rowIndex,clickedDate, selectedDayStart)
           } else {
-            sendDateSelection(rowIndex, selectedDayEnd, clickedDate)
+            sendDateSelection(rowIndex, selectedDayStart, clickedDate)
           }
 
         }
         
-        //gleiche Zeile, gleicher Tag
+      //gleiche Zeile, gleicher Tag
       } else if (selectedCell && (rowIndex === selectedCell.rowIndex) && (colIndex === selectedCell.colIndex) ) {
         //same day twice click
         setSecondSelectedCell({ rowIndex, colIndex });
         setSelectedDayEnd(clickedDate);
         console.log('same twice ' + clickedDateString)
-
         sendDateSelection(rowIndex, selectedDayEnd, selectedDayStart)
        
       } else if ((selectedCell === null && secondSelectedCell === null) || secondSelectedCell !== null) {
@@ -93,6 +96,7 @@ export const useCellSelection = (bookingCalendarWrapperRef: RefObject<HTMLDivEle
   }, [selectedCell, secondSelectedCell, cellClasses]); 
   
 
+
   const sendDateSelection = async (objId: number, startDay: Date | null, endDay: Date | null = null) => {
     //Format your dates as needed
     
@@ -103,7 +107,16 @@ export const useCellSelection = (bookingCalendarWrapperRef: RefObject<HTMLDivEle
     const url = `${baseUrl}&startDate=${startDateString}&endDate=${endDateString}`;
     
     setTimeout(() => {
-      window.open(url, '_blank', 'width=785,height=720');
+      if (openedWindowRef.current && !openedWindowRef.current.closed) {
+        // Window is open, so reuse it by loading the new URL
+        openedWindowRef.current.location.href = url;
+      } else {
+        // Window is not open, so open a new one and assign it to openedWindowRef.current
+        openedWindowRef.current = window.open(url, '_blank', 'width=785,height=720');
+      }
+  
+      // Optional: Bring the reused window to the front
+      openedWindowRef.current?.focus();
     }, 1000);
    
   };
