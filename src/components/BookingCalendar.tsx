@@ -51,7 +51,11 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ fewoOwnID, lang }): J
         const data = await response.json();
         console.log("Fetched data:", data);
         setCalendarSettings(Array.isArray(data) ? data : [data]); // Ensure it's always an array
-        setIsLoading(false);
+
+        if (data.length > 0 && data[0].colorSettings) {
+          updateGlobalStyles(data[0].colorSettings);
+        }
+        
       } catch (error) {
         console.error("Failed to fetch calendar settings:", error);
         setError("Failed to fetch calendar settings");
@@ -105,15 +109,6 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ fewoOwnID, lang }): J
     });
   }, [days]);
 
-
-  useEffect(() => {
-    setIsLoading(true);
-    if (calendarSettings.length > 0 && calendarSettings[0].colorSettings) {
-      updateGlobalStyles(calendarSettings[0].colorSettings);
-      setIsLoading(false);
-    }
-
-  }, [calendarSettings]);
 
 
 
