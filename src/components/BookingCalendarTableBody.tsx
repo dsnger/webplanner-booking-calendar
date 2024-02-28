@@ -1,6 +1,6 @@
 import { RefObject, useRef } from "react";
 import { BookingObject, DayStatus } from "../types";
-import { isSameDay } from "date-fns";
+import { endOfDay, isBefore, isSameDay } from "date-fns";
 import BookingCalendarCell from "./BookingCalendarCell";
 import { useCellSelection } from "../hooks/useCellSelection";
 import { useCellHighlighting } from "../hooks/useCellHighlight";
@@ -42,6 +42,8 @@ const BookingCalenderTableBody: React.FC<TableBodyProps> = ({
             // Destructure the needed properties, providing default values
             const { isUnavailable = false, type = null, isUnavailStart = false, isUnavailEnd = false, isDisabled = false, isArrival = false, isDeparture = false } = dayStatus;
             const isHoveredCell = isCellInRange(rowIndex, colIndex, selectedCell, secondSelectedCell, !isUnavailable)
+            const isInPast = isBefore(endOfDay(date), new Date());
+
             return (
               <BookingCalendarCell
                 key={`${rowIndex}-${colIndex}`}
@@ -64,6 +66,7 @@ const BookingCalenderTableBody: React.FC<TableBodyProps> = ({
                   isArrival,
                   isDeparture,
                   isHoveredCell,
+                  isInPast
                 }}
               />
             );

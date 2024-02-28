@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { getMonth, getYear } from 'date-fns';
-import { generateCalendarDays, preCalculateStatusFlags } from "../utils/dateUtils";
+import { generateCalendarDays, preCalculateDaysStatusFlags } from "../utils/dateUtils";
 import { BookingCalendarSettings, ColorSettings } from "../types";
 import Legend from "./Legend";
 import BookingObjectsTable from "./BookingObjectsTable"
@@ -98,7 +98,7 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ fewoOwnID, lang }): J
     setIsLoading(true);
      if (days.length === 0) return [];
      setIsLoading(false);
-     return preCalculateStatusFlags(calendarSettings[0]?.bookingObjects, days);
+     return preCalculateDaysStatusFlags(calendarSettings[0]?.bookingObjects, days);
      
    }, [days, calendarSettings]);
 

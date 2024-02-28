@@ -1,5 +1,5 @@
 // dateUtils.ts
-import { eachDayOfInterval, startOfMonth, endOfMonth, format, parseISO, startOfYear, endOfYear, isSameDay, isWithinInterval } from 'date-fns';
+import { eachDayOfInterval, startOfMonth, endOfMonth, format, parseISO, startOfYear, endOfYear, isSameDay, isWithinInterval, isBefore, endOfDay } from 'date-fns';
 import { de } from 'date-fns/locale';
 import { BookingObject, CalendarRange, DateRangeType, DayStatus } from "../types";
 // import { useBookingObjects } from "../context/BookingObjectsContext";
@@ -167,7 +167,7 @@ const hasExclusiveDateTypes = (bookingObject: BookingObject, type: 'arrival' | '
 
 
 
-export const preCalculateStatusFlags = (bookingObjects: BookingObject[], days: Date[]): DayStatus[][] => {
+export const preCalculateDaysStatusFlags = (bookingObjects: BookingObject[], days: Date[]): DayStatus[][] => {
     return bookingObjects.map((bookingObject) => 
       days.map((day) => {
 
@@ -178,7 +178,7 @@ export const preCalculateStatusFlags = (bookingObjects: BookingObject[], days: D
         const isDepartureDay = isDateType(bookingObject, day, 'departure');
 
         const isDisabled = (hasExclusiveDepartureDates && !isDepartureDay) || (hasExclusiveArrivalDates && !isArrivalDay);
-
+     
         return {
           isUnavailable: blockedInfo.isUnavailable,
           type: blockedInfo.type,

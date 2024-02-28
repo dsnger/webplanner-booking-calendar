@@ -21,13 +21,14 @@ interface BookingCalendarCellProps {
     isDisabled: boolean;
     isArrival: boolean;
     isDeparture: boolean;
-    isHoveredCell: boolean
+    isHoveredCell: boolean;
+    isInPast: boolean;
   };
 }
 
 const BookingCalendarCell: React.FC<BookingCalendarCellProps> = React.memo(({ date, objId, selectClasses, content, onClick, onMouseEnter, statusFlags }) => {
   
-  const { isUnavailable, type, isUnavailStart, isUnavailEnd, isDisabled, isArrival, isDeparture, isHoveredCell } = statusFlags;
+  const { isUnavailable, type, isUnavailStart, isUnavailEnd, isDisabled, isArrival, isDeparture, isHoveredCell, isInPast } = statusFlags;
 
   const cellClassNames = [
     // 'cell cell-day h-9 min-w-9',
@@ -40,6 +41,7 @@ const BookingCalendarCell: React.FC<BookingCalendarCellProps> = React.memo(({ da
     isArrival ? 'is-arrival' : '',
     isDeparture ? 'is-departure' : '',
     isHoveredCell ? 'bg-green-600/50' : '',
+    isInPast ? 'opacity-30' : '',
   ].filter(Boolean).join(' ');
 
 
