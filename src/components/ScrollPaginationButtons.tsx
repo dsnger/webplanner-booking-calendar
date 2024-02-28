@@ -1,5 +1,7 @@
 import React from 'react';
 import { ScrollContainerRefs } from "./BookingCalendarScrollContainer";
+import { Button } from "@/components/ui/button"
+import { FlowbiteChevronDoubleLeftSolid, FlowbiteChevronDoubleRightOutline, FlowbiteChevronDoubleRightSolid, FlowbiteChevronLeftSolid, FlowbiteChevronRightSolid } from "./icons/icons";
 
 // Adjust the props interface to include a ref to the scroll container
 interface ScrollPaginationProps {
@@ -51,12 +53,12 @@ const ScrollPaginationButtons: React.FC<ScrollPaginationProps> = ({
   };
 
   return (
-    <div className="py-2 flex justify-end items-center">
-      <button onClick={scrollLeft} className="mx-1 p-1 border border-gray-300 rounded bg-white">&lt;</button>
-      <button onClick={scrollToPrevMonth} className="mx-1 p-1 border border-gray-300 rounded bg-white">&lt; Monat zurück</button>
-      <button onClick={scrollToCurrentDay} className="mx-2 p-1 border border-gray-300 rounded bg-white">Heute</button>
-      <button onClick={scrollToNextMonth} className="mx-1 p-1 border border-gray-300 rounded bg-white">Monat weiter &gt;</button>
-      <button onClick={scrollRight} className="mx-1 p-1 border border-gray-300 rounded bg-white">&gt;</button>
+    <div className="py-2 flex justify-end items-center gap-2 mr-1">
+      <Button variant="outline" size="sm" onClick={scrollToPrevMonth} ><FlowbiteChevronDoubleLeftSolid /></Button>
+      <Button variant="outline" size="sm" onClick={scrollLeft} ><FlowbiteChevronLeftSolid /></Button>
+      <Button variant="outline" size="sm" onClick={scrollToCurrentDay} >Heute</Button>
+      <Button variant="outline" size="sm" onClick={scrollRight} ><FlowbiteChevronRightSolid /></Button>
+      <Button variant="outline" size="sm" onClick={scrollToNextMonth} ><FlowbiteChevronDoubleRightSolid /></Button>
     </div>
   );
 };

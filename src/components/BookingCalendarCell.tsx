@@ -2,6 +2,13 @@ import React from 'react';
 import { formatDate } from "../utils/dateUtils";
 import { isLastDayOfMonth } from "date-fns";
 import { DateRangeType } from "../types";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "./ui/tooltip"
+
 
 interface BookingCalendarCellProps {
   date: Date;
@@ -26,8 +33,8 @@ interface BookingCalendarCellProps {
   };
 }
 
-const BookingCalendarCell: React.FC<BookingCalendarCellProps> = React.memo(({ date, objId, selectClasses, content, onClick, onMouseEnter, statusFlags }) => {
-  
+const BookingCalendarCell: React.FC<BookingCalendarCellProps> = React.memo(({ date, objId, selectClasses, tooltip, content, onClick, onMouseEnter, statusFlags }) => {
+
   const { isUnavailable, type, isUnavailStart, isUnavailEnd, isDisabled, isArrival, isDeparture, isHoveredCell, isInPast } = statusFlags;
 
   const cellClassNames = [
@@ -53,12 +60,20 @@ const BookingCalendarCell: React.FC<BookingCalendarCellProps> = React.memo(({ da
       data-object-id={objId}
       data-date-string={formatDate(date)}
     >
-      <div
-        className={`cell-marker w-full h-full ${cellClassNames} `}
-      >
-        {content}
-      </div>
-  
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <div
+              className={`cell-marker w-full h-full ${cellClassNames} `}
+            >
+              {content}
+            </div>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>{tooltip}</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
     </td>
   );
 });

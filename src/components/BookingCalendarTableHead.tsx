@@ -33,7 +33,7 @@ const BookingCalendarTableHead: React.FC<BookingCalendarTableHeadProps> = ({ mon
           return (
             <th
               key={date.toISOString()}
-              className={ `border-l border-r border-b border-gray-500 p-1${index === 0 ? 'first-of-month border-l-2' : ' '}${isLastDayOfMonth(date) ? 'last-of-month border-r-2' : ' '}${getDay(date) === 0 && !isSameDay(date, currentDate) ? 'text-red-500 bg-red-100/10' : ' '}${isSameDay(date, currentDate) ? 'text-green-600 bg-green-100/50 is-today' : ' '}${isInPast ? ' opacity-30' : ''}`}
+              className={ `border-l border-r border-b border-gray-500 p-1${index === 0 ? ' first-of-month border-l-2' : ' '}${isLastDayOfMonth(date) ? 'last-of-month border-r-2' : ' '}${getDay(date) === 0 && !isSameDay(date, currentDate) ? ' text-red-500 bg-red-100/10' : ' '}${isSameDay(date, currentDate) ? 'text-green-600 bg-green-100/50 is-today' : ' '}${isInPast ? ' opacity-30' : ''}`}
               id={isSameDay(date, currentDate) ? 'isToday' : ' '}
             >
               <div className="flex flex-col items-center justify-center h-full">
