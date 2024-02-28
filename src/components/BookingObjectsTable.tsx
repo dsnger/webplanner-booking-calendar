@@ -6,8 +6,8 @@ interface BookingObjectsTableProps {
 
 const BookingObjectsTable: React.FC<BookingObjectsTableProps> = ({ bookingObjects }) => {
   return (
-    <div className="titles-table flex items-end w-full max-w-5xl pb-4 mb-[2px] mr-[-1px]">
-      <table className="w-full min-w-[220px] max-w-5xl">
+    <div className="titles-table flex items-end pb-4 mb-[2px] mr-[-1px] min-w-[80px] max-w-[240px] w-[15vw]">
+      <table className="w-full table-fixed">
         <tbody>
           {bookingObjects.map((bookingObject) => (
             <tr key={bookingObject.objId}>

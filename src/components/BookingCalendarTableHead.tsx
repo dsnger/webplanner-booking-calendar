@@ -15,7 +15,7 @@ const BookingCalendarTableHead: React.FC<BookingCalendarTableHeadProps> = ({ mon
       <tr>
         {months.map(({ month, count, year }, index) => (
           <th id={`month-${year}-${month + 1}`} key={index} colSpan={count} className="p-1 h-10 border border-r-2 border-l-2 border-gray-500">
-            {getMonthName(year,month)} {year}
+            <div className="sticky-title">{getMonthName(year,month)} {year}</div>
           </th>
         ))}
       </tr>
@@ -23,7 +23,7 @@ const BookingCalendarTableHead: React.FC<BookingCalendarTableHeadProps> = ({ mon
         {days.map((date, index) => (
           <th
             key={date.toISOString()}
-            className={`border-l border-r border-b border-gray-500 p-1${index === 0 ? 'first-of-month' : ' '}${isLastDayOfMonth(date) ? 'last-of-month border-r-2' : ' '}${getDay(date) === 0 && !isSameDay(date, currentDate) ? 'text-red-500 bg-red-100/10' : ' '}${isSameDay(date, currentDate) ? 'text-green-600 bg-green-100/50 is-today' : ' '} `}
+            className={`border-l border-r border-b border-gray-500 p-1${index === 0 ? 'first-of-month border-l-2' : ' '}${isLastDayOfMonth(date) ? 'last-of-month border-r-2' : ' '}${getDay(date) === 0 && !isSameDay(date, currentDate) ? 'text-red-500 bg-red-100/10' : ' '}${isSameDay(date, currentDate) ? 'text-green-600 bg-green-100/50 is-today' : ' '} `}
             id={isSameDay(date, currentDate) ? 'isToday' : ' '}
           >
             <div className="flex flex-col items-center justify-center h-full">

@@ -25,7 +25,7 @@ const BookingCalenderTableBody: React.FC<TableBodyProps> = ({
   }) => {
   
   const { selectedCell, secondSelectedCell, cellClasses, handleCellSelection } = useCellSelection(bookingCalendarWrapperRef,daysWithStatus);
-  const { isCellInRange, handleCellHover} = useCellHighlighting();
+  const { isCellInRange, handleCellHover } = useCellHighlighting(bookingCalendarWrapperRef);
   const tableBodyRef = useRef<HTMLTableSectionElement>(null);
 
 
@@ -53,7 +53,7 @@ const BookingCalenderTableBody: React.FC<TableBodyProps> = ({
                 tooltip={''}
                 onClick={() => handleCellSelection(date, rowIndex, colIndex)}
                 onMouseEnter={() => handleCellHover(rowIndex, colIndex, selectedCell, secondSelectedCell, !isUnavailable)}
-              
+                
                 statusFlags={{
                   isToday: isSameDay(date, currentDate),
                   isUnavailable,

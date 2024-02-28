@@ -7,7 +7,7 @@ import BookingObjectsTable from "./BookingObjectsTable"
 import BookingCalendarScrollContainer, { ScrollContainerRefs } from "./BookingCalendarScrollContainer";
 import ScrollPaginationButtons from "./ScrollPaginationButtons";
 import BookingCalendarTable from "./BookingCalendarTable";
-import { BookingObjectsProvider } from "../provider/BookingObjectsContext";
+import { BookingObjectsProvider } from "../context/BookingObjectsContext";
 // import MonthPaginationButtons from "./MonthPaginationButtons";
 
 
@@ -39,7 +39,13 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ fewoOwnID, lang }): J
   const scrollRef = useRef<ScrollContainerRefs>(null);
 
   useEffect(() => {
+    let isComponentMounted = true; 
+
     const init = async () => {
+
+      if (!isComponentMounted) return;
+
+      console.log("Effect running");
       setIsLoading(true);
       setError(null);
   
@@ -50,8 +56,8 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ fewoOwnID, lang }): J
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
-        console.log("Fetched data:", data);
         setCalendarSettings(Array.isArray(data) ? data : [data]); // Ensure it's always an array
+        console.log("Fetched data:", data);
 
         if (data.length > 0 && data[0].colorSettings) {
           updateGlobalStyles(data[0].colorSettings);
@@ -66,6 +72,12 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ fewoOwnID, lang }): J
       
     };
     init();
+
+    return () => {
+      isComponentMounted = false; // Clean up function setting the flag to false when component unmounts
+      console.log("Cleanup called");
+    };
+
   }, [fewoOwnID, lang]);
 
 
@@ -137,7 +149,7 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ fewoOwnID, lang }): J
 
 
   return (
-    <div className="booking-calendar-wrapper w-full" ref={bookingCalendarWrapperRef}>
+    <div className="booking-calendar-wrapper w-full overflow-hidden" ref={bookingCalendarWrapperRef}>
       <BookingObjectsProvider bookingObjects={ bookingObjects }>
       {/* <MonthPaginationButtons scrollRef={scrollRef} months={months} /> */}
       <ScrollPaginationButtons

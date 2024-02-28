@@ -81,6 +81,21 @@ button:focus-visible {
 }
 
 
+#booking-calendar {
+  width: 100%;
+  max-width: 100%;
+  padding: 1rem;
+  overflow: hidden;
+}
+
+.sticky-title {
+  position: sticky;
+  left: 0;
+  background-color: white; /* Match your table's background */
+  display: inline-block;
+  padding: 0 10px; /* Adjust as needed */
+}
+
 /* styles.css or your stylesheet file */
 .cell {
   @apply border-l border-b border-gray-500 p-0 m-0 hover:cursor-pointer;
@@ -118,7 +133,7 @@ button:focus-visible {
   clip-path: polygon(0 0, 0% 100%, 100% 0);
 }
 
-.is-selected {
+.is-selected .cell-marker {
   @apply bg-green-600
 }
 

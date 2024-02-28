@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect, RefObject, useRef } from 'react';
 import { CellCoordinates, DayStatus } from "../types";
 import { formatDate } from "../utils/dateUtils";
-import { useBookingObjects } from "../provider/BookingObjectsContext";
+import { useBookingObjects } from "../context/BookingObjectsContext";
 
 export const useCellSelection = (bookingCalendarWrapperRef: RefObject<HTMLDivElement>,daysWithStatus: DayStatus[][]) => {
   const [selectedDayStart, setSelectedDayStart] = useState<Date | null>(null);
@@ -9,6 +9,8 @@ export const useCellSelection = (bookingCalendarWrapperRef: RefObject<HTMLDivEle
   const [selectedCell, setSelectedCell] = useState<CellCoordinates | null>(null);
   const [secondSelectedCell, setSecondSelectedCell] = useState<CellCoordinates | null>(null);
   const [cellClasses, setCellClasses] = useState<{ rowIndex: number; colIndex: number; classes: string[] }[]>([]);
+  const [hoveredCell, setHoveredCell] = useState<CellCoordinates | null>(null);
+
   const { bookingObjects } = useBookingObjects();
 
   // Use useRef to keep a reference to the opened window
@@ -17,16 +19,20 @@ export const useCellSelection = (bookingCalendarWrapperRef: RefObject<HTMLDivEle
 
   useEffect(() => {
     const handleOutsideClick = (event: MouseEvent) => {
-      // Check if the click is outside of the table body
       if (bookingCalendarWrapperRef.current && !bookingCalendarWrapperRef.current.contains(event.target as Node)) {
         setSelectedCell(null);
         setSecondSelectedCell(null);
         setSelectedDayStart(null);
         setSelectedDayEnd(null);
         setCellClasses([]);
+        setHoveredCell(null);
       }
     };
+
+    // Attach the mousedown listener to the whole document
     document.addEventListener('mousedown', handleOutsideClick);
+
+    // Cleanup function to remove both event listeners
     return () => {
       document.removeEventListener('mousedown', handleOutsideClick);
     };
@@ -44,7 +50,7 @@ export const useCellSelection = (bookingCalendarWrapperRef: RefObject<HTMLDivEle
         setCellClasses([{ rowIndex, colIndex, classes: ['is-selected'] }]);
         setSelectedDayStart(clickedDate);
         setSelectedDayEnd(null);
-     
+        setHoveredCell(null);
         console.log('start new ' + clickedDateString)
   
       //Second day of range: same row, other col
@@ -82,28 +88,28 @@ export const useCellSelection = (bookingCalendarWrapperRef: RefObject<HTMLDivEle
         setSelectedDayEnd(clickedDate);
         console.log('same twice ' + clickedDateString)
         sendDateSelection(rowIndex, selectedDayEnd, selectedDayStart)
+        setHoveredCell(null);
        
       } else if ((selectedCell === null && secondSelectedCell === null) || secondSelectedCell !== null) {
         setSelectedCell({ rowIndex, colIndex });
         setCellClasses([{ rowIndex, colIndex, classes: ['is-selected'] }]);
         setSelectedDayStart(clickedDate);
         setSelectedDayEnd(null);
+        setHoveredCell(null);
 
         console.log('first ' + clickedDateString)
       }
-    
-    
+      setHoveredCell(null);
+
   }, [selectedCell, secondSelectedCell, cellClasses]); 
   
 
 
   const sendDateSelection = async (objId: number, startDay: Date | null, endDay: Date | null = null) => {
     //Format your dates as needed
-    
     const startDateString = startDay ? formatDate(startDay) : null;
     const endDateString = endDay != null ? formatDate(endDay) : null;
     const baseUrl = bookingObjects[objId].bookingLink;
-
     const url = `${baseUrl}&startDate=${startDateString}&endDate=${endDateString}`;
     
     setTimeout(() => {
@@ -114,7 +120,6 @@ export const useCellSelection = (bookingCalendarWrapperRef: RefObject<HTMLDivEle
         // Window is not open, so open a new one and assign it to openedWindowRef.current
         openedWindowRef.current = window.open(url, '_blank', 'width=785,height=720');
       }
-  
       // Optional: Bring the reused window to the front
       openedWindowRef.current?.focus();
     }, 1000);
@@ -127,7 +132,6 @@ export const useCellSelection = (bookingCalendarWrapperRef: RefObject<HTMLDivEle
     const endColIndex = Math.max(colIndex1, colIndex2);
 
     console.log(startColIndex + " " + endColIndex);
-
     const newCellClasses = [...cellClasses];
 
     for (let colIndex = startColIndex; colIndex <= endColIndex; colIndex++) {
@@ -158,28 +162,6 @@ export const useCellSelection = (bookingCalendarWrapperRef: RefObject<HTMLDivEle
     }
     return false;
   };
-
-
-  // const areUnavailableDaysBetween = (start: Date, end: Date, rowIndex: number): boolean => {;
-  //   // Ensure start is always before or equal to end;
-  //   const actualStart = isBefore(start, end) ? start : end;
-  //   const actualEnd = isBefore(start, end) ? end : start;
-
-  //   return bookingObjects[rowIndex].blockedDateRanges.some(range => {;
-
-  //     const rangeStart = parseISO(range.start);
-  //     const rangeEnd = parseISO(range.end);
-
-  //     // Check if any day in the range of actualStart to actualEnd is within an unavailable date range;
-  //     return isWithinInterval(actualStart, { start: rangeStart, end: rangeEnd }) ||;
-  //       isWithinInterval(actualEnd, { start: rangeStart, end: rangeEnd }) ||;
-  //       (actualStart < rangeStart && actualEnd > rangeEnd) ||;
-  //       (actualStart > rangeStart && actualEnd < rangeEnd);
-  //   });
-  // };
-
-
-  
 
 
   return {

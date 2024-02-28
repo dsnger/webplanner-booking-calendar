@@ -138,7 +138,7 @@ const BookingCalendarScrollContainer = forwardRef<ScrollContainerRefs, BookingCa
   return (
     <div
       ref={scrollParentRef}
-      className="w-full max-w-5xl"
+      className="flex-1 w-1/2"
       >
       <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-gray-900 pb-3"
         ref={scrollContainerRef}

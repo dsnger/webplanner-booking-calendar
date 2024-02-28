@@ -1,10 +1,33 @@
-import { useState } from 'react';
+import { RefObject, useEffect, useState } from 'react';
 import { CellCoordinates } from "../types";
 
-export const useCellHighlighting = () => {
+export const useCellHighlighting = (bookingCalendarWrapperRef: RefObject<HTMLDivElement>) => {
   // const [cellHlClasses, setCellHlClasses] = useState<Array<{ rowIndex: number; colIndex: number; classes: string[] }>>([]);
   const [cellClasses, setCellClasses] = useState<Array<{ rowIndex: number; colIndex: number; classes: string[] }>>([]);
   const [hoveredCell, setHoveredCell] = useState<CellCoordinates | null>(null);
+
+
+  useEffect(() => {
+    
+    const handleMouseLeave = () => {
+      setHoveredCell(null);
+    };
+
+    // Attach the mouseleave listener to just the bookingCalendarWrapper
+    const currentWrapper = bookingCalendarWrapperRef.current;
+    if (currentWrapper) {
+      currentWrapper.addEventListener('mouseleave', handleMouseLeave);
+    }
+
+    // Cleanup function to remove both event listeners
+    return () => {
+      if (currentWrapper) {
+        currentWrapper.removeEventListener('mouseleave', handleMouseLeave);
+      }
+    };
+  }, []);
+
+
 
   const setHighlightedRange = (rowIndex: number, colIndex1: number, colIndex2: number): void => {
     const startColIndex = Math.min(colIndex1, colIndex2);
@@ -31,8 +54,8 @@ export const useCellHighlighting = () => {
     
     if (selectedCell && !secondSelectedCell && isAvailable) {
 
-      // const startCellColIndex = selectedCell.colIndex;
-      // const startCellRowIndex = selectedCell.rowIndex;
+      const startCellColIndex = selectedCell.colIndex;
+      const startCellRowIndex = selectedCell.rowIndex;
       // Determine the new class based on the direction
       // const newClass = colIndex < startCellColIndex ? 'has-selection-left' : 'has-selection-right';
 
@@ -59,10 +82,14 @@ export const useCellHighlighting = () => {
       //     return [...prevCellClasses, { rowIndex: startCellRowIndex, colIndex: startCellColIndex, classes: [newClass] }];
       //   }
       // });
-      
-      setHoveredCell({ rowIndex, colIndex });
-    }
+      if (rowIndex === startCellRowIndex) {
+        setHoveredCell({ rowIndex, colIndex });
+      } else {
+        setHoveredCell(null);
+      }
+     
 
+    } 
   };
 
 
@@ -83,6 +110,7 @@ export const useCellHighlighting = () => {
   return {
     isCellInRange,
     hoveredCell,
+    setHoveredCell,
     setHighlightedRange,
     handleCellHover,
   };

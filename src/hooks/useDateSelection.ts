@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 import { CellCoordinates } from "../types";
 import { isBefore, isWithinInterval, parseISO } from "date-fns";
-import { useBookingObjects } from "../provider/BookingObjectsContext";
+import { useBookingObjects } from "../context/BookingObjectsContext";
 
 export const useDateSelection = () => {
   const [selectedDayStart, setSelectedDayStart] = useState<Date | null>(null);
