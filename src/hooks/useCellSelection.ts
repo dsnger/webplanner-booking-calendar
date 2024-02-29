@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect, RefObject, useRef } from 'react';
 import { CellCoordinates, DayStatus } from "../types";
 import { formatDate } from "../utils/dateUtils";
 import { useBookingObjects } from "../context/BookingObjectsContext";
+import { endOfDay, isBefore } from "date-fns";
 
 export const useCellSelection = (bookingCalendarWrapperRef: RefObject<HTMLDivElement>,daysWithStatus: DayStatus[][]) => {
   const [selectedDayStart, setSelectedDayStart] = useState<Date | null>(null);
@@ -42,8 +43,14 @@ export const useCellSelection = (bookingCalendarWrapperRef: RefObject<HTMLDivEle
 
   const handleCellSelection = useCallback((clickedDate: Date, rowIndex: number, colIndex: number) => {
     
+    if (!isSelectable(clickedDate, rowIndex, colIndex)) {
+      console.log('not selectable')
+      return null
+    }
+
     const clickedDateString = formatDate(clickedDate);
-      //zweite Auswahl, aber andere Zeile
+    //selection done or click in a different row
+    
       if (selectedCell && secondSelectedCell || rowIndex !== selectedCell?.rowIndex) {
         setSelectedCell({ rowIndex, colIndex });
         setSecondSelectedCell(null);
@@ -63,7 +70,6 @@ export const useCellSelection = (bookingCalendarWrapperRef: RefObject<HTMLDivEle
           setSelectedDayStart(clickedDate);
           setSelectedDayEnd(null);
         } else {
-
           setSecondSelectedCell({ rowIndex, colIndex });
           setCellClasses([{ rowIndex, colIndex, classes: ['is-selected'] }]);
           setHighlightedRange(selectedCell.rowIndex, selectedCell.colIndex, colIndex);
@@ -162,6 +168,21 @@ export const useCellSelection = (bookingCalendarWrapperRef: RefObject<HTMLDivEle
     }
     return false;
   };
+
+
+  const isSelectable = (clickedDate: Date, rowIndex: number, colIndex: number) => {
+      
+    //if is in past
+    if (isBefore(endOfDay(clickedDate), new Date())) return false;
+    
+    //is unavailable
+    const day = daysWithStatus[rowIndex]?.[colIndex];
+    if (day && day.isUnavailable === true) { 
+      return false;
+    }
+    
+    return true;
+   }
 
 
   return {

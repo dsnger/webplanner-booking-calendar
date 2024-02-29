@@ -60,11 +60,12 @@ const BookingCalendarCell: React.FC<BookingCalendarCellProps> = React.memo(({ da
       data-object-id={objId}
       data-date-string={formatDate(date)}
     >
+     {tooltip ? (
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>
             <div
-              className={`cell-marker w-full h-full ${cellClassNames} `}
+              className={`cell-marker w-full h-full ${cellClassNames}`}
             >
               {content}
             </div>
@@ -74,6 +75,13 @@ const BookingCalendarCell: React.FC<BookingCalendarCellProps> = React.memo(({ da
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
+    ) : (
+      <div
+        className={`cell-marker w-full h-full ${cellClassNames}`}
+      >
+        {content}
+      </div>
+    )}
     </td>
   );
 });
