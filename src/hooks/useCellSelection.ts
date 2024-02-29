@@ -49,33 +49,42 @@ export const useCellSelection = (bookingCalendarWrapperRef: RefObject<HTMLDivEle
     }
 
     const clickedDateString = formatDate(clickedDate);
-    //selection done or click in a different row
-    
-      if (selectedCell && secondSelectedCell || rowIndex !== selectedCell?.rowIndex) {
+      
+      //selection done or click in a different row
+    if (selectedCell && secondSelectedCell || rowIndex !== selectedCell?.rowIndex) {
+        
+        //if first selection is departure return null
+        if (isDepartureDay(rowIndex, colIndex)) return null;
+      
         setSelectedCell({ rowIndex, colIndex });
         setSecondSelectedCell(null);
         setCellClasses([{ rowIndex, colIndex, classes: ['is-selected'] }]);
         setSelectedDayStart(clickedDate);
         setSelectedDayEnd(null);
         setHoveredCell(null);
-        console.log('start new ' + clickedDateString)
+        //console.log('start new ' + clickedDateString)
+
   
-      //Second day of range: same row, other col
+      //Second selection of range: same row, other col
       } else if (selectedCell && (rowIndex === selectedCell.rowIndex) && (colIndex !== selectedCell.colIndex)) {
-        
         if (areUnavailableDaysInRange(selectedCell.colIndex, colIndex, rowIndex) === true) {
           setSelectedCell({ rowIndex, colIndex });
           setSecondSelectedCell(null);
           setCellClasses([{ rowIndex, colIndex, classes: ['is-selected'] }]);
           setSelectedDayStart(clickedDate);
           setSelectedDayEnd(null);
+
         } else {
+               
+          //if second selection is arrival
+          if (isArrivalDay(rowIndex, colIndex)) return null;
+
           setSecondSelectedCell({ rowIndex, colIndex });
           setCellClasses([{ rowIndex, colIndex, classes: ['is-selected'] }]);
           setHighlightedRange(selectedCell.rowIndex, selectedCell.colIndex, colIndex);
           setSelectedDayEnd(clickedDate);
-        
-          console.log('second ' + clickedDateString)
+
+          //console.log('second ' + clickedDateString)
 
           if (selectedDayStart != null && clickedDate < selectedDayStart) {
             setSelectedDayEnd(selectedDayStart);
@@ -96,7 +105,12 @@ export const useCellSelection = (bookingCalendarWrapperRef: RefObject<HTMLDivEle
         sendDateSelection(rowIndex, selectedDayEnd, selectedDayStart)
         setHoveredCell(null);
        
-      } else if ((selectedCell === null && secondSelectedCell === null) || secondSelectedCell !== null) {
+      //first selection
+    } else if ((selectedCell === null && secondSelectedCell === null) || secondSelectedCell !== null) {
+      
+        //if first selection is departure return null
+        if (isDepartureDay(rowIndex, colIndex)) return null;
+      
         setSelectedCell({ rowIndex, colIndex });
         setCellClasses([{ rowIndex, colIndex, classes: ['is-selected'] }]);
         setSelectedDayStart(clickedDate);
@@ -182,7 +196,30 @@ export const useCellSelection = (bookingCalendarWrapperRef: RefObject<HTMLDivEle
     }
     
     return true;
+  }
+  
+
+  const isArrivalDay = (rowIndex: number, colIndex: number) => {
+      
+    const day = daysWithStatus[rowIndex]?.[colIndex];
+    if (day && day.isArrival === true) { 
+      return true;
+    }
+    
+    return false;
    }
+
+  
+   const isDepartureDay = (rowIndex: number, colIndex: number) => {
+      
+    const day = daysWithStatus[rowIndex]?.[colIndex];
+    if (day && day.isDeparture === true) { 
+      return true;
+    }
+    
+    return false;
+   }
+
 
 
   return {

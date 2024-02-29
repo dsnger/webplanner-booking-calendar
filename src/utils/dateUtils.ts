@@ -165,8 +165,6 @@ const hasExclusiveDateTypes = (bookingObject: BookingObject, type: 'arrival' | '
 
 
 
-
-
 export const preCalculateDaysStatusFlags = (bookingObjects: BookingObject[], days: Date[]): DayStatus[][] => {
     return bookingObjects.map((bookingObject) => 
       days.map((day) => {

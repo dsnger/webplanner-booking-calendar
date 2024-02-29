@@ -125,8 +125,6 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ fewoOwnID, lang }): J
   }, [days]);
 
 
-
-
   if (isLoading) {
     return <div>Loading...</div>;
   }
