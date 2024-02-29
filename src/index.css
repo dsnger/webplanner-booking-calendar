@@ -91,15 +91,13 @@ button:focus-visible {
 .sticky-title {
   position: sticky;
   left: 0;
-  background-color: white; /* Match your table's background */
   display: inline-block;
-  padding: 0 10px; /* Adjust as needed */
 }
 
 /* styles.css or your stylesheet file */
-.cell {
+/* .cell {
   @apply border-l border-b border-gray-500 p-0 m-0 hover:cursor-pointer;
-}
+} */
 
 .grabbing, .grabbing * {
   cursor: grabbing !important;
@@ -133,9 +131,9 @@ button:focus-visible {
   clip-path: polygon(0 0, 0% 100%, 100% 0);
 }
 
-.is-selected .cell-marker {
+/* .is-selected .cell-marker {
   @apply bg-green-600
-}
+} */
 
 .is-selected.has-selection-left {
   clip-path: polygon(0 0, 0% 100%, 100% 0);

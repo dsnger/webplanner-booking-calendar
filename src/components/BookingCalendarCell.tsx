@@ -41,10 +41,10 @@ const BookingCalendarCell: React.FC<BookingCalendarCellProps> = React.memo(({ da
     // 'cell cell-day h-9 min-w-9',
     isDisabled && !isHoveredCell ? 'bg-gray-200 text-gray-30 ' : 'bg-green-300 hover:bg-green-500 text-green-600',
     // isToday ? 'bg-green-100/50 text-green-600' : '',
-    isUnavailable ? 'is-unavailable' : '',
-    isUnavailStart ? 'is-unavailable is-unavail-start' : '',
+    isUnavailable ? 'is-unavailable border-l-0' : '',
+    isUnavailStart ? 'is-unavailable is-unavail-start rounded-md' : '',
     type ? `is-${type}` : '',
-    isUnavailEnd ? 'is-unavailable is-unavail-end' : '',
+    isUnavailEnd ? 'is-unavailable is-unavail-end rounded-md' : '',
     isArrival ? 'is-arrival' : '',
     isDeparture ? 'is-departure' : '',
     isHoveredCell ? 'bg-green-600/50' : '',
@@ -54,7 +54,7 @@ const BookingCalendarCell: React.FC<BookingCalendarCellProps> = React.memo(({ da
 
   return (
     <td
-      className={`cell cell-day h-9 min-w-9 ${isLastDayOfMonth(date) ? 'last-of-month border-r-2' : ''} ${selectClasses}`}
+      className={`border-l border-white p-0 m-0 hover:cursor-pointer cell-day h-9 min-w-9 ${isLastDayOfMonth(date) ? 'last-of-month border-r-2' : ''} ${cellClassNames} ${selectClasses}`}
       onClick={onClick}
       onMouseEnter={onMouseEnter}
       data-object-id={objId}
@@ -65,7 +65,7 @@ const BookingCalendarCell: React.FC<BookingCalendarCellProps> = React.memo(({ da
         <Tooltip>
           <TooltipTrigger asChild>
             <div
-              className={`cell-marker w-full h-full ${cellClassNames}`}
+              className={`cell-marker w-full h-full `}
             >
               {content}
             </div>
@@ -77,7 +77,7 @@ const BookingCalendarCell: React.FC<BookingCalendarCellProps> = React.memo(({ da
       </TooltipProvider>
     ) : (
       <div
-        className={`cell-marker w-full h-full ${cellClassNames}`}
+        className={`cell-marker w-full h-full`}
       >
         {content}
       </div>

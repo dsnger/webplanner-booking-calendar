@@ -1,4 +1,4 @@
-import { RefObject, useRef } from "react";
+import React, { RefObject, useRef } from "react";
 import { BookingObject, DayStatus } from "../types";
 import { endOfDay, isBefore, isSameDay } from "date-fns";
 import BookingCalendarCell from "./BookingCalendarCell";
@@ -32,7 +32,7 @@ const BookingCalenderTableBody: React.FC<TableBodyProps> = ({
   return (
     <tbody ref={tableBodyRef}>
       {bookingObjects.map((bookingObject, rowIndex) => (
-        <tr key={rowIndex}>
+        <tr key={rowIndex} className="border-b-4 border-white">
           {days.map((date, colIndex) => {
 
             const selectClasses = cellClasses.find(entry => entry.rowIndex === rowIndex && entry.colIndex === colIndex)?.classes?.join(' ') || '';
