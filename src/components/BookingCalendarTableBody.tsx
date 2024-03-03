@@ -1,5 +1,5 @@
 import React, { RefObject, useRef } from "react";
-import { BookingObject, DayStatus } from "../types";
+import { BookingObject, CellCoordinates, DayStatus } from "../types";
 import { endOfDay, isBefore, isSameDay } from "date-fns";
 import BookingCalendarCell from "./BookingCalendarCell";
 import { useCellSelection } from "../hooks/useCellSelection";
@@ -43,7 +43,7 @@ const BookingCalenderTableBody: React.FC<TableBodyProps> = ({
             const { isUnavailable = false, type = null, isUnavailStart = false, isUnavailEnd = false, isDisabled = false, isArrival = false, isDeparture = false } = dayStatus;
             const isHoveredCell = isCellInRange(rowIndex, colIndex, selectedCell, secondSelectedCell, !isUnavailable)
             const isInPast = isBefore(endOfDay(date), new Date());
-            const isSelectedCell = (rowIndex, colIndex, selectedCell, secondSelectedCell) => (
+            const isSelectedCell = (rowIndex: number, colIndex : number, selectedCell: CellCoordinates, secondSelectedCell: CellCoordinates) => (
               (selectedCell && secondSelectedCell && 
                 ((rowIndex >= Math.min(selectedCell.rowIndex, secondSelectedCell.rowIndex) && rowIndex <= Math.max(selectedCell.rowIndex, secondSelectedCell.rowIndex)) &&
                 (colIndex >= Math.min(selectedCell.colIndex, secondSelectedCell.colIndex) && colIndex <= Math.max(selectedCell.colIndex, secondSelectedCell.colIndex)))

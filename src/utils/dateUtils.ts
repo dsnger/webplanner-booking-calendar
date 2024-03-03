@@ -1,5 +1,5 @@
 // dateUtils.ts
-import { eachDayOfInterval, startOfMonth, endOfMonth, format, parseISO, startOfYear, endOfYear, isSameDay, isWithinInterval, isBefore, endOfDay } from 'date-fns';
+import { eachDayOfInterval, startOfMonth, endOfMonth, format, parseISO, startOfYear, endOfYear, isSameDay, isWithinInterval } from 'date-fns';
 import { de } from 'date-fns/locale';
 import { BookingObject, CalendarRange, DateRangeType, DayStatus } from "../types";
 // import { useBookingObjects } from "../context/BookingObjectsContext";

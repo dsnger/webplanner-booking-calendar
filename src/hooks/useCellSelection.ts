@@ -4,13 +4,15 @@ import { formatDate } from "../utils/dateUtils";
 import { useBookingObjects } from "../context/BookingObjectsContext";
 import { endOfDay, isBefore } from "date-fns";
 
-export const useCellSelection = (bookingCalendarWrapperRef: RefObject<HTMLDivElement>,daysWithStatus: DayStatus[][]) => {
+export const useCellSelection = (bookingCalendarWrapperRef: RefObject<HTMLDivElement>, daysWithStatus: DayStatus[][]) => {
+  
+  console.log('render cell selection')
   const [selectedDayStart, setSelectedDayStart] = useState<Date | null>(null);
   const [selectedDayEnd, setSelectedDayEnd] = useState<Date | null>(null);
   const [selectedCell, setSelectedCell] = useState<CellCoordinates | null>(null);
   const [secondSelectedCell, setSecondSelectedCell] = useState<CellCoordinates | null>(null);
   const [cellClasses, setCellClasses] = useState<{ rowIndex: number; colIndex: number; classes: string[] }[]>([]);
-  const [hoveredCell, setHoveredCell] = useState<CellCoordinates | null>(null);
+  // const [hoveredCell, setHoveredCell] = useState<CellCoordinates | null>(null);
 
   const { bookingObjects } = useBookingObjects();
 
@@ -26,7 +28,7 @@ export const useCellSelection = (bookingCalendarWrapperRef: RefObject<HTMLDivEle
         setSelectedDayStart(null);
         setSelectedDayEnd(null);
         setCellClasses([]);
-        setHoveredCell(null);
+        // setHoveredCell(null);
       }
     };
 
@@ -44,10 +46,9 @@ export const useCellSelection = (bookingCalendarWrapperRef: RefObject<HTMLDivEle
   const handleCellSelection = useCallback((clickedDate: Date, rowIndex: number, colIndex: number) => {
     
     if (!isSelectable(clickedDate, rowIndex, colIndex)) {
-      console.log('not selectable')
-      return null
-    }
-
+      return false;
+    } 
+    
     const clickedDateString = formatDate(clickedDate);
       
       //selection done or click in a different row
@@ -61,7 +62,7 @@ export const useCellSelection = (bookingCalendarWrapperRef: RefObject<HTMLDivEle
         setCellClasses([{ rowIndex, colIndex, classes: ['is-selected'] }]);
         setSelectedDayStart(clickedDate);
         setSelectedDayEnd(null);
-        setHoveredCell(null);
+        // setHoveredCell(null);
         //console.log('start new ' + clickedDateString)
 
   
@@ -79,17 +80,25 @@ export const useCellSelection = (bookingCalendarWrapperRef: RefObject<HTMLDivEle
           //if second selection is arrival
           if (isArrivalDay(rowIndex, colIndex)) return null;
 
-          setSecondSelectedCell({ rowIndex, colIndex });
-          setCellClasses([{ rowIndex, colIndex, classes: ['is-selected'] }]);
-          // setHighlightedRange(selectedCell.rowIndex, selectedCell.colIndex, colIndex);
-          setSelectedDayEnd(clickedDate);
+          if (selectedDayStart != null && clickedDate > selectedDayStart) {
+            setSecondSelectedCell({ rowIndex, colIndex });
+            setCellClasses([{ rowIndex, colIndex, classes: ['is-selected'] }]);
+            setSelectedDayEnd(clickedDate);
+          }
 
           //console.log('second ' + clickedDateString)
-
+        
           if (selectedDayStart != null && clickedDate < selectedDayStart) {
+
+            if (isDepartureDay(rowIndex, colIndex)) {
+              return false;
+            }
+            setSecondSelectedCell({ rowIndex, colIndex });
+            setCellClasses([{ rowIndex, colIndex, classes: ['is-selected'] }]);
             setSelectedDayEnd(selectedDayStart);
             setSelectedDayStart(clickedDate);
-            sendDateSelection(rowIndex,clickedDate, selectedDayStart)
+            sendDateSelection(rowIndex, clickedDate, selectedDayStart)
+            
           } else {
             sendDateSelection(rowIndex, selectedDayStart, clickedDate)
           }
@@ -103,7 +112,7 @@ export const useCellSelection = (bookingCalendarWrapperRef: RefObject<HTMLDivEle
         setSelectedDayEnd(clickedDate);
         console.log('same twice ' + clickedDateString)
         sendDateSelection(rowIndex, selectedDayEnd, selectedDayStart)
-        setHoveredCell(null);
+        // setHoveredCell(null);
        
       //first selection
     } else if ((selectedCell === null && secondSelectedCell === null) || secondSelectedCell !== null) {
@@ -115,11 +124,11 @@ export const useCellSelection = (bookingCalendarWrapperRef: RefObject<HTMLDivEle
         setCellClasses([{ rowIndex, colIndex, classes: ['is-selected'] }]);
         setSelectedDayStart(clickedDate);
         setSelectedDayEnd(null);
-        setHoveredCell(null);
+        // setHoveredCell(null);
 
         console.log('first ' + clickedDateString)
       }
-      setHoveredCell(null);
+      // setHoveredCell(null);
 
   }, [selectedCell, secondSelectedCell, cellClasses]); 
   
@@ -147,27 +156,6 @@ export const useCellSelection = (bookingCalendarWrapperRef: RefObject<HTMLDivEle
   };
 
 
-  // const setHighlightedRange = (rowIndex: number, colIndex1: number, colIndex2: number): void => {
-  //   const startColIndex = Math.min(colIndex1, colIndex2);
-  //   const endColIndex = Math.max(colIndex1, colIndex2);
-
-  //   console.log(startColIndex + " " + endColIndex);
-  //   const newCellClasses = [...cellClasses];
-
-  //   for (let colIndex = startColIndex; colIndex <= endColIndex; colIndex++) {
-  //     const cellEntryIndex = newCellClasses.findIndex(entry => entry.rowIndex === rowIndex && entry.colIndex === colIndex);
-
-  //     if (cellEntryIndex !== -1) {
-  //       newCellClasses[cellEntryIndex].classes = ['is-selected'];
-  //     } else {
-  //       newCellClasses.push({ rowIndex, colIndex, classes: ['is-selected'] });
-  //     }
-  //   }
-
-  //   setCellClasses(newCellClasses);
-  // };
-
-
   const areUnavailableDaysInRange = ( startColIndex: number, endColIndex: number, rowIndex: number): boolean => {
     
     const colIndexStart = Math.min(startColIndex, endColIndex);
@@ -193,6 +181,10 @@ export const useCellSelection = (bookingCalendarWrapperRef: RefObject<HTMLDivEle
     //is unavailable
     const day = daysWithStatus[rowIndex]?.[colIndex];
     if (day && day.isUnavailable === true) { 
+      return false;
+    }
+
+    if (day && (day.isDisabled === true && day.isArrival === false && day.isDeparture === false)) { 
       return false;
     }
     

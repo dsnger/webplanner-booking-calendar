@@ -39,29 +39,39 @@ const BookingCalendarCell: React.FC<BookingCalendarCellProps> = React.memo(({ da
 
   const cellClassNames = [
     // 'cell cell-day h-9 min-w-9',
-    isDisabled && !isHoveredCell ? 'bg-gray-200 text-gray-30 ' : 'bg-green-300 hover:bg-green-500 text-green-600',
+    isDisabled && !isHoveredCell ? 'is-disabled bg-gray-200 text-gray-30' : 'bg-green-300 hover:bg-green-500 text-green-600',
+    !isDisabled ? 'cursor-pointer' : '',
     // isToday ? 'bg-green-100/50 text-green-600' : '',
     isUnavailable ? 'is-unavailable border-l-0' : '',
     isUnavailStart ? 'is-unavailable is-unavail-start rounded-md' : '',
     type ? `is-${type}` : '',
     isUnavailEnd ? 'is-unavailable is-unavail-end rounded-md' : '',
-    isArrival ? 'is-arrival' : '',
-    isDeparture ? 'is-departure' : '',
+    isArrival ? 'is-available is-arrival hover:cursor-pointer hover:bg-green-600/50' : '',
+    isDeparture ? 'is-available is-departure hover:cursor-pointer hover:bg-green-600/50' : '',
     isHoveredCell ? 'bg-green-600/50' : '',
     isInPast ? 'opacity-30' : '',
-    isSelected ? 'bg-green-600 border-r-0 border-l-0' : ''
+    isSelected ? 'bg-green-600 border-r-0 border-l-0 ' : ''
   ].filter(Boolean).join(' ');
+
+  let message = '';
+  if (isArrival && !isUnavailable) {
+    message = 'Anreisetag';
+  }
+
+  if (isDeparture && !isUnavailable) {
+    message = 'Abreisetag';
+  }
 
 
   return (
     <td
-      className={`border-l border-white p-0 m-0 hover:cursor-pointer cell-day h-9 min-w-9 ${isLastDayOfMonth(date) ? 'last-of-month border-r-2' : ''} ${cellClassNames} ${selectClasses}`}
+      className={`border-l border-white p-0 m-0 cell-day h-9 min-w-9 ${isLastDayOfMonth(date) ? 'last-of-month border-r-2' : ''} ${cellClassNames} ${selectClasses}`}
       onClick={onClick}
       onMouseEnter={onMouseEnter}
       data-object-id={objId}
       data-date-string={formatDate(date)}
     >
-     {tooltip ? (
+     {tooltip || message != '' ? (
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>
@@ -72,7 +82,7 @@ const BookingCalendarCell: React.FC<BookingCalendarCellProps> = React.memo(({ da
             </div>
           </TooltipTrigger>
           <TooltipContent>
-            <p>{tooltip}</p>
+              <p>{tooltip}{ message }</p>
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>

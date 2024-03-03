@@ -54,7 +54,7 @@ export const useCellHighlighting = (bookingCalendarWrapperRef: RefObject<HTMLDiv
     
     if (selectedCell && !secondSelectedCell && isAvailable) {
 
-      const startCellColIndex = selectedCell.colIndex;
+      // const startCellColIndex = selectedCell.colIndex;
       const startCellRowIndex = selectedCell.rowIndex;
       // Determine the new class based on the direction
       // const newClass = colIndex < startCellColIndex ? 'has-selection-left' : 'has-selection-right';

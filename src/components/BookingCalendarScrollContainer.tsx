@@ -1,5 +1,5 @@
 import { calculateMostVisibleMonth, isElementInViewport } from "@/utils/scrollUtils";
-import React, { forwardRef, useRef, useImperativeHandle, useEffect } from 'react';
+import React, { forwardRef, useRef, useImperativeHandle } from 'react';
 
 type BookingCalendarScrollContainerProps = {
   children: React.ReactNode;
@@ -68,8 +68,6 @@ const BookingCalendarScrollContainer = forwardRef<ScrollContainerRefs, BookingCa
     const dayElement = container.querySelector('#isToday') as HTMLElement | null;
     if (dayElement && isElementInViewport(dayElement, container)) {
       updateIsTodayView(true);
-      console.log('Day element is in the viewport');
-      // Perform actions when dayElement is visible
     } else {
       updateIsTodayView(false);
     }
