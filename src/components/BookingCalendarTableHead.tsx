@@ -37,7 +37,7 @@ const BookingCalendarTableHead: React.FC<BookingCalendarTableHeadProps> = ({ mon
               id={isSameDay(date, currentDate) ? 'isToday' : ' '}
             >
               <div className="flex flex-col items-center justify-center h-full">
-                <span className="text-xs font-light block mb-1">{getDayName(date)}</span>
+                <span className="text-xs font-light block">{getDayName(date)}</span>
                 <span className="text-xs block">{format(date, 'd')}</span>
               </div>
             </th>

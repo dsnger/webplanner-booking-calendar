@@ -88,11 +88,6 @@ button:focus-visible {
   overflow: hidden;
 }
 
-.sticky-title {
-  position: sticky;
-  left: 0;
-  display: inline-block;
-}
 
 /* styles.css or your stylesheet file */
 /* .cell {

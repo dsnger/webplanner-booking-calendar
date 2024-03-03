@@ -43,13 +43,22 @@ const BookingCalenderTableBody: React.FC<TableBodyProps> = ({
             const { isUnavailable = false, type = null, isUnavailStart = false, isUnavailEnd = false, isDisabled = false, isArrival = false, isDeparture = false } = dayStatus;
             const isHoveredCell = isCellInRange(rowIndex, colIndex, selectedCell, secondSelectedCell, !isUnavailable)
             const isInPast = isBefore(endOfDay(date), new Date());
+            const isSelectedCell = (rowIndex, colIndex, selectedCell, secondSelectedCell) => (
+              (selectedCell && secondSelectedCell && 
+                ((rowIndex >= Math.min(selectedCell.rowIndex, secondSelectedCell.rowIndex) && rowIndex <= Math.max(selectedCell.rowIndex, secondSelectedCell.rowIndex)) &&
+                (colIndex >= Math.min(selectedCell.colIndex, secondSelectedCell.colIndex) && colIndex <= Math.max(selectedCell.colIndex, secondSelectedCell.colIndex)))
+              ) || 
+              (selectedCell?.rowIndex === rowIndex && selectedCell?.colIndex === colIndex) || 
+              (secondSelectedCell?.rowIndex === rowIndex && secondSelectedCell?.colIndex === colIndex)
+            );
+            
 
             return (
               <BookingCalendarCell
                 key={`${rowIndex}-${colIndex}`}
                 objId={bookingObject.objId}
                 date={date}
-                isSelected={(selectedCell?.rowIndex === rowIndex && selectedCell?.colIndex === colIndex) || secondSelectedCell?.rowIndex === rowIndex && secondSelectedCell?.colIndex === colIndex}
+                isSelected={isSelectedCell(rowIndex, colIndex, selectedCell, secondSelectedCell)}
                 selectClasses={`${selectClasses} `}
                 content={``}
                 tooltip={''}

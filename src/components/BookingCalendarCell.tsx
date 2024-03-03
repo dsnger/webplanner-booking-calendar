@@ -33,7 +33,7 @@ interface BookingCalendarCellProps {
   };
 }
 
-const BookingCalendarCell: React.FC<BookingCalendarCellProps> = React.memo(({ date, objId, selectClasses, tooltip, content, onClick, onMouseEnter, statusFlags }) => {
+const BookingCalendarCell: React.FC<BookingCalendarCellProps> = React.memo(({ date, objId, isSelected, selectClasses, tooltip, content, onClick, onMouseEnter, statusFlags }) => {
 
   const { isUnavailable, type, isUnavailStart, isUnavailEnd, isDisabled, isArrival, isDeparture, isHoveredCell, isInPast } = statusFlags;
 
@@ -49,6 +49,7 @@ const BookingCalendarCell: React.FC<BookingCalendarCellProps> = React.memo(({ da
     isDeparture ? 'is-departure' : '',
     isHoveredCell ? 'bg-green-600/50' : '',
     isInPast ? 'opacity-30' : '',
+    isSelected ? 'bg-green-600 border-r-0 border-l-0' : ''
   ].filter(Boolean).join(' ');
 
 

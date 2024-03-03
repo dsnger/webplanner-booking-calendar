@@ -34,6 +34,9 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ fewoOwnID, lang }): J
   const [calendarSettings, setCalendarSettings] = useState<BookingCalendarSettings[]>([]);
   const [visibleMonth, setVisibleMonth] = useState(new Date().getMonth() + 1); // Adjust to initial visible month based on your app's logic
   const [visibleYear, setVisibleYear] = useState(new Date().getFullYear());
+  const [isTodayView, setIsTodayView] = useState(false)
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
 
   const bookingCalendarWrapperRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<ScrollContainerRefs>(null);
@@ -139,12 +142,18 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ fewoOwnID, lang }): J
 
   const { colorSettings, bookingObjects } = calendarSettings[0];
 
-   // Function to update visible month and year, based on scroll position
-   const updateVisibleMonthAndYear = (month: number, year: number) => {
+  // Function to update visible month and year, based on scroll position
+  const updateVisibleMonthAndYear = (month: number, year: number) => {
     setVisibleMonth(month);
     setVisibleYear(year);
   };
+  
 
+  // Function to update the scroll state
+  const updateScrollState = ( scrollLeft: number, scrollWidth: number, clientWidth: number) => {
+    setCanScrollLeft(scrollLeft > 10);
+    setCanScrollRight(scrollLeft + clientWidth < scrollWidth - 10);
+  };
 
   return (
     <div className="booking-calendar-wrapper w-full overflow-hidden" ref={bookingCalendarWrapperRef}>
@@ -154,14 +163,19 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ fewoOwnID, lang }): J
         scrollRef={scrollRef}
         visibleMonth={visibleMonth}
         visibleYear={visibleYear}
-        updateVisibleMonthAndYear={updateVisibleMonthAndYear}
+        isTodayView={isTodayView} 
+        canScrollLeft={canScrollLeft}
+        canScrollRight={canScrollRight}
       />
       
       <div className="flex">
       <BookingObjectsTable bookingObjects={bookingObjects} />
         <BookingCalendarScrollContainer
           ref={scrollRef}
-          updateVisibleMonthAndYear={updateVisibleMonthAndYear}>
+          updateVisibleMonthAndYear={updateVisibleMonthAndYear}
+            updateIsTodayView={setIsTodayView}
+            updateScrollState={updateScrollState}
+          >
         <BookingCalendarTable
             months={months}
             days={days}

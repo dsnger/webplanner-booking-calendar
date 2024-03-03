@@ -81,7 +81,7 @@ export const useCellSelection = (bookingCalendarWrapperRef: RefObject<HTMLDivEle
 
           setSecondSelectedCell({ rowIndex, colIndex });
           setCellClasses([{ rowIndex, colIndex, classes: ['is-selected'] }]);
-          setHighlightedRange(selectedCell.rowIndex, selectedCell.colIndex, colIndex);
+          // setHighlightedRange(selectedCell.rowIndex, selectedCell.colIndex, colIndex);
           setSelectedDayEnd(clickedDate);
 
           //console.log('second ' + clickedDateString)
@@ -147,24 +147,25 @@ export const useCellSelection = (bookingCalendarWrapperRef: RefObject<HTMLDivEle
   };
 
 
-  const setHighlightedRange = (rowIndex: number, colIndex1: number, colIndex2: number): void => {
-    const startColIndex = Math.min(colIndex1, colIndex2);
-    const endColIndex = Math.max(colIndex1, colIndex2);
+  // const setHighlightedRange = (rowIndex: number, colIndex1: number, colIndex2: number): void => {
+  //   const startColIndex = Math.min(colIndex1, colIndex2);
+  //   const endColIndex = Math.max(colIndex1, colIndex2);
 
-    console.log(startColIndex + " " + endColIndex);
-    const newCellClasses = [...cellClasses];
+  //   console.log(startColIndex + " " + endColIndex);
+  //   const newCellClasses = [...cellClasses];
 
-    for (let colIndex = startColIndex; colIndex <= endColIndex; colIndex++) {
-      const cellEntryIndex = newCellClasses.findIndex(entry => entry.rowIndex === rowIndex && entry.colIndex === colIndex);
+  //   for (let colIndex = startColIndex; colIndex <= endColIndex; colIndex++) {
+  //     const cellEntryIndex = newCellClasses.findIndex(entry => entry.rowIndex === rowIndex && entry.colIndex === colIndex);
 
-      if (cellEntryIndex !== -1) {
-        newCellClasses[cellEntryIndex].classes = ['is-selected'];
-      } else {
-        newCellClasses.push({ rowIndex, colIndex, classes: ['is-selected'] });
-      }
-    }
-    setCellClasses(newCellClasses);
-  };
+  //     if (cellEntryIndex !== -1) {
+  //       newCellClasses[cellEntryIndex].classes = ['is-selected'];
+  //     } else {
+  //       newCellClasses.push({ rowIndex, colIndex, classes: ['is-selected'] });
+  //     }
+  //   }
+
+  //   setCellClasses(newCellClasses);
+  // };
 
 
   const areUnavailableDaysInRange = ( startColIndex: number, endColIndex: number, rowIndex: number): boolean => {
