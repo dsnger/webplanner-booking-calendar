@@ -1,5 +1,5 @@
 import { calculateMostVisibleMonth, isElementInViewport } from "@/utils/scrollUtils";
-import React, { forwardRef, useRef, useImperativeHandle } from 'react';
+import React, { forwardRef, useRef, useImperativeHandle, useEffect } from 'react';
 
 type BookingCalendarScrollContainerProps = {
   children: React.ReactNode;
@@ -21,16 +21,24 @@ const BookingCalendarScrollContainer = forwardRef<ScrollContainerRefs, BookingCa
   const scrollParentRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
+
+  // Define a reusable function for scrolling
+  const scrollToToday = () => {
+    const dayElement = scrollContainerRef.current?.querySelector('#isToday');
+    if (dayElement) {
+      dayElement.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
+    }
+  };
+
+
+  useEffect(() => {;
+    scrollToToday();
+  }, []);
+
+
   useImperativeHandle(ref, () => ({
 
-    scrollToCurrentDay: () => {
-      if (scrollContainerRef.current) {
-        const dayElement = scrollContainerRef.current.querySelector('#isToday');
-        if (dayElement) {
-          dayElement.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
-        }
-      }
-    },
+    scrollToCurrentDay: scrollToToday,
     scrollLeft: () => {
       if (scrollContainerRef.current && scrollParentRef.current) {
         let newScrollPosition = -scrollParentRef.current.offsetWidth / 2; // Adjust the scroll step size as needed
@@ -75,7 +83,6 @@ const BookingCalendarScrollContainer = forwardRef<ScrollContainerRefs, BookingCa
 
     const { scrollLeft, scrollWidth, clientWidth } = container;
     updateScrollState(scrollLeft, scrollWidth, clientWidth);
-
   
   };
   

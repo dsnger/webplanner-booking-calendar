@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { ScrollContainerRefs } from "./BookingCalendarScrollContainer";
 import { Button } from "./ui/button"
 import { FlowbiteChevronDoubleLeftSolid, FlowbiteChevronDoubleRightSolid, FlowbiteChevronLeftSolid, FlowbiteChevronRightSolid } from "./icons/icons";
@@ -31,11 +31,6 @@ const ScrollPaginationButtons: React.FC<ScrollPaginationProps> = ({
   canScrollRight,
   calendarRange
 }) => {
-
-  useEffect(() => {
-    scrollRef.current?.scrollToCurrentDay();
-  }, []);
-
 
   const scrollToCurrentDay = () => {
     scrollRef.current?.scrollToCurrentDay();

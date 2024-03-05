@@ -66,7 +66,6 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ fewoOwnID, lang }): J
         }
         const data = await response.json();
         setCalendarSettings(Array.isArray(data) ? data : [data]); // Ensure it's always an array
-        console.log("Fetched data:", data);
         setProgress(80);
 
         if (data.length > 0 && data[0].colorSettings) {
@@ -75,7 +74,6 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ fewoOwnID, lang }): J
         setProgress(100)
         setTimeout(() => setIsLoading(false), 500)
         
-       
       } catch (error) {
         console.error("Failed to fetch calendar settings:", error);
         setError("Failed to fetch calendar settings");
@@ -86,14 +84,13 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ fewoOwnID, lang }): J
 
     };
     init();
-
+   
     return () => {
       isComponentMounted = false; // Clean up function setting the flag to false when component unmounts
       console.log("Cleanup called");
     };
 
   }, [fewoOwnID, lang]);
-
 
 
   // Compute days and year after ensuring calendarSettings[0] exists
@@ -140,7 +137,7 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ fewoOwnID, lang }): J
     return (
       <div className="w-[60%] m-auto">
         <Progress value={progress} max={100} />
-        {progress < 100 ? <p className="mt-1">Kalenderdaten werden geladen...</p> : <p className="mt-1">Kalenderdaten erfolgreich geladen!</p>}
+        {progress < 100 ? <p className="mt-1">Kalenderdaten werden geladen...</p> : <p className="mt-1">Fertig!</p>}
       </div>
     );
   }
@@ -170,7 +167,7 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ fewoOwnID, lang }): J
 
 
   return (
-    <div className="booking-calendar-wrapper w-full overflow-hidden" ref={bookingCalendarWrapperRef}>
+    <div className="booking-calendar-wrapper w-full overflow-hidden animate-fadeIn" ref={bookingCalendarWrapperRef} >
       <BookingObjectsProvider bookingObjects={bookingObjects}>
         {/* <MonthPaginationButtons scrollRef={scrollRef} months={months} /> */}
 
