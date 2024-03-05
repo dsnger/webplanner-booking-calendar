@@ -9,6 +9,8 @@ import ScrollPaginationButtons from "./ScrollPaginationButtons";
 import BookingCalendarTable from "./BookingCalendarTable";
 import { BookingObjectsProvider } from "../context/BookingObjectsContext";
 import MonthDropdown from "./MonthDropdown";
+import { Progress } from "./ui/progress";
+
 // import MonthPaginationButtons from "./MonthPaginationButtons";
 
 
@@ -31,6 +33,7 @@ const updateGlobalStyles = (colorSettings: ColorSettings) => {
 
 const BookingCalendar: React.FC<BookingCalendarProps> = ({ fewoOwnID, lang }): JSX.Element => {
   const [isLoading, setIsLoading] = useState(true);
+  const [progress, setProgress] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [calendarSettings, setCalendarSettings] = useState<BookingCalendarSettings[]>([]);
   const [visibleMonth, setVisibleMonth] = useState(new Date().getMonth() + 1); // Adjust to initial visible month based on your app's logic
@@ -52,26 +55,32 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ fewoOwnID, lang }): J
       console.log("Effect running");
       setIsLoading(true);
       setError(null);
+      setProgress(30);
 
       try {
         const apiUrl = `https://www.webplanner.de/tools/belegungsplanerapi.php?fewoOwnID=${fewoOwnID}&lang=${lang}&anfrage=3`;
         const response = await fetch(apiUrl);
+        setProgress(60);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
         setCalendarSettings(Array.isArray(data) ? data : [data]); // Ensure it's always an array
         console.log("Fetched data:", data);
+        setProgress(80);
 
         if (data.length > 0 && data[0].colorSettings) {
           updateGlobalStyles(data[0].colorSettings);
         }
-        setIsLoading(false);
-
+        setProgress(100)
+        setTimeout(() => setIsLoading(false), 500)
+        
+       
       } catch (error) {
         console.error("Failed to fetch calendar settings:", error);
         setError("Failed to fetch calendar settings");
         setIsLoading(false);
+        setProgress(100);
         throw error;
       }
 
@@ -127,8 +136,13 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ fewoOwnID, lang }): J
   }, [days]);
 
 
-  if (isLoading) {
-    return <div>Loading...</div>;
+  if (progress <= 100 && isLoading) {
+    return (
+      <div className="w-[60%] m-auto">
+        <Progress value={progress} max={100} />
+        {progress < 100 ? <p className="mt-1">Kalenderdaten werden geladen...</p> : <p className="mt-1">Kalenderdaten erfolgreich geladen!</p>}
+      </div>
+    );
   }
 
   if (error) {

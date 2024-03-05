@@ -38,7 +38,9 @@ const Legend = ({ colorSettings }: { colorSettings: ColorSettings }) => {
       </div>
 
       {/* Powered by */}
-      <img src={poweredByLogoUrl} alt="Logo" width={160} height={15} className="object-contain mt-4 m-auto" /> {/* Adjust size as needed */}
+      <div className="flex items-center">
+        <img src={poweredByLogoUrl} alt="Logo" width={160} height={15} className="object-contain mt-4 m-auto sm:mt-0 sm:mr-0 sm:ml-auto" />
+      </div>
     </div>
   );
 }

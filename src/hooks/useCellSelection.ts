@@ -52,7 +52,6 @@ export const useCellSelection = (bookingCalendarWrapperRef: RefObject<HTMLDivEle
       //selection done or click in a different row
     if (selectedCell && secondSelectedCell || rowIndex !== selectedCell?.rowIndex) {
         
-        console.log(isDepartureDay(rowIndex, colIndex) || (isOnlyDepartureDay(rowIndex, colIndex) && !isArrivalDay(rowIndex, colIndex)))
         //if first selection is departure return null
         if (isDepartureDay(rowIndex, colIndex) || (isOnlyDepartureDay(rowIndex, colIndex) && !isArrivalDay(rowIndex, colIndex))) return null;
       
