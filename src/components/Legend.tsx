@@ -3,8 +3,8 @@ import { ColorSettings } from "../types";
 
 const Legend = ({ colorSettings }: { colorSettings: ColorSettings }) => {
   return (
-    <div className="mt-4 flex items-center justify-between">
-      <div className="flex justify-center items-center">
+    <div className="mt-4 flex flex-wrap sm:flex-nowrap items-center sm:justify-between">
+      <div className="flex flex-wrap sm:flex-nowrap justify-center items-center gap-2">
         {/* Belegt */}
         <div className="flex items-center mr-4">
           <div className="w-3 h-3 mr-2 rounded-sm" style={{ backgroundColor: colorSettings.booked }}></div>
@@ -38,7 +38,7 @@ const Legend = ({ colorSettings }: { colorSettings: ColorSettings }) => {
       </div>
 
       {/* Powered by */}
-      <img src={poweredByLogoUrl} alt="Logo" width={160} height={15} className="object-contain" /> {/* Adjust size as needed */}
+      <img src={poweredByLogoUrl} alt="Logo" width={160} height={15} className="object-contain mt-4 m-auto" /> {/* Adjust size as needed */}
     </div>
   );
 }

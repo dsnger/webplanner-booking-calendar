@@ -16,7 +16,8 @@ export type ScrollContainerRefs = {
   scrollToMonth: (year: number, month: number) => void;
 };
 
-const BookingCalendarScrollContainer = forwardRef<ScrollContainerRefs, BookingCalendarScrollContainerProps>(({ children, updateVisibleMonthAndYear, updateIsTodayView, updateScrollState}, ref) => {
+const BookingCalendarScrollContainer = forwardRef<ScrollContainerRefs, BookingCalendarScrollContainerProps>(({ children, updateVisibleMonthAndYear, updateIsTodayView, updateScrollState }, ref) => {
+  
   const scrollParentRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
@@ -46,9 +47,9 @@ const BookingCalendarScrollContainer = forwardRef<ScrollContainerRefs, BookingCa
       const monthStartElem = document.getElementById(`month-${year}-${month}`);
       if (monthStartElem) {
         monthStartElem.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        updateVisibleMonthAndYear(month, year);
       }
     },
+   
 
   }));
 
@@ -74,6 +75,7 @@ const BookingCalendarScrollContainer = forwardRef<ScrollContainerRefs, BookingCa
 
     const { scrollLeft, scrollWidth, clientWidth } = container;
     updateScrollState(scrollLeft, scrollWidth, clientWidth);
+
   
   };
   

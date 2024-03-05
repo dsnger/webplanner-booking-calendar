@@ -8,6 +8,7 @@ import BookingCalendarScrollContainer, { ScrollContainerRefs } from "./BookingCa
 import ScrollPaginationButtons from "./ScrollPaginationButtons";
 import BookingCalendarTable from "./BookingCalendarTable";
 import { BookingObjectsProvider } from "../context/BookingObjectsContext";
+import MonthDropdown from "./MonthDropdown";
 // import MonthPaginationButtons from "./MonthPaginationButtons";
 
 
@@ -42,7 +43,7 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ fewoOwnID, lang }): J
   const scrollRef = useRef<ScrollContainerRefs>(null);
 
   useEffect(() => {
-    let isComponentMounted = true; 
+    let isComponentMounted = true;
 
     const init = async () => {
 
@@ -51,7 +52,7 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ fewoOwnID, lang }): J
       console.log("Effect running");
       setIsLoading(true);
       setError(null);
-  
+
       try {
         const apiUrl = `https://www.webplanner.de/tools/belegungsplanerapi.php?fewoOwnID=${fewoOwnID}&lang=${lang}&anfrage=3`;
         const response = await fetch(apiUrl);
@@ -65,14 +66,15 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ fewoOwnID, lang }): J
         if (data.length > 0 && data[0].colorSettings) {
           updateGlobalStyles(data[0].colorSettings);
         }
-        
+        setIsLoading(false);
+
       } catch (error) {
         console.error("Failed to fetch calendar settings:", error);
         setError("Failed to fetch calendar settings");
         setIsLoading(false);
         throw error;
       }
-      
+
     };
     init();
 
@@ -87,30 +89,27 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ fewoOwnID, lang }): J
 
   // Compute days and year after ensuring calendarSettings[0] exists
   const days = useMemo(() => {
-    setIsLoading(true);
     if (calendarSettings.length === 0 || !calendarSettings[0]?.calendarRange) {
       return [];
     }
-    
     return generateCalendarDays(calendarSettings[0].calendarRange);
   }, [calendarSettings]);
-  
 
-   // Use useMemo to precalculate status flags for the generated days
+
+  // Use useMemo to precalculate status flags for the generated days
   const daysWithStatus = useMemo(() => {
-    setIsLoading(true);
-     if (days.length === 0) return [];
-     setIsLoading(false);
-     return preCalculateDaysStatusFlags(calendarSettings[0]?.bookingObjects, days);
-     
-   }, [days, calendarSettings]);
 
-  
+    if (days.length === 0) return [];
+    return preCalculateDaysStatusFlags(calendarSettings[0]?.bookingObjects, days);
+
+  }, [days, calendarSettings]);
+
+
 
   const months = useMemo(() => {
-    setIsLoading(true);
+
     if (!days.length) return []; // Early return if days is empty
-  
+
     const monthMap = new Map();
     days.forEach(date => {
       // Combine year and month to ensure uniqueness across years
@@ -118,7 +117,7 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ fewoOwnID, lang }): J
       const count = monthMap.get(yearMonthKey) || 0;
       monthMap.set(yearMonthKey, count + 1);
     });
-    setIsLoading(false);
+
     // Convert the map into an array of [yearMonthKey, count] pairs
     return Array.from(monthMap.entries()).map(([yearMonthKey, count]) => {
       // Optionally, split the key back into year and month if needed for downstream processing
@@ -147,48 +146,62 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ fewoOwnID, lang }): J
     setVisibleMonth(month);
     setVisibleYear(year);
   };
-  
+
 
   // Function to update the scroll state
-  const updateScrollState = ( scrollLeft: number, scrollWidth: number, clientWidth: number) => {
+  const updateScrollState = (scrollLeft: number, scrollWidth: number, clientWidth: number) => {
     setCanScrollLeft(scrollLeft > 10);
     setCanScrollRight(scrollLeft + clientWidth < scrollWidth - 10);
   };
 
+
   return (
     <div className="booking-calendar-wrapper w-full overflow-hidden" ref={bookingCalendarWrapperRef}>
-      <BookingObjectsProvider bookingObjects={ bookingObjects }>
-      {/* <MonthPaginationButtons scrollRef={scrollRef} months={months} /> */}
-      <ScrollPaginationButtons
-        scrollRef={scrollRef}
-        visibleMonth={visibleMonth}
-        visibleYear={visibleYear}
-        isTodayView={isTodayView} 
-        canScrollLeft={canScrollLeft}
-        canScrollRight={canScrollRight}
-      />
-      
-      <div className="flex">
-      <BookingObjectsTable bookingObjects={bookingObjects} />
-        <BookingCalendarScrollContainer
-          ref={scrollRef}
-          updateVisibleMonthAndYear={updateVisibleMonthAndYear}
+      <BookingObjectsProvider bookingObjects={bookingObjects}>
+        {/* <MonthPaginationButtons scrollRef={scrollRef} months={months} /> */}
+
+        <div className="flex">
+          <div className="hidden sm:flex items-end pb-4 mb-[2px] mr-[-1px] min-w-[80px] max-w-[240px] w-[15vw]">
+          </div>
+          <div className="py-2 flex flex-1 flex-col sm:flex-row sm:justify-between items-center gap-2 ml-0 mr-2 w-max-full">
+
+            <MonthDropdown
+              scrollRef={scrollRef}
+              months={months}
+            />
+            <ScrollPaginationButtons
+              scrollRef={scrollRef}
+              visibleMonth={visibleMonth}
+              visibleYear={visibleYear}
+              isTodayView={isTodayView}
+              canScrollLeft={canScrollLeft}
+              canScrollRight={canScrollRight}
+              calendarRange={calendarSettings[0]?.calendarRange}
+            />
+
+          </div>
+        </div>
+        <div className="flex">
+          <BookingObjectsTable bookingObjects={bookingObjects} />
+          <BookingCalendarScrollContainer
+            ref={scrollRef}
+            updateVisibleMonthAndYear={updateVisibleMonthAndYear}
             updateIsTodayView={setIsTodayView}
             updateScrollState={updateScrollState}
           >
-        <BookingCalendarTable
-            months={months}
-            days={days}
-            daysWithStatus={daysWithStatus}
-            bookingObjects={bookingObjects}
-            currentDate={new Date()}
-            bookingCalendarWrapperRef={bookingCalendarWrapperRef}
-          />
-        </BookingCalendarScrollContainer>
-      </div>
+            <BookingCalendarTable
+              months={months}
+              days={days}
+              daysWithStatus={daysWithStatus}
+              bookingObjects={bookingObjects}
+              currentDate={new Date()}
+              bookingCalendarWrapperRef={bookingCalendarWrapperRef}
+            />
+          </BookingCalendarScrollContainer>
+        </div>
         <Legend colorSettings={colorSettings} />
-        </BookingObjectsProvider>
-       
+      </BookingObjectsProvider>
+
     </div>
   );
 

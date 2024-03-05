@@ -13,7 +13,13 @@ const BookingObjectsTable: React.FC<BookingObjectsTableProps> = ({ bookingObject
           {bookingObjects.map((bookingObject) => (
             <tr key={bookingObject.objId} className="border-b-4 border-white">
               <td className="object-titles h-9 min-w-9 text-left text-sm p-1 m-0 border-r-2 border-l-0 pl-2 border-white bg-slate-100 truncate">
-                {bookingObject.title} {/* Assuming each bookingObject has a title */}
+                {bookingObject.extLink ? (
+                  <a href={bookingObject.extLink} target="_blank" rel="noopener noreferrer">
+                    {bookingObject.title} 
+                  </a>
+                ) : (
+                  bookingObject.title
+                )}
               </td>
             </tr>
           ))}

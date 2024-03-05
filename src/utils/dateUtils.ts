@@ -1,5 +1,5 @@
 // dateUtils.ts
-import { eachDayOfInterval, startOfMonth, endOfMonth, format, parseISO, startOfYear, endOfYear, isSameDay, isWithinInterval } from 'date-fns';
+import { eachDayOfInterval, startOfMonth, endOfMonth, format, parseISO, startOfYear, endOfYear, isSameDay, isWithinInterval, subMonths, addMonths } from 'date-fns';
 import { de } from 'date-fns/locale';
 import { BookingObject, CalendarRange, DateRangeType, DayStatus } from "../types";
 // import { useBookingObjects } from "../context/BookingObjectsContext";
@@ -55,14 +55,35 @@ export const generateCalendarDays = (calendarRange: CalendarRange): Date[] => {
   }
 
   const days = eachDayOfInterval({ start, end });
-  // console.log(days)
   return days;
+};
+
+// Check if the previous month relative to a given year and month is within the calendar range
+export const isPrevMonthWithinRange = (year: number, month: number, calendarRange: CalendarRange): boolean => {
+  const start = calendarRange.startDate ? parseISO(calendarRange.startDate) : startOfYear(new Date());
+  const end = calendarRange.endDate ? parseISO(calendarRange.endDate) : endOfYear(new Date());
+  
+  const dateToCheck = new Date(year, month); // Convert year and month to a Date object, month is 0-indexed
+  const prevMonthStart = startOfMonth(subMonths(dateToCheck, 1));
+  const prevMonthEnd = endOfMonth(subMonths(dateToCheck, 1));
+  
+  return isWithinInterval(prevMonthStart, { start, end }) || isWithinInterval(prevMonthEnd, { start, end });
+};
+
+// Check if the next month relative to a given year and month is within the calendar range
+export const isNextMonthWithinRange = (year: number, month: number, calendarRange: CalendarRange): boolean => {
+  const start = calendarRange.startDate ? parseISO(calendarRange.startDate) : startOfYear(new Date());
+  const end = calendarRange.endDate ? parseISO(calendarRange.endDate) : endOfYear(new Date());
+  
+  const dateToCheck = new Date(year, month - 2); // Convert year and month to a Date object, month is 0-indexed
+  const nextMonthStart = startOfMonth(addMonths(dateToCheck, 1));
+  const nextMonthEnd = endOfMonth(addMonths(dateToCheck, 1));
+  
+  return isWithinInterval(nextMonthStart, { start, end }) || isWithinInterval(nextMonthEnd, { start, end });
 };
 
 
 
-// const blockedRangeDatesLookup: { [key: string]: BlockedDateRangeInfo[] } = {};
- 
 const isBlockedDateRange = (
   bookingObject: BookingObject,
   date: Date
@@ -139,6 +160,28 @@ const isDateType = (bookingObject: BookingObject, date: Date, type: 'arrival' | 
 };
 
 
+const hasDepartureDays = (bookingObject: BookingObject): boolean => {
+  if (!bookingObject) {
+    return false;
+  }
+  // Access the departure days; use a fallback to an empty array if undefined
+  const departureDates = bookingObject.dayTypes.departureDays.dates || [];
+  // Check if the array of departure dates is not empty
+  return departureDates.length > 0;
+};
+
+
+const hasArrivalDays = (bookingObject: BookingObject): boolean => {
+  if (!bookingObject) {
+    return false;
+  }
+  // Access the departure days; use a fallback to an empty array if undefined
+  const arrivalDates = bookingObject.dayTypes.arrivalDays.dates || [];
+  // Check if the array of departure dates is not empty
+  return arrivalDates.length > 0;
+};
+
+
 const hasExclusiveDateTypes = (bookingObject: BookingObject, type: 'arrival' | 'departure'): boolean => {
   if (!bookingObject) {
     return false;
@@ -163,19 +206,17 @@ const hasExclusiveDateTypes = (bookingObject: BookingObject, type: 'arrival' | '
 };
 
 
-
-
 export const preCalculateDaysStatusFlags = (bookingObjects: BookingObject[], days: Date[]): DayStatus[][] => {
     return bookingObjects.map((bookingObject) => 
       days.map((day) => {
 
         const blockedInfo = isBlockedDateRange(bookingObject, day);
         const hasExclusiveArrivalDates = hasExclusiveDateTypes(bookingObject, 'arrival');
-        const hasExclusiveDepartureDates = hasExclusiveDateTypes(bookingObject, 'arrival');
+        const hasExclusiveDepartureDates = hasExclusiveDateTypes(bookingObject, 'departure');
         const isArrivalDay = isDateType(bookingObject, day, 'arrival');
         const isDepartureDay = isDateType(bookingObject, day, 'departure');
 
-        const isDisabled = (hasExclusiveDepartureDates && !isDepartureDay) || (hasExclusiveArrivalDates && !isArrivalDay);
+        const isDisabled = (hasExclusiveDepartureDates && !isDepartureDay) || hasExclusiveDepartureDates && hasExclusiveArrivalDates && !isArrivalDay;
      
         return {
           isUnavailable: blockedInfo.isUnavailable,
@@ -185,6 +226,7 @@ export const preCalculateDaysStatusFlags = (bookingObjects: BookingObject[], day
           isUnavailEnd: blockedInfo.isUnavailEnd,
           isDisabled: isDisabled,
           isArrival: isDateType(bookingObject, day, 'arrival'),
+          isOnlyDeparture: !hasDepartureDays(bookingObject) && hasArrivalDays( bookingObject) && !isDateType(bookingObject, day, 'arrival'),
           isDeparture: isDateType(bookingObject, day, 'departure'),
         };
       })

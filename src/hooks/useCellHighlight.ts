@@ -3,7 +3,7 @@ import { CellCoordinates } from "../types";
 
 export const useCellHighlighting = (bookingCalendarWrapperRef: RefObject<HTMLDivElement>) => {
   // const [cellHlClasses, setCellHlClasses] = useState<Array<{ rowIndex: number; colIndex: number; classes: string[] }>>([]);
-  const [cellClasses, setCellClasses] = useState<Array<{ rowIndex: number; colIndex: number; classes: string[] }>>([]);
+  // const [cellClasses, setCellClasses] = useState<Array<{ rowIndex: number; colIndex: number; classes: string[] }>>([]);
   const [hoveredCell, setHoveredCell] = useState<CellCoordinates | null>(null);
 
 
@@ -29,28 +29,10 @@ export const useCellHighlighting = (bookingCalendarWrapperRef: RefObject<HTMLDiv
 
 
 
-  const setHighlightedRange = (rowIndex: number, colIndex1: number, colIndex2: number): void => {
-    const startColIndex = Math.min(colIndex1, colIndex2);
-    const endColIndex = Math.max(colIndex1, colIndex2);
-
-    console.log(startColIndex + " " + endColIndex);
-    const newCellClasses = [...cellClasses];
-
-    for (let colIndex = startColIndex; colIndex <= endColIndex; colIndex++) {
-      const cellEntryIndex = newCellClasses.findIndex(entry => entry.rowIndex === rowIndex && entry.colIndex === colIndex);
-
-      if (cellEntryIndex !== -1) {
-        newCellClasses[cellEntryIndex].classes = ['is-selected'];
-      } else {
-        newCellClasses.push({ rowIndex, colIndex, classes: ['is-selected'] });
-      }
-    }
-
-    setCellClasses(newCellClasses);
-  };
-
 
   const handleCellHover = (rowIndex: number, colIndex: number, selectedCell:CellCoordinates, secondSelectedCell:CellCoordinates, isAvailable: boolean) => {
+    
+    
     
     if (selectedCell && !secondSelectedCell && isAvailable) {
 
@@ -111,7 +93,7 @@ export const useCellHighlighting = (bookingCalendarWrapperRef: RefObject<HTMLDiv
     isCellInRange,
     hoveredCell,
     setHoveredCell,
-    setHighlightedRange,
+
     handleCellHover,
   };
 };

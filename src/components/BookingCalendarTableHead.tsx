@@ -21,8 +21,8 @@ const BookingCalendarTableHead: React.FC<BookingCalendarTableHeadProps> = ({ mon
             // Check if the last moment of the month is before the current date and time
             const isInPast = isBefore(lastMomentOfMonth, new Date());
           return (
-            <th id={`month-${year}-${month + 1}`} key={index} colSpan={count} className={`p-1 h-10 border-t-0 border-b-4 border-r-2 border-l-2 border-white bg-slate-100${isInPast ? ' opacity-30' : ''}`}>
-              <div className="sticky left-3 inline-block text-sm">{getMonthName(year, month)} {year}</div>
+            <th id={`month-${year}-${month + 1}`} key={index} colSpan={count} className={`p-1 h-10 border-t-0 border-b-4 border-r-2 border-l-2 border-white bg-slate-100 text-left md:text-center${isInPast ? ' opacity-30' : ''}`}>
+              <div className="sticky left-3 inline-block text-sm ">{getMonthName(year, month)} {year}</div>
             </th>
           )
         })}

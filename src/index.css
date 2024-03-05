@@ -18,12 +18,14 @@
   -moz-osx-font-smoothing: grayscale;
   overflow: hidden;
   --day-available: #00FF00; /* Replace with default or fallback colors */
+  --day-arrival: #006600; /* Replace with default or fallback colors */
+  --day-departure: #006600; /* Replace with default or fallback colors */
   --day-unavailable: #FF0000;
   --day-onrequest: #FFFF00;
   --day-closed: #aaa;
   --day-booked: #00ff;
-  --day-hover: hsl(120, 100%, 20%);
-  --day-selected: hsl(120, 100%, 20%);
+  --day-hover: rgba(0, 102, 0, 0.5);
+  --day-selected: #006600;
 }
 
 a {
@@ -129,17 +131,40 @@ button:focus-visible {
   clip-path: polygon(100% 0, 0% 100%, 100% 100%);
 }
 
+/* .cell:hover .cell-marker{
+  background-color: var(--day-hover);
+  clip-path: polygon(100% 0, 0% 100%, 100% 100%);
+} */
 
+.cell.is-start {
+  background-color: transparent!important;
+}
+
+
+.cell.is-start .cell-marker{
+  background-color: var(--day-selected);
+  clip-path: polygon(100% 0, 0% 100%, 100% 100%);
+}
+
+
+.cell.is-end .cell-marker{
+  background-color: var(--day-selected);
+  clip-path: polygon(0 0, 0% 100%, 100% 0);
+}
 
 
 .is-available.is-departure:not(.is-unavailable) .cell-marker {
-  background-color: var(--day-available);
-  clip-path: polygon(100% 0%, 100% 50%, 100% 100%, 80% 100%, 40% 50%, 80% 0);
+  background-color: var(--day-departure);
+  /* clip-path: polygon(100% 0%, 100% 50%, 100% 100%, 80% 100%, 40% 50%, 80% 0); */
+  clip-path: polygon(0 0, 0% 100%, 100% 0);
+
 }
 
 .is-available.is-arrival:not(.is-unavailable) .cell-marker {
-  background-color: var(--day-available);
-  clip-path: polygon(0% 0%, 20% 0, 60% 50%, 20% 100%, 0% 100%);
+  background-color: var(--day-arrival);
+  /* clip-path: polygon(0% 0%, 20% 0, 60% 50%, 20% 100%, 0% 100%); */
+  clip-path: polygon(100% 0, 0% 100%, 100% 100%);
+
 
 }
 

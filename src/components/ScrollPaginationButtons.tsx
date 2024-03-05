@@ -8,6 +8,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "./ui/tooltip"
+import { CalendarRange } from "@/types";
+import { isNextMonthWithinRange, isPrevMonthWithinRange } from "@/utils/dateUtils";
 
 // Adjust the props interface to include a ref to the scroll container
 interface ScrollPaginationProps {
@@ -17,6 +19,7 @@ interface ScrollPaginationProps {
   isTodayView: boolean;
   canScrollLeft: boolean;
   canScrollRight: boolean;
+  calendarRange: CalendarRange
 }
 
 const ScrollPaginationButtons: React.FC<ScrollPaginationProps> = ({
@@ -25,12 +28,14 @@ const ScrollPaginationButtons: React.FC<ScrollPaginationProps> = ({
   visibleYear,
   isTodayView,
   canScrollLeft,
-  canScrollRight
+  canScrollRight,
+  calendarRange
 }) => {
 
-  useEffect(() => { 
+  useEffect(() => {
     scrollRef.current?.scrollToCurrentDay();
   }, []);
+
 
   const scrollToCurrentDay = () => {
     scrollRef.current?.scrollToCurrentDay();
@@ -45,31 +50,51 @@ const ScrollPaginationButtons: React.FC<ScrollPaginationProps> = ({
   };
 
   const getNextMonth = (year: number, month: number) => {
-    const nextMonth = new Date(year, month, 0); // Getting the last day of the current month
-    return { year: nextMonth.getFullYear(), month: nextMonth.getMonth() + 2 }; // JavaScript months are 0-indexed, adjust for next month
+    let nextYear = month === 12 ? year + 1 : year;
+    let nextMonth = month === 12 ? 1 : month + 1;
+    return { year: nextYear, month: nextMonth };
   };
 
+
   const getPrevMonth = (year: number, month: number) => {
-    const prevMonth = new Date(year, month - 2, 1); // Setting to one month before the current month
-    return { year: prevMonth.getFullYear(), month: prevMonth.getMonth() + 1 }; // Adjust for 0-indexed months
+    let prevYear = month === 1 ? year - 1 : year;
+    let prevMonth = month === 1 ? 12 : month - 1;
+    return { year: prevYear, month: prevMonth };
   };
 
   const scrollToNextMonth = () => {
     const { year, month } = getNextMonth(visibleYear, visibleMonth);
-    scrollRef.current?.scrollToMonth(year, month);
+    if (isNextMonthWithinRange(year, month, calendarRange)) {
+      scrollRef.current?.scrollToMonth(year, month);
+    }
+    console.log('Next: '+month)
   };
+
 
   const scrollToPrevMonth = () => {
     const { year, month } = getPrevMonth(visibleYear, visibleMonth);
-    scrollRef.current?.scrollToMonth(year, month);
+    if (isPrevMonthWithinRange(year, month, calendarRange)) {
+      scrollRef.current?.scrollToMonth(year, month);
+    }
+    console.log('Prev: '+month)
   };
+
+  const prevDisabled = () => {
+    const { year, month } = getPrevMonth(visibleYear, visibleMonth);
+    return isPrevMonthWithinRange(year, month, calendarRange)
+  }
+
+  const nextDisabled = () => {
+    const { year, month } = getNextMonth(visibleYear, visibleMonth);
+    return isNextMonthWithinRange(year, month, calendarRange)
+  }
 
   return (
     <div className="py-2 flex justify-end items-center gap-2 mr-1">
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>
-            <Button variant="secondary" size="sm" onClick={scrollToPrevMonth} disabled={!canScrollLeft}><FlowbiteChevronDoubleLeftSolid /></Button>
+            <Button variant="secondary" size="sm" onClick={scrollToPrevMonth} disabled={!prevDisabled()}><FlowbiteChevronDoubleLeftSolid /></Button>
           </TooltipTrigger>
           <TooltipContent>
             <p>vorheriger Monat</p>
@@ -99,7 +124,7 @@ const ScrollPaginationButtons: React.FC<ScrollPaginationProps> = ({
 
         <Tooltip>
           <TooltipTrigger asChild>
-            <Button variant="secondary" size="sm" onClick={scrollToNextMonth} disabled={!canScrollRight}><FlowbiteChevronDoubleRightSolid /></Button>
+            <Button variant="secondary" size="sm" onClick={scrollToNextMonth} disabled={!nextDisabled()}><FlowbiteChevronDoubleRightSolid /></Button>
           </TooltipTrigger>
           <TooltipContent>
             <p>nächster Monat</p>

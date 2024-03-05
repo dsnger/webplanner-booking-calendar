@@ -24,8 +24,9 @@ const BookingCalenderTableBody: React.FC<TableBodyProps> = ({
   bookingCalendarWrapperRef
   }) => {
   
+  const { isCellInRange, handleCellHover} = useCellHighlighting(bookingCalendarWrapperRef);
   const { selectedCell, secondSelectedCell, cellClasses, handleCellSelection } = useCellSelection(bookingCalendarWrapperRef,daysWithStatus);
-  const { isCellInRange, handleCellHover } = useCellHighlighting(bookingCalendarWrapperRef);
+ 
   const tableBodyRef = useRef<HTMLTableSectionElement>(null);
 
 

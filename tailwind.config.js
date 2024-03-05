@@ -6,6 +6,7 @@ module.exports = {
   ],
   prefix: "",
   theme: {
+   
     container: {
       center: true,
       padding: "2rem",
@@ -14,6 +15,15 @@ module.exports = {
       },
     },
     extend: {
+      colors: {
+        'day-available': 'var(--day-available)',
+        'day-closed': 'var(--day-closed)',
+        'day-unavailable': 'var(--day-unavailable)',
+        'day-onrequest': 'var(--day-onrequest)',
+        'day-booked': 'var(--day-booked)',
+        'day-hover': 'var(--day-hover)',
+        'day-selected': 'var(--day-selected)',
+      },
       keyframes: {
         "accordion-down": {
           from: { height: "0" },

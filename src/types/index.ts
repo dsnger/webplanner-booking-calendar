@@ -80,6 +80,7 @@ export interface DayStatus {
   isUnavailEnd: boolean;
   isDisabled: boolean;
   isArrival: boolean;
+  isOnlyDeparture: boolean;
   isDeparture: boolean;
 }
 

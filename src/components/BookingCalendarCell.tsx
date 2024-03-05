@@ -39,18 +39,17 @@ const BookingCalendarCell: React.FC<BookingCalendarCellProps> = React.memo(({ da
 
   const cellClassNames = [
     // 'cell cell-day h-9 min-w-9',
-    isDisabled && !isHoveredCell ? 'is-disabled bg-gray-200 text-gray-30' : 'bg-green-300 hover:bg-green-500 text-green-600',
-    !isDisabled ? 'cursor-pointer' : '',
+    isDisabled && !isHoveredCell ? 'is-disabled bg-gray-200 text-gray-30' : 'bg-day-available hover:bg-day-hover hover:cursor-pointer',
     // isToday ? 'bg-green-100/50 text-green-600' : '',
     isUnavailable ? 'is-unavailable border-l-0' : '',
-    isUnavailStart ? 'is-unavailable is-unavail-start rounded-md' : '',
+    isUnavailStart ? 'is-unavailable is-unavail-start' : '',
     type ? `is-${type}` : '',
-    isUnavailEnd ? 'is-unavailable is-unavail-end rounded-md' : '',
-    isArrival ? 'is-available is-arrival hover:cursor-pointer hover:bg-green-600/50' : '',
-    isDeparture ? 'is-available is-departure hover:cursor-pointer hover:bg-green-600/50' : '',
-    isHoveredCell ? 'bg-green-600/50' : '',
+    isUnavailEnd ? 'is-unavailable is-unavail-end' : '',
+    isArrival ? 'is-available is-arrival hover:cursor-pointer hover:bg-day-hover' : '',
+    isDeparture ? 'is-available is-departure hover:cursor-pointer hover:bg-day-hover' : '',
+    isHoveredCell ? 'bg-day-hover' : '',
     isInPast ? 'opacity-30' : '',
-    isSelected ? 'bg-green-600 border-r-0 border-l-0 ' : ''
+    isSelected ? 'bg-day-selected border-r-0 border-l-0 ' : ''
   ].filter(Boolean).join(' ');
 
   let message = '';
@@ -65,34 +64,38 @@ const BookingCalendarCell: React.FC<BookingCalendarCellProps> = React.memo(({ da
 
   return (
     <td
-      className={`border-l border-white p-0 m-0 cell-day h-9 min-w-9 ${isLastDayOfMonth(date) ? 'last-of-month border-r-2' : ''} ${cellClassNames} ${selectClasses}`}
+      className={`cell border-l border-white p-0 m-0 cell-day h-9 min-w-9 ${isLastDayOfMonth(date) ? 'last-of-month border-r-2' : ''} ${cellClassNames} ${selectClasses}`}
       onClick={onClick}
       onMouseEnter={onMouseEnter}
       data-object-id={objId}
       data-date-string={formatDate(date)}
     >
-     {tooltip || message != '' ? (
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <div
-              className={`cell-marker w-full h-full `}
-            >
-              {content}
-            </div>
-          </TooltipTrigger>
-          <TooltipContent>
-              <p>{tooltip}{ message }</p>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
-    ) : (
-      <div
-        className={`cell-marker w-full h-full`}
-      >
-        {content}
-      </div>
-    )}
+      {tooltip || message ? (
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div className="h-8 min-w-8 m-0 p-0 flex">
+                <div
+                  className={`cell-marker w-full h-full `}
+                >
+                  {content}
+                </div>
+              </div>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>{tooltip}{message}</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      ) : (
+        <div className="h-8 min-w-8 m-0 p-0 flex">
+          <div
+            className={`cell-marker w-full h-full`}
+          >
+            {content}
+          </div>
+        </div>
+      )}
     </td>
   );
 });
