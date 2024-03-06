@@ -137,7 +137,7 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ fewoOwnID, lang }): J
     return (
       <div className="w-[60%] m-auto">
         <Progress value={progress} max={100} />
-        {progress < 100 ? <p className="mt-1">Kalenderdaten werden geladen...</p> : <p className="mt-1">Fertig!</p>}
+        <p className="mt-1">Kalenderdaten werden geladen...</p>
       </div>
     );
   }
