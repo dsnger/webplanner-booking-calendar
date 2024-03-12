@@ -78,10 +78,13 @@ export interface DayStatus {
   type: DateRangeType | null;
   isUnavailStart: boolean;
   isUnavailEnd: boolean;
+  isUnavailStartHalf: boolean;
+  isUnavailEndHalf: boolean;
   isDisabled: boolean;
   isArrival: boolean;
-  isOnlyDeparture: boolean;
+  hasDepartureDays: boolean;
   isDeparture: boolean;
+  hasArrivalDays: boolean;
 }
 
 

@@ -93,12 +93,16 @@ const isBlockedDateRange = (
     tooltip: string | null,
     isUnavailStart: boolean,
     isUnavailEnd: boolean
+    isUnavailStartHalf: boolean,
+    isUnavailEndHalf: boolean
 
 } => {
   
   let isUnavailable = false;
   let isUnavailStart = false;
   let isUnavailEnd = false;
+  let isUnavailStartHalf = false;
+  let isUnavailEndHalf = false;
   let rangeType: DateRangeType | null = null;
   let rangeTooltip: string | null = null;
 
@@ -109,6 +113,8 @@ const isBlockedDateRange = (
       tooltip: null,
       isUnavailStart,
       isUnavailEnd,
+      isUnavailStartHalf,
+      isUnavailEndHalf
     };
   }
 
@@ -118,19 +124,34 @@ const isBlockedDateRange = (
     
     if (isSameDay(date, startDay)) {
       isUnavailStart = true; 
+      isUnavailStartHalf = range.starthalf; 
       rangeType = range.type as DateRangeType;
+    
     }
-
+    
     if (isSameDay(date, endDay)) {
       isUnavailEnd = true;  
-      //rangeType = range.type as DateRangeType;
+      isUnavailEndHalf = range.endhalf;
+      if (!isUnavailStart) { 
+        rangeType = range.type as DateRangeType;
+      }
     }
 
+
     if (isWithinInterval(date, { start: startDay, end: endDay })) {
+      // Do not set isUnavailable if it's a start half-day or an end half-day
+      if (!((isUnavailStart && isUnavailStartHalf) || (isUnavailEnd && isUnavailEndHalf))) {
+        isUnavailable = true;
+        rangeTooltip = range.tooltip;
+        if (!isUnavailStart && !isUnavailEnd) {
+          rangeType = range.type as DateRangeType;
+        }
+      }
+      return true; // Found an interval that affects availability, no need to search further
+    }
+
+    if (isUnavailStart && isUnavailEnd) {
       isUnavailable = true;
-      rangeType = range.type as DateRangeType;
-      rangeTooltip = range.tooltip;
-      return true;
     }
 
     return false; // Continue searching if none of the conditions are met
@@ -142,6 +163,8 @@ const isBlockedDateRange = (
     tooltip: rangeTooltip,
     isUnavailStart,
     isUnavailEnd,
+    isUnavailStartHalf,
+    isUnavailEndHalf
   };
 };
 
@@ -220,14 +243,17 @@ export const preCalculateDaysStatusFlags = (bookingObjects: BookingObject[], day
      
         return {
           isUnavailable: blockedInfo.isUnavailable,
+          isUnavailStartHalf: blockedInfo.isUnavailStartHalf,
+          isUnavailEndHalf: blockedInfo.isUnavailEndHalf,
           type: blockedInfo.type,
           tooltip: blockedInfo.tooltip,
           isUnavailStart: blockedInfo.isUnavailStart,
           isUnavailEnd: blockedInfo.isUnavailEnd,
           isDisabled: isDisabled,
           isArrival: isDateType(bookingObject, day, 'arrival'),
-          isOnlyDeparture: !hasDepartureDays(bookingObject) && hasArrivalDays( bookingObject) && !isDateType(bookingObject, day, 'arrival'),
+          hasDepartureDays: hasDepartureDays(bookingObject),
           isDeparture: isDateType(bookingObject, day, 'departure'),
+          hasArrivalDays: hasArrivalDays(bookingObject),
         };
       })
     );

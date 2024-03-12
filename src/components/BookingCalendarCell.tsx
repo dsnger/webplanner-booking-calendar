@@ -25,6 +25,8 @@ interface BookingCalendarCellProps {
     type: DateRangeType | null;
     isUnavailStart: boolean;
     isUnavailEnd: boolean;
+    isUnavailStartHalf: boolean;
+    isUnavailEndHalf: boolean;
     isDisabled: boolean;
     isArrival: boolean;
     isDeparture: boolean;
@@ -35,16 +37,18 @@ interface BookingCalendarCellProps {
 
 const BookingCalendarCell: React.FC<BookingCalendarCellProps> = React.memo(({ date, objId, isSelected, selectClasses, tooltip, content, onClick, onMouseEnter, statusFlags }) => {
 
-  const { isUnavailable, type, isUnavailStart, isUnavailEnd, isDisabled, isArrival, isDeparture, isHoveredCell, isInPast } = statusFlags;
+  const { isUnavailable, type, isUnavailStart, isUnavailEnd, isUnavailStartHalf, isUnavailEndHalf, isDisabled, isArrival, isDeparture, isHoveredCell, isInPast } = statusFlags;
 
   const cellClassNames = [
     // 'cell cell-day h-9 min-w-9',
-    isDisabled && !isHoveredCell ? 'is-disabled bg-gray-200 text-gray-30' : 'bg-day-available hover:bg-day-hover hover:cursor-pointer',
+    isDisabled && !isHoveredCell ? 'is-disabled bg-gray-200 text-gray-30' : (!isUnavailable ? 'bg-day-available hover:bg-day-hover hover:cursor-pointer' : ''),
     // isToday ? 'bg-green-100/50 text-green-600' : '',
-    isUnavailable ? 'is-unavailable border-l-0' : '',
-    isUnavailStart ? 'is-unavailable is-unavail-start' : '',
+    isUnavailable ? 'is-unavailable border-l-0 hover:cursor-default' : '',
+    isUnavailStart && !isUnavailStartHalf ? 'is-unavailable is-unavail-start' : '',
+    isUnavailStartHalf && !isUnavailEndHalf && !isSelected ? 'is-unavailable is-unavail-starthalf' : '',
     type ? `is-${type}` : '',
-    isUnavailEnd ? 'is-unavailable is-unavail-end' : '',
+    isUnavailEnd && !isUnavailEndHalf ? 'is-unavailable is-unavail-end' : '',
+    isUnavailEndHalf && !isUnavailStartHalf && !isSelected ? 'is-unavailable is-unavail-endhalf' : '',
     isArrival ? 'is-available is-arrival hover:cursor-pointer hover:bg-day-hover' : '',
     isDeparture ? 'is-available is-departure hover:cursor-pointer hover:bg-day-hover' : '',
     isHoveredCell ? 'bg-day-hover' : '',

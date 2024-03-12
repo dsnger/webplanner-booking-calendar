@@ -49,11 +49,11 @@ export const useCellSelection = (bookingCalendarWrapperRef: RefObject<HTMLDivEle
     
     const clickedDateString = formatDate(clickedDate);
       
-      //selection done or click in a different row
+    //selection done or click in a different row
     if (selectedCell && secondSelectedCell || rowIndex !== selectedCell?.rowIndex) {
         
         //if first selection is departure return null
-        if (isDepartureDay(rowIndex, colIndex) || (isOnlyDepartureDay(rowIndex, colIndex) && !isArrivalDay(rowIndex, colIndex))) return null;
+        if (isDepartureDay(rowIndex, colIndex) || (hasArrivalDays(rowIndex, colIndex) && !isArrivalDay(rowIndex, colIndex))) return null;
       
         setSelectedCell({ rowIndex, colIndex });
         setSecondSelectedCell(null);
@@ -67,6 +67,10 @@ export const useCellSelection = (bookingCalendarWrapperRef: RefObject<HTMLDivEle
       } else if (selectedCell && (rowIndex === selectedCell.rowIndex) && (colIndex !== selectedCell.colIndex)) {
         
         if (areUnavailableDaysInRange(selectedCell.colIndex, colIndex, rowIndex) === true) {
+          
+          //if first selection is departure return null
+          if (isDepartureDay(rowIndex, colIndex) || (hasArrivalDays(rowIndex, colIndex) && !isArrivalDay(rowIndex, colIndex))) return null;
+       
           setSelectedCell({ rowIndex, colIndex });
           setSecondSelectedCell(null);
           setCellClasses([{ rowIndex, colIndex, classes: ['is-selected','is-start'] }]);
@@ -76,7 +80,7 @@ export const useCellSelection = (bookingCalendarWrapperRef: RefObject<HTMLDivEle
         } else {
                
           //if second selection is arrival
-          if (isArrivalDay(rowIndex, colIndex)) return null;
+          if (isArrivalDay(rowIndex, colIndex) || (hasDepartureDays(rowIndex,colIndex) && !isDepartureDay(rowIndex,colIndex))) return null;
 
           if (selectedDayStart != null && clickedDate > selectedDayStart) {
             setSecondSelectedCell({ rowIndex, colIndex });
@@ -87,11 +91,11 @@ export const useCellSelection = (bookingCalendarWrapperRef: RefObject<HTMLDivEle
 
           //console.log('second ' + clickedDateString)
         
+          //reverse selection
           if (selectedDayStart != null && clickedDate < selectedDayStart) {
 
-            if (isDepartureDay(rowIndex, colIndex) && !isOnlyDepartureDay(rowIndex, colIndex)) {
-              return false;
-            }
+            if (isDepartureDay(rowIndex, colIndex) || (hasArrivalDays(rowIndex, colIndex) && !isArrivalDay(rowIndex, colIndex))) return null;
+            
             setSecondSelectedCell({ rowIndex, colIndex });
             // setCellClasses([{ rowIndex, colIndex, classes: ['is-selected', 'is-start'] }]);
             setHighlightedRange(selectedCell.rowIndex, selectedCell.colIndex, colIndex);
@@ -107,6 +111,9 @@ export const useCellSelection = (bookingCalendarWrapperRef: RefObject<HTMLDivEle
         
       //gleiche Zeile, gleicher Tag
       } else if (selectedCell && (rowIndex === selectedCell.rowIndex) && (colIndex === selectedCell.colIndex) ) {
+        
+        if (isArrivalDay(rowIndex, colIndex) || (hasDepartureDays(rowIndex, colIndex) && !isDepartureDay(rowIndex, colIndex))) return null;
+      
         //same day twice click
         setSecondSelectedCell({ rowIndex, colIndex });
         setSelectedDayEnd(clickedDate);
@@ -117,8 +124,8 @@ export const useCellSelection = (bookingCalendarWrapperRef: RefObject<HTMLDivEle
     } else if ((selectedCell === null && secondSelectedCell === null) || secondSelectedCell !== null) {
       
         //if first selection is departure return null
-        if (isDepartureDay(rowIndex, colIndex) && !isOnlyDepartureDay(rowIndex, colIndex)) return null;
-      
+        if (isDepartureDay(rowIndex, colIndex) || (hasArrivalDays(rowIndex, colIndex) && !isArrivalDay(rowIndex, colIndex))) return null;
+    
         setSelectedCell({ rowIndex, colIndex });
         setCellClasses([{ rowIndex, colIndex, classes: ['is-selected','is-start'] }]);
         setSelectedDayStart(clickedDate);
@@ -172,6 +179,7 @@ export const useCellSelection = (bookingCalendarWrapperRef: RefObject<HTMLDivEle
 
   const isSelectable = (clickedDate: Date, rowIndex: number, colIndex: number) => {
       
+    // console.log(rowIndex + ' ' + colIndex)
     //if is in past
     if (isBefore(endOfDay(clickedDate), new Date())) return false;
     
@@ -197,17 +205,6 @@ export const useCellSelection = (bookingCalendarWrapperRef: RefObject<HTMLDivEle
     return false;
   }
   
-
-
-   const isOnlyDepartureDay = (rowIndex: number, colIndex: number) => {
-    const day = daysWithStatus[rowIndex]?.[colIndex];
-    if (day && day.isOnlyDeparture === true) { 
-      return true;
-    }
-    return false;
-   }
-
-  
    const isDepartureDay = (rowIndex: number, colIndex: number) => {
     const day = daysWithStatus[rowIndex]?.[colIndex];
     if (day && day.isDeparture === true) { 
@@ -215,9 +212,28 @@ export const useCellSelection = (bookingCalendarWrapperRef: RefObject<HTMLDivEle
     }
     return false;
    }
+  
+  
+   const hasDepartureDays = (rowIndex: number, colIndex: number) => {
+    const day = daysWithStatus[rowIndex]?.[colIndex];
+    if (day && day.hasDepartureDays === true) { 
+      return true;
+    }
+    return false;
+   }
 
   
-   const setHighlightedRange = (rowIndex: number, colIndex1: number, colIndex2: number): void => {
+   const hasArrivalDays = (rowIndex: number, colIndex: number) => {
+    const day = daysWithStatus[rowIndex]?.[colIndex];
+    if (day && day.hasArrivalDays === true) { 
+      return true;
+    }
+    return false;
+   }
+
+
+  
+  const setHighlightedRange = (rowIndex: number, colIndex1: number, colIndex2: number): void => {
   const startColIndex = Math.min(colIndex1, colIndex2);
   const endColIndex = Math.max(colIndex1, colIndex2);
 

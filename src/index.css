@@ -138,12 +138,14 @@ button:focus-visible {
 
 .cell.is-start {
   background-color: transparent!important;
+
 }
 
 
 .cell.is-start .cell-marker{
   background-color: var(--day-selected);
   clip-path: polygon(100% 0, 0% 100%, 100% 100%);
+  margin-right: -2px!important;
 }
 
 
@@ -173,16 +175,18 @@ button:focus-visible {
   z-index: 1;
 }
 
-.is-unavail-start:not(.is-disabled) .cell-marker{
+.is-unavail-starthalf .cell-marker{
   clip-path: polygon(100% 0, 0% 100%, 100% 100%);
+  margin-right: -1px;
 }
 
-.is-unavail-end:not(.is-disabled) .cell-marker{
+.is-unavail-endhalf .cell-marker{
   clip-path: polygon(0 0, 0% 100%, 100% 0);
+  margin-left: -1px;
 }
 
 
-.is-unavailable.is-booked .cell-marker {
+.is-unavailable.is-booked:not(.is-start) .cell-marker {
   background-color: var(--day-booked);
 }
 
