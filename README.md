@@ -29,9 +29,9 @@ http://webplanner.smilefx.de/bookingcalendar/
 Und der Modus Nacheinander-Klicken oder Einmal-klick und direkt Formular öffnen muss im Script setzbar sein. Manche Kunden bieten Party-Locations oä an, die man nur einen Tag bucht.
 - [x] Kalender-Auswahl übergeben
 - [x] Mobile Support / Responsiv
-- [ ] Verlinkung der Objekte
-- [ ] Monate blättern
-- [ ] Halber geblockter Tag, trotzdem Anreisetag
+- [x] Verlinkung der Objekte
+- [x] Monate blättern
+- [x] Halber geblockter Tag, trotzdem Anreisetag
 
 
 
