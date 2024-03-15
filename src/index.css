@@ -145,7 +145,7 @@ button:focus-visible {
 .cell.is-start .cell-marker{
   background-color: var(--day-selected);
   clip-path: polygon(100% 0, 0% 100%, 100% 100%);
-  margin-right: -2px!important;
+  margin-right: -3px!important;
 }
 
 
@@ -166,8 +166,6 @@ button:focus-visible {
   background-color: var(--day-arrival);
   /* clip-path: polygon(0% 0%, 20% 0, 60% 50%, 20% 100%, 0% 100%); */
   clip-path: polygon(100% 0, 0% 100%, 100% 100%);
-
-
 }
 
 .is-unavailable .cell-marker {

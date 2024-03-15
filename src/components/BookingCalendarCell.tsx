@@ -41,7 +41,7 @@ const BookingCalendarCell: React.FC<BookingCalendarCellProps> = React.memo(({ da
 
   const cellClassNames = [
     // 'cell cell-day h-9 min-w-9',
-    isDisabled && !isHoveredCell ? 'is-disabled bg-gray-200 text-gray-30' : (!isUnavailable ? 'bg-day-available hover:bg-day-hover hover:cursor-pointer' : ''),
+    isDisabled && !isHoveredCell ? 'is-disabled bg-gray-200 text-gray-30' : (!isUnavailable || !isUnavailStartHalf || !isUnavailEndHalf  ? 'bg-day-available hover:bg-day-hover hover:cursor-pointer' : ''),
     // isToday ? 'bg-green-100/50 text-green-600' : '',
     isUnavailable ? 'is-unavailable border-l-0 hover:cursor-default' : '',
     isUnavailStart && !isUnavailStartHalf ? 'is-unavailable is-unavail-start' : '',
