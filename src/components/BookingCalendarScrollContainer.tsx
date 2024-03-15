@@ -1,9 +1,10 @@
-import { calculateMostVisibleMonth, isElementInViewport } from "@/utils/scrollUtils";
+import { VisibleMonthYear } from "@/types";
+import { calculateMostVisibleMonths, isElementInViewport } from "@/utils/scrollUtils";
 import React, { forwardRef, useRef, useImperativeHandle, useEffect } from 'react';
 
 type BookingCalendarScrollContainerProps = {
   children: React.ReactNode;
-  updateVisibleMonthAndYear: (month: number, year: number) => void;
+  updateVisibleMonthsAndYears: (months: VisibleMonthYear[]) => void;
   updateIsTodayView: (isTodayView: boolean) => void;
   updateScrollState: (scrollLeft: number, scrollWidth: number, clientWidth: number) => void;
 };
@@ -16,7 +17,7 @@ export type ScrollContainerRefs = {
   scrollToMonth: (year: number, month: number) => void;
 };
 
-const BookingCalendarScrollContainer = forwardRef<ScrollContainerRefs, BookingCalendarScrollContainerProps>(({ children, updateVisibleMonthAndYear, updateIsTodayView, updateScrollState }, ref) => {
+const BookingCalendarScrollContainer = forwardRef<ScrollContainerRefs, BookingCalendarScrollContainerProps>(({ children, updateVisibleMonthsAndYears, updateIsTodayView, updateScrollState }, ref) => {
   
   const scrollParentRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -61,6 +62,15 @@ const BookingCalendarScrollContainer = forwardRef<ScrollContainerRefs, BookingCa
 
   }));
 
+
+  
+   // Function to handle the update based on the most visible months
+   const handleUpdate = (container: HTMLElement) => {
+    const { months } = calculateMostVisibleMonths(container);
+    if (months.length > 0) {
+      updateVisibleMonthsAndYears(months);
+    }
+  };
   
 
   const handleScroll = () => {
@@ -68,10 +78,7 @@ const BookingCalendarScrollContainer = forwardRef<ScrollContainerRefs, BookingCa
     if (!container) return;
   
     // Calculate the most visible month
-    const { year, month } = calculateMostVisibleMonth(container);
-    if (year && month) {
-      updateVisibleMonthAndYear(month, year);
-    }
+    handleUpdate(container);
 
     // Check if the 'dayElement' is in the viewport
     const dayElement = container.querySelector('#isToday') as HTMLElement | null;

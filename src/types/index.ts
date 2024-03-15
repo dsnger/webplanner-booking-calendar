@@ -88,3 +88,7 @@ export interface DayStatus {
 }
 
 
+export interface VisibleMonthYear {
+  month: number;
+  year: number;
+}

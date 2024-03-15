@@ -14,15 +14,17 @@ export function isElementInViewport(el: HTMLElement, container: HTMLElement):boo
 
 
 interface MostVisibleMonthResult {
-  mostVisibleMonthID: string;
+  mostVisibleMonthsIDs: string[];
   maxVisibleWidth: number;
-  year: number;
-  month: number;
+  months: { year: number; month: number }[];
 }
 
-export function calculateMostVisibleMonth(container: HTMLElement): MostVisibleMonthResult {
+
+
+export function calculateMostVisibleMonths(container: HTMLElement): MostVisibleMonthResult {
   let maxVisibleWidth = 0;
-  let mostVisibleMonthID = '';
+  const mostVisibleMonthsIDs: string[] = [];
+  const months: { year: number; month: number }[] = [];
 
   const monthElements = container.querySelectorAll('[id^="month-"]');
   monthElements.forEach((month: Element) => {
@@ -35,16 +37,19 @@ export function calculateMostVisibleMonth(container: HTMLElement): MostVisibleMo
 
     if (visibleWidth > maxVisibleWidth) {
       maxVisibleWidth = visibleWidth;
-      mostVisibleMonthID = month.id;
+      mostVisibleMonthsIDs.length = 0; // Clear the array
+      mostVisibleMonthsIDs.push(month.id);
+    } else if (visibleWidth === maxVisibleWidth) {
+      mostVisibleMonthsIDs.push(month.id);
     }
   });
 
-  let year = 0, month = 0;
-  if (mostVisibleMonthID) {
-    const parts = mostVisibleMonthID.split('-');
-    year = parseInt(parts[1], 10);
-    month = parseInt(parts[2], 10);
-  }
+  mostVisibleMonthsIDs.forEach((id) => {
+    const parts = id.split('-');
+    const year = parseInt(parts[1], 10);
+    const month = parseInt(parts[2], 10);
+    months.push({ year, month });
+  });
 
-  return { mostVisibleMonthID, maxVisibleWidth, year, month };
+  return { mostVisibleMonthsIDs, maxVisibleWidth, months };
 }

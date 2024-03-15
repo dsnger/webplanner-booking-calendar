@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { getMonth, getYear } from 'date-fns';
 import { generateCalendarDays, preCalculateDaysStatusFlags } from "../utils/dateUtils";
-import { BookingCalendarSettings, ColorSettings } from "../types";
+import { BookingCalendarSettings, ColorSettings, VisibleMonthYear } from "../types";
 import Legend from "./Legend";
 import BookingObjectsTable from "./BookingObjectsTable"
 import BookingCalendarScrollContainer, { ScrollContainerRefs } from "./BookingCalendarScrollContainer";
@@ -37,6 +37,7 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ fewoOwnID, lang }): J
   const [error, setError] = useState<string | null>(null);
   const [calendarSettings, setCalendarSettings] = useState<BookingCalendarSettings[]>([]);
   const [visibleMonth, setVisibleMonth] = useState(new Date().getMonth() + 1); // Adjust to initial visible month based on your app's logic
+  const [visibleMonths, setVisibleMonths] = useState<VisibleMonthYear[]>([{ month: new Date().getMonth() + 1, year: new Date().getFullYear() }]);
   const [visibleYear, setVisibleYear] = useState(new Date().getFullYear());
   const [isTodayView, setIsTodayView] = useState(false)
   const [canScrollLeft, setCanScrollLeft] = useState(false);
@@ -152,11 +153,11 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ fewoOwnID, lang }): J
 
   const { colorSettings, bookingObjects } = calendarSettings[0];
 
-  // Function to update visible month and year, based on scroll position
-  const updateVisibleMonthAndYear = (month: number, year: number) => {
-    setVisibleMonth(month);
-    setVisibleYear(year);
+  // Function to update visible months and years, based on scroll position
+  const updateVisibleMonthsAndYears = (months: VisibleMonthYear[]) => {
+    setVisibleMonths(months);
   };
+
 
 
   // Function to update the scroll state
@@ -182,8 +183,7 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ fewoOwnID, lang }): J
             />
             <ScrollPaginationButtons
               scrollRef={scrollRef}
-              visibleMonth={visibleMonth}
-              visibleYear={visibleYear}
+              visibleMonths={visibleMonths}
               isTodayView={isTodayView}
               canScrollLeft={canScrollLeft}
               canScrollRight={canScrollRight}
@@ -196,7 +196,7 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ fewoOwnID, lang }): J
           <BookingObjectsTable bookingObjects={bookingObjects} />
           <BookingCalendarScrollContainer
             ref={scrollRef}
-            updateVisibleMonthAndYear={updateVisibleMonthAndYear}
+            updateVisibleMonthsAndYears={updateVisibleMonthsAndYears}
             updateIsTodayView={setIsTodayView}
             updateScrollState={updateScrollState}
           >
