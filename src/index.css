@@ -26,6 +26,7 @@
   --day-booked: #00ff;
   --day-hover: rgba(0, 102, 0, 0.5);
   --day-selected: #006600;
+  --cell-width: 2.5rem;
 }
 
 a {

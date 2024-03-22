@@ -2,11 +2,7 @@
 import { eachDayOfInterval, startOfMonth, endOfMonth, format, parseISO, startOfYear, endOfYear, isSameDay, isWithinInterval, subMonths, addMonths } from 'date-fns';
 import { de } from 'date-fns/locale';
 import { BookingObject, CalendarRange, DateRangeType, DayStatus } from "../types";
-// import { useBookingObjects } from "../context/BookingObjectsContext";
 
-
-
-// const { bookingObjects } = useBookingObjects();
 
 
 export const getDaysOfMonth = (year: number, month: number): Date[] => {
@@ -57,6 +53,7 @@ export const generateCalendarDays = (calendarRange: CalendarRange): Date[] => {
   const days = eachDayOfInterval({ start, end });
   return days;
 };
+
 
 // Check if the previous month relative to a given year and month is within the calendar range
 export const isPrevMonthWithinRange = (year: number, month: number, calendarRange: CalendarRange): boolean => {

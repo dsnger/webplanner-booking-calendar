@@ -22,7 +22,6 @@ interface BookingCalendarProps {
 
 const updateGlobalStyles = (colorSettings: ColorSettings) => {
   const root = document.documentElement;
-
   root.style.setProperty('--day-booked', colorSettings.booked);
   root.style.setProperty('--day-available', colorSettings.available);
   root.style.setProperty('--day-unavailable', colorSettings.notAvailable);
@@ -51,7 +50,7 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ fewoOwnID, lang }): J
 
       if (!isComponentMounted) return;
 
-      console.log("Effect running");
+      console.log("Initialization running");
       setIsLoading(true);
       setError(null);
       setProgress(30);
@@ -100,6 +99,7 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ fewoOwnID, lang }): J
     return generateCalendarDays(calendarSettings[0].calendarRange);
   }, [calendarSettings]);
 
+ 
 
   // Use useMemo to precalculate status flags for the generated days
   const daysWithStatus = useMemo(() => {
@@ -155,7 +155,6 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ fewoOwnID, lang }): J
   const updateVisibleMonthsAndYears = (months: VisibleMonthYear[]) => {
     setVisibleMonths(months);
   };
-
 
 
   // Function to update the scroll state

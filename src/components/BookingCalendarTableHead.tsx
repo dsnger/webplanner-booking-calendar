@@ -9,10 +9,20 @@ interface BookingCalendarTableHeadProps {
   currentDate: Date;
 }
 
+
 const BookingCalendarTableHead: React.FC<BookingCalendarTableHeadProps> = ({ months, days, currentDate }) => {
+
+
+  const cellRowCount = days.length;
+  
   return (
-    <thead>
-      <tr className="border-t-0">
+    <div className="grid"
+      style={{ 
+        width: `calc(${cellRowCount} * var(--cell-width))`, 
+        gridTemplateColumns: `repeat(${cellRowCount}, 2fr)`,
+        gridTemplateRows: 'auto auto',
+      }}>
+      
         {months.map(({ month, count, year }, index) => {
             // Create a Date object for the first day of the month
             const firstDayOfMonth = new Date(year, month, 1);
@@ -21,17 +31,20 @@ const BookingCalendarTableHead: React.FC<BookingCalendarTableHeadProps> = ({ mon
             // Check if the last moment of the month is before the current date and time
             const isInPast = isBefore(lastMomentOfMonth, new Date());
           return (
-            <th id={`month-${year}-${month + 1}`} key={index} colSpan={count} className={`p-1 h-10 border-t-0 border-b-4 border-r-2 border-l-2 border-white bg-slate-100 text-left md:text-center${isInPast ? ' opacity-30' : ''}`}>
+            <div id={`month-${year}-${month + 1}`} key={index} className={`p-1 h-10 border-t-0 border-b-4 border-r-2 border-l-2 border-white bg-slate-100 text-left md:text-center${isInPast ? ' opacity-30' : ''}`}
+            style={{ gridColumn: `auto/ span ${count}` }}
+        
+           >
               <div className="sticky left-3 inline-block text-sm ">{getMonthName(year, month)} {year}</div>
-            </th>
+            </div>
           )
         })}
-      </tr>
-      <tr>
+     
+     
         {days.map((date, index) => {
           const isInPast = isBefore(endOfDay(date), new Date());
           return (
-            <th
+            <div
               key={date.toISOString()}
               className={ `border-l border-r border-b-4 border-white p-1${index === 0 ? ' first-of-month border-l-2 border-white' : ' '}${isLastDayOfMonth(date) ? 'last-of-month border-r-2 border-white' : ' '}${getDay(date) === 0 && !isSameDay(date, currentDate) ? ' text-red-500 bg-red-100/40' : ' '}${isSameDay(date, currentDate) ? 'text-green-600 bg-green-100/60 is-today' : ' '}${isInPast ? ' opacity-30' : ''}`}
               id={isSameDay(date, currentDate) ? 'isToday' : ' '}
@@ -40,12 +53,12 @@ const BookingCalendarTableHead: React.FC<BookingCalendarTableHeadProps> = ({ mon
                 <span className="text-xs font-light block">{getDayName(date)}</span>
                 <span className="text-xs block">{format(date, 'd')}</span>
               </div>
-            </th>
+            </div>
           )
         }
         )}
-      </tr>
-    </thead>
+   
+    </div>
   );
 };
 

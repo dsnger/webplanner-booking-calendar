@@ -27,13 +27,19 @@ const BookingCalenderTableBody: React.FC<TableBodyProps> = ({
   const { isCellInRange, handleCellHover} = useCellHighlighting(bookingCalendarWrapperRef);
   const { selectedCell, secondSelectedCell, cellClasses, handleCellSelection } = useCellSelection(bookingCalendarWrapperRef,daysWithStatus);
  
-  const tableBodyRef = useRef<HTMLTableSectionElement>(null);
-
+  const tableBodyRef = useRef<HTMLDivElement>(null);
+  const cellRowCount = days.length;
 
   return (
-    <tbody ref={tableBodyRef}>
+  
+    <div  ref={tableBodyRef}>
       {bookingObjects.map((bookingObject, rowIndex) => (
-        <tr key={rowIndex} className="border-b-4 border-white">
+        <div key={rowIndex} className="grid border-b-4 border-white"
+          style={{ 
+          width: `calc(${cellRowCount} * var(--cell-width))`, 
+          gridTemplateColumns: `repeat(${cellRowCount}, 2fr)`,
+          gridTemplateRows: 'auto auto',
+        }}>
           {days.map((date, colIndex) => {
 
             const selectClasses = cellClasses.find(entry => entry.rowIndex === rowIndex && entry.colIndex === colIndex)?.classes?.join(' ') || '';
@@ -83,9 +89,9 @@ const BookingCalenderTableBody: React.FC<TableBodyProps> = ({
               />
             );
           })}
-        </tr>
+        </div>
       ))}
-    </tbody>
+    </div>
   );
 };
 

@@ -67,7 +67,7 @@ const BookingCalendarCell: React.FC<BookingCalendarCellProps> = React.memo(({ da
 
 
   return (
-    <td
+    <div
       className={`cell border-l border-white p-0 m-0 cell-day h-9 min-w-9 ${isLastDayOfMonth(date) ? 'last-of-month border-r-2' : ''} ${cellClassNames} ${selectClasses}`}
       onClick={onClick}
       onMouseEnter={onMouseEnter}
@@ -100,7 +100,7 @@ const BookingCalendarCell: React.FC<BookingCalendarCellProps> = React.memo(({ da
           </div>
         </div>
       )}
-    </td>
+    </div>
   );
 });
 

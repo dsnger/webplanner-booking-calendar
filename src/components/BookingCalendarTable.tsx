@@ -22,7 +22,7 @@ const BookingCalendarTable: React.FC<BookingCalendarTableProps> = ({
   currentDate,
   bookingCalendarWrapperRef
 }) => (
-  <table className="min-w-full">
+  <div className="min-w-full">
     <BookingCalendarTableHead
       months={months}
       days={days}
@@ -35,7 +35,7 @@ const BookingCalendarTable: React.FC<BookingCalendarTableProps> = ({
       currentDate={currentDate}
       bookingCalendarWrapperRef={bookingCalendarWrapperRef}
     />
-  </table>
+  </div>
 );
 
 export default BookingCalendarTable;
