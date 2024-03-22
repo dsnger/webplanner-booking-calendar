@@ -54,6 +54,10 @@ export const generateCalendarDays = (calendarRange: CalendarRange): Date[] => {
   return days;
 };
 
+export const setDayCountGlobalVar = (days: number) => {
+  const root = document.documentElement;
+  root.style.setProperty('--days', `${ days }`);
+}
 
 // Check if the previous month relative to a given year and month is within the calendar range
 export const isPrevMonthWithinRange = (year: number, month: number, calendarRange: CalendarRange): boolean => {

@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { getMonth, getYear } from 'date-fns';
-import { generateCalendarDays, preCalculateDaysStatusFlags } from "../utils/dateUtils";
+import { generateCalendarDays, preCalculateDaysStatusFlags, setDayCountGlobalVar } from "../utils/dateUtils";
 import { BookingCalendarSettings, ColorSettings, VisibleMonthYear } from "../types";
 import Legend from "./Legend";
 import BookingObjectsTable from "./BookingObjectsTable"
@@ -99,7 +99,6 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ fewoOwnID, lang }): J
     return generateCalendarDays(calendarSettings[0].calendarRange);
   }, [calendarSettings]);
 
- 
 
   // Use useMemo to precalculate status flags for the generated days
   const daysWithStatus = useMemo(() => {
@@ -108,7 +107,6 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ fewoOwnID, lang }): J
     return preCalculateDaysStatusFlags(calendarSettings[0]?.bookingObjects, days);
 
   }, [days, calendarSettings]);
-
 
 
   const months = useMemo(() => {
@@ -151,6 +149,8 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ fewoOwnID, lang }): J
 
   const { colorSettings, bookingObjects } = calendarSettings[0];
 
+  setDayCountGlobalVar(days.length);
+
   // Function to update visible months and years, based on scroll position
   const updateVisibleMonthsAndYears = (months: VisibleMonthYear[]) => {
     setVisibleMonths(months);
@@ -165,6 +165,7 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ fewoOwnID, lang }): J
 
 
   return (
+
     <div className="booking-calendar-wrapper w-full overflow-hidden animate-fadeIn" ref={bookingCalendarWrapperRef} >
       <BookingObjectsProvider bookingObjects={bookingObjects}>
         {/* <MonthPaginationButtons scrollRef={scrollRef} months={months} /> */}
@@ -210,7 +211,8 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ fewoOwnID, lang }): J
         <Legend colorSettings={colorSettings} />
       </BookingObjectsProvider>
 
-    </div>
+      </div>
+   
   );
 
 };
