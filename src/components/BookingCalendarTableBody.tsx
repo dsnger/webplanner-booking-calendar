@@ -43,13 +43,13 @@ const BookingCalenderTableBody: React.FC<TableBodyProps> = ({
           {days.map((date, colIndex) => {
 
             const selectClasses = cellClasses.find(entry => entry.rowIndex === rowIndex && entry.colIndex === colIndex)?.classes?.join(' ') || '';
-            //const hlClasses = cellHlClasses.find(entry => entry.rowIndex === rowIndex && entry.colIndex === colIndex)?.classes?.join(' ') || '';
             // Directly access the corresponding day status using rowIndex and colIndex
             const dayStatus = daysWithStatus[rowIndex]?.[colIndex] || {};
             // Destructure the needed properties, providing default values
             const { isUnavailable = false, type = null, isUnavailStart = false, isUnavailEnd = false, isUnavailStartHalf = false, isUnavailEndHalf = false, isDisabled = false, isArrival = false, isDeparture = false } = dayStatus;
             const isHoveredCell = isCellInRange(rowIndex, colIndex, selectedCell, secondSelectedCell, !isUnavailable)
             const isInPast = isBefore(endOfDay(date), new Date());
+           
             const isSelectedCell = (rowIndex: number, colIndex : number, selectedCell: CellCoordinates, secondSelectedCell: CellCoordinates) => (
               (selectedCell && secondSelectedCell && 
                 ((rowIndex >= Math.min(selectedCell.rowIndex, secondSelectedCell.rowIndex) && rowIndex <= Math.max(selectedCell.rowIndex, secondSelectedCell.rowIndex)) &&

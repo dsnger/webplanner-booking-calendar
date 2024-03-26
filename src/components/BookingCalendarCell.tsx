@@ -8,6 +8,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "./ui/tooltip"
+import { is } from "date-fns/locale";
 
 
 interface BookingCalendarCellProps {
@@ -56,6 +57,9 @@ const BookingCalendarCell: React.FC<BookingCalendarCellProps> = React.memo(({ da
     isSelected ? 'bg-day-selected border-r-0 border-l-0 ' : ''
   ].filter(Boolean).join(' ');
 
+  if(isInPast)
+    console.log( date + ' ' + isInPast)
+
   let message = '';
   if (isArrival && !isUnavailable) {
     message = 'Anreisetag';
@@ -68,7 +72,7 @@ const BookingCalendarCell: React.FC<BookingCalendarCellProps> = React.memo(({ da
 
   return (
     <div
-      className={`cell border-l border-white p-0 m-0 cell-day h-9 min-w-9 ${isLastDayOfMonth(date) ? 'last-of-month border-r-2' : ''} ${cellClassNames} ${selectClasses}`}
+      className={`cell border-l border-white p-0 m-0 cell-day h-9 w-9 ${isLastDayOfMonth(date) ? 'last-of-month border-r-2' : ''} ${cellClassNames} ${selectClasses}`}
       onClick={onClick}
       onMouseEnter={onMouseEnter}
       data-object-id={objId}
