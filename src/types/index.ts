@@ -43,7 +43,7 @@ export type ColorSettings = {
   closed: string;
 }
 
-export type CellCoordinates = { rowIndex: number; colIndex: number } | null;
+export type CellCoordinates = { rowIndex: number; cellIndex: number } | null;
 
 export interface BookingObject {
   objId: string;

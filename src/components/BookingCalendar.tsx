@@ -129,6 +129,7 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ fewoOwnID, lang }): J
     });
   }, [days]);
 
+  
 
   if (progress <= 100 && isLoading) {
     return (
