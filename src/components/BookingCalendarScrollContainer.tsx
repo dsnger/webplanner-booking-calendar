@@ -18,7 +18,6 @@ export type ScrollContainerRefs = {
 };
 
 const BookingCalendarScrollContainer = forwardRef<ScrollContainerRefs, BookingCalendarScrollContainerProps>(({ children, updateVisibleMonthsAndYears, updateIsTodayView, updateScrollState }, ref) => {
-  
   const scrollParentRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
@@ -27,12 +26,12 @@ const BookingCalendarScrollContainer = forwardRef<ScrollContainerRefs, BookingCa
   const scrollToToday = () => {
     const dayElement = scrollContainerRef.current?.querySelector('#isToday');
     if (dayElement) {
-      dayElement.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
+      dayElement.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
     }
   };
 
 
-  useEffect(() => {;
+  useEffect(() => {
     scrollToToday();
   }, []);
 
@@ -42,13 +41,13 @@ const BookingCalendarScrollContainer = forwardRef<ScrollContainerRefs, BookingCa
     scrollToCurrentDay: scrollToToday,
     scrollLeft: () => {
       if (scrollContainerRef.current && scrollParentRef.current) {
-        let newScrollPosition = -scrollParentRef.current.offsetWidth / 2; // Adjust the scroll step size as needed
+        const newScrollPosition = -scrollParentRef.current.offsetWidth / 2; // Adjust the scroll step size as needed
         scrollContainerRef.current.scrollBy({ left: newScrollPosition, behavior: 'smooth' });
       }
     },
     scrollRight: () => {
       if (scrollContainerRef.current && scrollParentRef.current) {
-        let newScrollPosition = scrollParentRef.current.offsetWidth / 2; // Adjust the scroll step size as needed
+        const newScrollPosition = scrollParentRef.current.offsetWidth / 2; // Adjust the scroll step size as needed
         scrollContainerRef.current.scrollBy({ left: newScrollPosition, behavior: 'smooth' });
       }
     },
@@ -58,12 +57,12 @@ const BookingCalendarScrollContainer = forwardRef<ScrollContainerRefs, BookingCa
         monthStartElem.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
     },
-   
+
 
   }));
 
 
-  
+
    // Function to handle the update based on the most visible months
    const handleUpdate = (container: HTMLElement) => {
     const { months } = calculateMostVisibleMonths(container);
@@ -71,12 +70,12 @@ const BookingCalendarScrollContainer = forwardRef<ScrollContainerRefs, BookingCa
       updateVisibleMonthsAndYears(months);
     }
   };
-  
+
 
   const handleScroll = () => {
     const container = scrollContainerRef.current;
     if (!container) return;
-  
+
     // Calculate the most visible month
     handleUpdate(container);
 
@@ -90,9 +89,9 @@ const BookingCalendarScrollContainer = forwardRef<ScrollContainerRefs, BookingCa
 
     const { scrollLeft, scrollWidth, clientWidth } = container;
     updateScrollState(scrollLeft, scrollWidth, clientWidth);
-  
+
   };
-  
+
 
 
   return (
@@ -100,9 +99,9 @@ const BookingCalendarScrollContainer = forwardRef<ScrollContainerRefs, BookingCa
       ref={scrollParentRef}
       className="flex-1 w-1/2"
       >
-      <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-gray-900 pb-3"
+      <div className="overflow-x-auto scrollbar-hide relative"
         ref={scrollContainerRef}
-        onScroll={handleScroll} 
+        onScroll={handleScroll}
         >
         {children}
       </div>

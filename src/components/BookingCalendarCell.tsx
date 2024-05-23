@@ -38,7 +38,7 @@ interface BookingCalendarCellProps {
 
 const BookingCalendarCell: React.FC<BookingCalendarCellProps> = React.memo(({ date, objId, isSelected, selectClasses, tooltip, content, onClick, onMouseEnter, statusFlags }) => {
 
-  const { isUnavailable, type, isUnavailStart, isUnavailEnd, isUnavailStartHalf, isUnavailEndHalf, isDisabled, isArrival, isDeparture, isHoveredCell, isInPast } = statusFlags;
+  const { isUnavailable, isUnavailStartHalf, isUnavailEndHalf, isDisabled, isArrival, isDeparture, isHoveredCell, isInPast } = statusFlags;
 
   const cellClassNames = [
     // 'cell cell-day h-9 min-w-9',
@@ -70,7 +70,7 @@ const BookingCalendarCell: React.FC<BookingCalendarCellProps> = React.memo(({ da
 
   return (
     <div
-      className={`cell border-l border-white p-0 m-0 cell-day h-9 w-9 ${isLastDayOfMonth(date) ? 'last-of-month border-r-2' : ''} ${cellClassNames} ${selectClasses}`}
+      className={`cell border-l border-white p-0 m-0 cell-day h-cell-height w-cell-width ${isLastDayOfMonth(date) ? 'last-of-month' : ''} ${cellClassNames} ${selectClasses}`}
       onClick={onClick}
       onMouseEnter={onMouseEnter}
       data-object-id={objId}
@@ -94,7 +94,7 @@ const BookingCalendarCell: React.FC<BookingCalendarCellProps> = React.memo(({ da
           </Tooltip>
         </TooltipProvider>
       ) : (
-        <div className="h-8 min-w-8 m-0 p-0 flex">
+        <div className="flex">
           <div
             className={`cell-marker w-full h-full`}
           >

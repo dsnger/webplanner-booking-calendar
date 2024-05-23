@@ -37,7 +37,7 @@ const BookingCalenderTableBody: React.FC<TableBodyProps> = ({
         {bookingObjects.map((bookingObject, rowIndex) => (
           <div
             key={rowIndex}
-            className="grid border-b-4 border-white"
+            className="grid gap-[1px]"
             style={{
               width: `calc(${cellColCount} * var(--cell-width))`,
               gridTemplateColumns: `repeat(${cellColCount}, 2fr)`,

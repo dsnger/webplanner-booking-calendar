@@ -10,7 +10,7 @@ interface MonthDropdownProps {
 const MonthDropdown: React.FC<MonthDropdownProps> = ({ scrollRef, months }) => {
 
   return (
-    <div className="flex w-full sm:w-auto justify-center items-center gap-2 p-2">
+    <div className="flex w-full sm:w-auto justify-center items-center">
       <DropdownMenu>
         <DropdownMenuTrigger asChild >
           <Button variant="secondary">Zum Monat ...</Button>
@@ -20,9 +20,7 @@ const MonthDropdown: React.FC<MonthDropdownProps> = ({ scrollRef, months }) => {
           {months.map(({ year, month }) => (
             <DropdownMenuItem  key={`${year}-${month + 1}`}
             onClick={() => scrollRef.current?.scrollToMonth(year, month + 1)}>
-             
               {new Date(year, month).toLocaleString('default', { month: 'short' })} {year}
-           
             </DropdownMenuItem>
           ))}
         </DropdownMenuContent>

@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: ["class"],
@@ -6,7 +7,7 @@ module.exports = {
   ],
   prefix: "",
   theme: {
-   
+
     container: {
       center: true,
       padding: "2rem",
@@ -15,6 +16,18 @@ module.exports = {
       },
     },
     extend: {
+      fontSize: {
+        '2xs': '0.5rem;'
+      },
+      height: {
+        'cell-height': 'var(--cell-height)',
+      },
+      width: {
+        'cell-width': 'var(--cell-width)',
+      },
+      gap: {
+        'cell-gap': 'var(--cell-gap)',
+      },
       colors: {
         'day-available': 'var(--day-available)',
         'day-closed': 'var(--day-closed)',

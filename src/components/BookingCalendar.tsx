@@ -71,7 +71,7 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ fewoOwnID, lang }): J
         }
         setProgress(100)
         setTimeout(() => setIsLoading(false), 500)
-        
+
       } catch (error) {
         console.error("Failed to fetch calendar settings:", error);
         setError("Failed to fetch calendar settings");
@@ -82,7 +82,7 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ fewoOwnID, lang }): J
 
     };
     init();
-   
+
     return () => {
       isComponentMounted = false; // Clean up function setting the flag to false when component unmounts
       console.log("Cleanup called");
@@ -129,11 +129,10 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ fewoOwnID, lang }): J
     });
   }, [days]);
 
-  
 
   if (progress <= 100 && isLoading) {
     return (
-      <div className="w-[60%] m-auto">
+      <div className="w-[60%] mx-auto mt-10">
         <Progress value={progress} max={100} />
         <p className="mt-1">Kalenderdaten werden geladen...</p>
       </div>
@@ -148,7 +147,7 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ fewoOwnID, lang }): J
     return <div>No calendar settings available.</div>;
   }
 
-  const { colorSettings, bookingObjects } = calendarSettings[0];
+  const { bookingObjects } = calendarSettings[0];
 
   setDayCountGlobalVar(days.length);
 
@@ -167,15 +166,12 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ fewoOwnID, lang }): J
 
   return (
 
-    <div className="booking-calendar-wrapper w-full overflow-hidden animate-fadeIn" ref={bookingCalendarWrapperRef} >
+    <div className="booking-calendar-wrapper w-full overflow-hidden animate-fadeIn relative" ref={bookingCalendarWrapperRef} >
       <BookingObjectsProvider bookingObjects={bookingObjects}>
         {/* <MonthPaginationButtons scrollRef={scrollRef} months={months} /> */}
 
-        <div className="flex">
-          <div className="hidden sm:flex items-end pb-4 mb-[2px] mr-[-1px] min-w-[80px] max-w-[240px] w-[15vw]">
-          </div>
-          <div className="py-2 flex flex-1 flex-col sm:flex-row sm:justify-between items-center gap-2 ml-0 mr-2 w-max-full">
-
+        <div className="hidden lg:flex">
+          <div className="flex flex-1 flex-row sm:justify-between items-center gap-2 ml-0 mr-2 w-max-full">
             <MonthDropdown
               scrollRef={scrollRef}
               months={months}
@@ -188,17 +184,27 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ fewoOwnID, lang }): J
               canScrollRight={canScrollRight}
               calendarRange={calendarSettings[0]?.calendarRange}
             />
-
           </div>
         </div>
-        <div className="flex">
-          <BookingObjectsTable bookingObjects={bookingObjects} />
+        <div className="flex relative">
+        <BookingObjectsTable bookingObjects={bookingObjects}/>
+          {/* <BookingObjectsTable bookingObjects={bookingObjects}/> */}
+          <ScrollPaginationButtons
+              scrollRef={scrollRef}
+              visibleMonths={visibleMonths}
+              isTodayView={isTodayView}
+              canScrollLeft={canScrollLeft}
+              canScrollRight={canScrollRight}
+            calendarRange={calendarSettings[0]?.calendarRange}
+            className="absolute top-0 right-0 z-10 m-0 py-0 bg-slate-100 lg:hidden"
+            />
           <BookingCalendarScrollContainer
             ref={scrollRef}
             updateVisibleMonthsAndYears={updateVisibleMonthsAndYears}
             updateIsTodayView={setIsTodayView}
             updateScrollState={updateScrollState}
           >
+
             <BookingCalendarTable
               months={months}
               days={days}
@@ -209,11 +215,10 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ fewoOwnID, lang }): J
             />
           </BookingCalendarScrollContainer>
         </div>
-        <Legend colorSettings={colorSettings} />
+        <Legend />
       </BookingObjectsProvider>
 
       </div>
-   
   );
 
 };

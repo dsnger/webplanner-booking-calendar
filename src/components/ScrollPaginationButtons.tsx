@@ -1,7 +1,7 @@
 import React from 'react';
 import { ScrollContainerRefs } from "./BookingCalendarScrollContainer";
 import { Button } from "./ui/button"
-import { FlowbiteChevronDoubleLeftSolid, FlowbiteChevronDoubleRightSolid, FlowbiteChevronLeftSolid, FlowbiteChevronRightSolid } from "./icons/icons";
+import { FlowbiteChevronLeftSolid, FlowbiteChevronRightSolid } from "./icons/icons";
 import {
   Tooltip,
   TooltipContent,
@@ -19,6 +19,7 @@ interface ScrollPaginationProps {
   canScrollLeft: boolean;
   canScrollRight: boolean;
   calendarRange: CalendarRange;
+  className?: string;
 }
 
 interface VisibleMonthYear {
@@ -33,31 +34,32 @@ const ScrollPaginationButtons: React.FC<ScrollPaginationProps> = ({
   isTodayView,
   canScrollLeft,
   canScrollRight,
-  calendarRange
+  calendarRange,
+  className
 }) => {
 
   const scrollToCurrentDay = () => {
     scrollRef.current?.scrollToCurrentDay();
   }
 
-  const scrollLeft = () => {
-    scrollRef.current?.scrollLeft();
-  };
+  // const scrollLeft = () => {
+  //   scrollRef.current?.scrollLeft();
+  // };
 
-  const scrollRight = () => {
-    scrollRef.current?.scrollRight();
-  };
+  // const scrollRight = () => {
+  //   scrollRef.current?.scrollRight();
+  // };
 
   const getNextMonth = (year: number, month: number) => {
-    let nextYear = month === 12 ? year + 1 : year;
-    let nextMonth = month === 12 ? 1 : month + 1;
+    const nextYear = month === 12 ? year + 1 : year;
+    const nextMonth = month === 12 ? 1 : month + 1;
     return { year: nextYear, month: nextMonth };
   };
 
 
   const getPrevMonth = (year: number, month: number) => {
-    let prevYear = month === 1 ? year - 1 : year;
-    let prevMonth = month === 1 ? 12 : month - 1;
+    const prevYear = month === 1 ? year - 1 : year;
+    const prevMonth = month === 1 ? 12 : month - 1;
     return { year: prevYear, month: prevMonth };
   };
 
@@ -89,41 +91,40 @@ const ScrollPaginationButtons: React.FC<ScrollPaginationProps> = ({
   const nextDisabled = () => visibleMonths.length === 0 || !canScrollRight;
 
   return (
-    <div className="py-2 flex justify-end items-center gap-2 mr-1">
+    <div className={`py-2 flex justify-end items-center gap-2 ${className}`}>
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>
-            <Button variant="secondary" size="sm" onClick={scrollToPrevMonth} disabled={prevDisabled()}><FlowbiteChevronDoubleLeftSolid /></Button>
+            <Button variant="secondary" size="sm" className="w-cell-width px-0 h-cell-height" onClick={scrollToPrevMonth} disabled={prevDisabled()}><FlowbiteChevronLeftSolid /></Button>
           </TooltipTrigger>
           <TooltipContent>
             <p>vorheriger Monat</p>
           </TooltipContent>
         </Tooltip>
 
-          
-        <Tooltip>
+        {/* <Tooltip>
           <TooltipTrigger asChild>
             <Button variant="secondary" size="sm" onClick={scrollLeft} disabled={!canScrollLeft}><FlowbiteChevronLeftSolid /></Button>
           </TooltipTrigger>
           <TooltipContent>
             <p>zurück</p>
           </TooltipContent>
-        </Tooltip>
-          
-        <Button variant="secondary" size="sm" onClick={scrollToCurrentDay} disabled={isTodayView}>Heute</Button>
-        
-        <Tooltip>
+        </Tooltip> */}
+
+        <Button className="h-cell-height" variant="secondary" size="sm" onClick={scrollToCurrentDay} disabled={isTodayView}>Heute</Button>
+
+        {/* <Tooltip>
           <TooltipTrigger asChild>
             <Button variant="secondary" size="sm" onClick={scrollRight} disabled={!canScrollRight}><FlowbiteChevronRightSolid /></Button>
             </TooltipTrigger>
           <TooltipContent>
             <p>vor</p>
           </TooltipContent>
-        </Tooltip>
+        </Tooltip> */}
 
         <Tooltip>
           <TooltipTrigger asChild>
-            <Button variant="secondary" size="sm" onClick={scrollToNextMonth} disabled={nextDisabled()}><FlowbiteChevronDoubleRightSolid /></Button>
+            <Button variant="secondary" size="sm" className="w-cell-width px-0 h-cell-height" onClick={scrollToNextMonth} disabled={nextDisabled()}><FlowbiteChevronRightSolid /></Button>
           </TooltipTrigger>
           <TooltipContent>
             <p>nächster Monat</p>

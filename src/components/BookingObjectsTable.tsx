@@ -7,18 +7,16 @@ interface BookingObjectsTableProps {
 
 const BookingObjectsTable: React.FC<BookingObjectsTableProps> = ({ bookingObjects }) => {
   return (
-    <div className="titles-table flex flex-col items-end pb-4 mb-[2px] mr-[-1px] min-w-[80px] max-w-[240px] w-[15vw]">
-      <div className="w-full mr-1 grid gap-y-0 border-0">
-        <div className="h-10"></div>
-        <div className="h-9"></div>
+    <div className="objects-table flex flex-col justify-end items-end ml-[-1px] m-[1px] min-w-[80px] max-w-[220px] w-[15vw] absolute bottom-0 h-full z-10">
+      <div className="w-full grid gap-cell-gap">
         {bookingObjects.map((bookingObject) => (
           <div key={bookingObject.objId}>
             {bookingObject.extLink ? (
-              <a href={bookingObject.extLink} target="_blank" rel="noopener noreferrer" className="object-titles flex items-center h-10 min-w-9 text-left text-sm p-1 m-0 pl-3 border-r-2 border-l-0 border-b-4 border-white bg-slate-100 hover:bg-slate-300  truncate">
+              <a href={bookingObject.extLink} target="_blank" rel="noopener noreferrer" className="object-titles flex items-center bg-white bg-opacity-90 h-cell-height min-w-9 text-left text-sm m-0 pl-3 hover:bg-slate-300  truncate">
                 {bookingObject.title}
               </a>
             ) : (
-              <div className="object-titles flex items-center h-10 min-w-10 text-left text-sm p-1 m-0 pl-3 border-r-2 border-l-0 border-b-4 border-white bg-slate-100 truncate">
+              <div className="object-titles flex items-center h-cell-height min-w-10 text-left text-sm p-1 m-0 pl-3 bg-white bg-opacity-90 truncate">
                 {bookingObject.title}
               </div>
             )}
@@ -29,4 +27,4 @@ const BookingObjectsTable: React.FC<BookingObjectsTableProps> = ({ bookingObject
   );
 };
 
-export default BookingObjectsTable;
+export default BookingObjectsTable

@@ -2,7 +2,7 @@ import React, { RefObject } from 'react';
 import BookingCalendarTableHead from './BookingCalendarTableHead';
 import BookingCalendarTableBody from './BookingCalendarTableBody';
 import { BookingObject, DayStatus } from "../types";
-import BookingCalendarBlockedRanges from "./BookingCalendarBlockedRanges";
+
 
 // Assuming types for your props are defined elsewhere and imported accordingly
 interface BookingCalendarTableProps {
