@@ -1,5 +1,5 @@
 import React from 'react';
-import { differenceInCalendarDays, parseISO } from 'date-fns';
+import { differenceInCalendarDays } from 'date-fns';
 
 interface RangeMarkerProps {
   index: number;
@@ -12,12 +12,12 @@ interface RangeMarkerProps {
   days: Date[];
 }
 
-const BookingCalendarRangeMarker: React.FC<RangeMarkerProps> = ({ index, start, end, starthalf, endhalf, type, tooltip, days }) => {
+const RangeMarker: React.FC<RangeMarkerProps> = ({ index, start, end, tooltip, days }) => {
   const getColumnStart = (date: Date) => days.findIndex(day => differenceInCalendarDays(day, date) === 0) + 1;
   const getColumnEnd = (date: Date) => days.findIndex(day => differenceInCalendarDays(day, date) === 0) + 2; // End day is inclusive
 
   return (
-    <div className="h-9"
+    <div className="h-cell-height"
       style={{
         gridColumnStart: getColumnStart(start),
         gridColumnEnd: getColumnEnd(end),
@@ -30,4 +30,4 @@ const BookingCalendarRangeMarker: React.FC<RangeMarkerProps> = ({ index, start, 
   );
 };
 
-export default BookingCalendarRangeMarker;
+export default RangeMarker;

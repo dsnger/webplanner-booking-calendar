@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollContainerRefs } from "./BookingCalendarScrollContainer";
+import { ScrollContainerRefs } from "./ScrollContainer";
 import { Button } from "./ui/button"
 import { FlowbiteChevronLeftSolid, FlowbiteChevronRightSolid } from "./icons/icons";
 import {

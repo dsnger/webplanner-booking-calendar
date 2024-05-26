@@ -1,9 +1,10 @@
 import React, { RefObject, useRef } from 'react';
 import { BookingObject, CellCoordinates, DayStatus } from '../types';
 import { endOfDay, isBefore, isSameDay } from 'date-fns';
-import BookingCalendarCell from './BookingCalendarCell';
+import BookingCalendarCell from './Cell';
 import { useCellSelection } from '../hooks/useCellSelection';
 import { useCellHighlighting } from '../hooks/useCellHighlight';
+import BlockedRanges from "./BlockedRanges";
 
 // Props type definition
 interface TableBodyProps {
@@ -32,7 +33,7 @@ const BookingCalenderTableBody: React.FC<TableBodyProps> = ({
 
   return (
     <div ref={tableBodyRef} className="relative">
-      {/* <BookingCalendarBlockedRanges bookingObjects={bookingObjects} days={days}/> */}
+      <BlockedRanges bookingObjects={bookingObjects} days={days}/>
       <div>
         {bookingObjects.map((bookingObject, rowIndex) => (
           <div

@@ -17,7 +17,7 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow: hidden;
-  --day-available: #00FF00; /* Replace with default or fallback colors */
+  --day-available: #00ff0050; /* Replace with default or fallback colors */
   --day-arrival: #006600; /* Replace with default or fallback colors */
   --day-departure: #006600; /* Replace with default or fallback colors */
   --day-unavailable: #FF0000;

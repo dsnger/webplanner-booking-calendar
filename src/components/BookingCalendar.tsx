@@ -3,10 +3,10 @@ import { getMonth, getYear } from 'date-fns';
 import { generateCalendarDays, preCalculateDaysStatusFlags, setDayCountGlobalVar } from "../utils/dateUtils";
 import { BookingCalendarSettings, ColorSettings, VisibleMonthYear } from "../types";
 import Legend from "./Legend";
-import BookingObjectsTable from "./BookingObjectsTable"
-import BookingCalendarScrollContainer, { ScrollContainerRefs } from "./BookingCalendarScrollContainer";
+import BookingObjectsTable from "./BookingObjects"
+import BookingCalendarScrollContainer, { ScrollContainerRefs } from "./ScrollContainer";
 import ScrollPaginationButtons from "./ScrollPaginationButtons";
-import BookingCalendarTable from "./BookingCalendarTable";
+import BookingCalendarTable from "./TableGrid";
 import { BookingObjectsProvider } from "../context/BookingObjectsContext";
 import MonthDropdown from "./MonthDropdown";
 import { Progress } from "./ui/progress";

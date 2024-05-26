@@ -8,7 +8,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "./ui/tooltip"
-import { is } from "date-fns/locale";
+
 
 
 interface BookingCalendarCellProps {
@@ -36,25 +36,18 @@ interface BookingCalendarCellProps {
   };
 }
 
-const BookingCalendarCell: React.FC<BookingCalendarCellProps> = React.memo(({ date, objId, isSelected, selectClasses, tooltip, content, onClick, onMouseEnter, statusFlags }) => {
+const BookingCalendarCell: React.FC<BookingCalendarCellProps> = React.memo(({ date, objId, selectClasses, tooltip, content, onClick, onMouseEnter, statusFlags }) => {
 
   const { isUnavailable, isUnavailStartHalf, isUnavailEndHalf, isDisabled, isArrival, isDeparture, isHoveredCell, isInPast } = statusFlags;
 
   const cellClassNames = [
     // 'cell cell-day h-9 min-w-9',
     isDisabled && !isHoveredCell ? 'is-disabled bg-gray-200 text-gray-30' : (!isUnavailable || !isUnavailStartHalf || !isUnavailEndHalf  ? 'bg-day-available hover:bg-day-hover hover:cursor-pointer' : ''),
-    // isToday ? 'bg-green-100/50 text-green-600' : '',
-    // isUnavailable ? 'is-unavailable border-l-0 hover:cursor-default' : '',
-    // isUnavailStart && !isUnavailStartHalf ? 'is-unavailable is-unavail-start' : '',
-    // isUnavailStartHalf && !isUnavailEndHalf && !isSelected ? 'is-unavailable is-unavail-starthalf' : '',
-    // type ? `is-${type}` : '',
-    // isUnavailEnd && !isUnavailEndHalf ? 'is-unavailable is-unavail-end' : '',
-    // isUnavailEndHalf && !isUnavailStartHalf && !isSelected ? 'is-unavailable is-unavail-endhalf' : '',
+
     isArrival ? 'is-available is-arrival hover:cursor-pointer hover:bg-day-hover' : '',
     isDeparture ? 'is-available is-departure hover:cursor-pointer hover:bg-day-hover' : '',
-    // isHoveredCell ? 'bg-day-hover' : '',
-    isInPast ? 'opacity-30' : '',
-    // isSelected ? 'bg-day-selected border-r-0 border-l-0 ' : ''
+
+    isInPast ? 'opacity-10' : '',
   ].filter(Boolean).join(' ');
 
 
