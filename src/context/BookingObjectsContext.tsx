@@ -1,4 +1,4 @@
-import React, { createContext, useContext} from 'react';
+import React, { createContext } from 'react';
 import { BookingObject } from "../types";
 
 interface BookingObjectsContextType {
@@ -21,11 +21,5 @@ export const BookingObjectsProvider: React.FC<BookingObjectsProviderProps> = ({ 
   );
 };
 
-// Update the hook to handle the possibility of `null`
-export const useBookingObjects = (): BookingObjectsContextType => {
-  const context = useContext(BookingObjectsContext);
-  if (context === null) {
-    throw new Error('useBookingObjects must be used within a BookingObjectsProvider');
-  }
-  return context;
-};
+
+export default BookingObjectsContext;

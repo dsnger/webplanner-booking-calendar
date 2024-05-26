@@ -1,12 +1,15 @@
 
 import './App.css'
 import BookingCalendar from "./components/BookingCalendar";
+import { SettingsProvider } from "./context/SettingsContext";
 
 function App() {
 
   return (
     <>
-      <BookingCalendar fewoOwnID={10745} lang={'de'} />
+      <SettingsProvider  fewoOwnID={10745} lang={'de'}>
+        <BookingCalendar />
+      </SettingsProvider>
     </>
   )
 }

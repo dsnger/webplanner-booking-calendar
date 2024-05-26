@@ -26,7 +26,7 @@ const ArrivalDayIcon: React.FC<SvgProps> = ({ fill = 'green', stroke = ' none', 
           fill="none"
           stroke={stroke}
           stroke-linecap="round"
-          stroke-linejoin="round"
+          strokeLinejoin="round"
           stroke-miterlimit="10"
           points="28.4,28.2
 		28.4,10.2 10.4,28.2 	"

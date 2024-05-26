@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { isSameDay, startOfDay, endOfMonth, getDay, getMonth, getYear, format, isWithinInterval, parseISO, isBefore } from 'date-fns';
 import { getMonthName, getDayName, formatDate, fetchCalendarSettings, generateCalendarDays } from "./src/utils";
-import { BlockedDateRangeInfo, BookingCalendarSettings, DateRangeType, ColorSettings } from "./src/types";
+import { BlockedDateRangeInfo, BookingCalendarSettings, DateRangeType, CSSVarsSettings } from "./src/types";
 import Legend from "./src/components/Legend";
 
 type CellCoordinates = { rowIndex: number; colIndex: number } | null;
@@ -12,14 +12,14 @@ interface BookingCalendarProps {
 }
 
 
-const updateGlobalStyles = (colorSettings: ColorSettings) => {
+const updateGlobalStyles = (CSSVarsSettings: CSSVarsSettings) => {
   const root = document.documentElement;
 
-  root.style.setProperty('--day-booked', colorSettings.booked);
-  root.style.setProperty('--day-available', colorSettings.available);
-  root.style.setProperty('--day-unavailable', colorSettings.notAvailable);
-  root.style.setProperty('--day-onrequest', colorSettings.onRequest);
-  root.style.setProperty('--day-closed', colorSettings.closed);
+  root.style.setProperty('--day-booked', CSSVarsSettings.booked);
+  root.style.setProperty('--day-available', CSSVarsSettings.available);
+  root.style.setProperty('--day-unavailable', CSSVarsSettings.notAvailable);
+  root.style.setProperty('--day-onrequest', CSSVarsSettings.onRequest);
+  root.style.setProperty('--day-closed', CSSVarsSettings.closed);
 };
 
 
@@ -101,8 +101,8 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ fewoOwnID, lang }): J
   
 
   useEffect(() => {
-    if (calendarSettings.length > 0 && calendarSettings[0].colorSettings) {
-      updateGlobalStyles(calendarSettings[0].colorSettings);
+    if (calendarSettings.length > 0 && calendarSettings[0].CSSVarsSettings) {
+      updateGlobalStyles(calendarSettings[0].CSSVarsSettings);
     }
   }, [calendarSettings]);
 
@@ -137,7 +137,7 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ fewoOwnID, lang }): J
   }
 
 
-  const { calendarRange, colorSettings, bookingObjects } = calendarSettings[0];
+  const { calendarRange, CSSVarsSettings, bookingObjects } = calendarSettings[0];
 
   // // Generate days based on calendarRange using your function
   // const days = useMemo(() => generateCalendarDays(calendarRange), [calendarRange]);
@@ -524,7 +524,7 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ fewoOwnID, lang }): J
           </div>
         </div>
       </div>
-      <Legend colorSettings={ colorSettings } />
+      <Legend CSSVarsSettings={ CSSVarsSettings } />
     </div>
   );
 

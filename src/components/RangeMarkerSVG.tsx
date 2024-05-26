@@ -75,7 +75,7 @@ const RangeMarkerSVG: React.FC<RangeMarkerProps> = ({ index, start, end, tooltip
     >
       <svg className="absolute inset-0 h-full" viewBox={`0 0 ${svgWidth} ${svgHeight}`} xmlns="http://www.w3.org/2000/svg">
         <path stroke="none" d={calculatePath(cellWidth,numberOfColumns)}></path>
-        <path fill="none" stroke-linejoin="round" strokeWidth="2" d={calculateStrokePath(cellWidth,numberOfColumns)}></path>
+        <path fill="none" strokeLinejoin="round" strokeWidth="2" d={calculateStrokePath(cellWidth,numberOfColumns)}></path>
       </svg>
       {tooltip ? (
         <TooltipProvider>

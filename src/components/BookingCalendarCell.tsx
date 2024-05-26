@@ -79,8 +79,8 @@ const BookingCalendarCell: React.FC<BookingCalendarCellProps> = React.memo(({ da
                 <div
                   className={`cell-marker w-full h-full `}
                 >
-                  {isArrival && !isUnavailable ? (<ArrivalDayIcon cellWidth={cellwidth}/>) : ''}
-                  {isDeparture && !isUnavailable ? (<DepartureDayIcon cellWidth={cellwidth}/>) : ''}
+                  {isArrival && !isUnavailable ? (<ArrivalDayIcon cellWidth={32}/>) : ''}
+                  {isDeparture && !isUnavailable ? (<DepartureDayIcon cellWidth={32}/>) : ''}
                   {content}
                 </div>
               </div>
@@ -95,8 +95,8 @@ const BookingCalendarCell: React.FC<BookingCalendarCellProps> = React.memo(({ da
           <div
             className={`cell-marker w-full h-full`}
             >
-            {isArrival && !isUnavailable ? (<ArrivalDayIcon cellWidth={cellwidth}/>) : ''}
-            {isDeparture && !isUnavailable ? (<DepartureDayIcon cellWidth={cellwidth}/>) : ''}
+            {isArrival && !isUnavailable ? (<ArrivalDayIcon cellWidth={32}/>) : ''}
+            {isDeparture && !isUnavailable ? (<DepartureDayIcon cellWidth={32}/>) : ''}
             {content}
           </div>
         </div>

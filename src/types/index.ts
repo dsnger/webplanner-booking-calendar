@@ -18,7 +18,7 @@ export interface BlockedDateRangeInfo {
 
 export interface BookingCalendarSettings {
   calendarRange: CalendarRange;
-  colorSettings: ColorSettings;
+  cssVarsSettings: CSSVarsSettings;
   bookingObjects: BookingObject[];
 }
 
@@ -35,12 +35,15 @@ export type Duration = {
   yearCount?: number | null;
 }
 
-export type ColorSettings = {
+export type CSSVarsSettings = {
   booked: string;
   available: string;
   notAvailable: string;
   onRequest: string;
   closed: string;
+  cellWidth?: string;
+  cellHeight?: string;
+  cellGap?: string;
 }
 
 export type CellCoordinates = { rowIndex: number; cellIndex: number } | null;
