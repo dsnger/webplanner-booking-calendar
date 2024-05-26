@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { differenceInCalendarDays } from 'date-fns';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip";
 
 interface RangeMarkerProps {
   index: number;
@@ -14,7 +15,7 @@ interface RangeMarkerProps {
 
 
 const RangeMarkerSVG: React.FC<RangeMarkerProps> = ({ index, start, end, tooltip, days }) => {
-  const [cellWidth, setCellWidth] = useState(32); 
+  const [cellWidth, setCellWidth] = useState(32);
   const [cellGap, setCellGap] = useState(1); // Default cell width to 40 if not set in CSS
 
   useEffect(() => {
@@ -76,7 +77,24 @@ const RangeMarkerSVG: React.FC<RangeMarkerProps> = ({ index, start, end, tooltip
         <path stroke="none" d={calculatePath(cellWidth,numberOfColumns)}></path>
         <path fill="none" stroke-linejoin="round" strokeWidth="2" d={calculateStrokePath(cellWidth,numberOfColumns)}></path>
       </svg>
-      {tooltip}
+      {tooltip ? (
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div className="h-8 min-w-8 m-0 p-0 flex">
+                <div
+                  className={`cell-marker w-full h-full `}
+                >
+                  {tooltip}
+                </div>
+              </div>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>{tooltip}</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      ) : ''}
     </div>
   );
 };

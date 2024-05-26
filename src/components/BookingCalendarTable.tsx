@@ -1,6 +1,6 @@
 import React, { RefObject } from 'react';
-import BookingCalendarTableHead from './TableHead';
-import BookingCalendarTableBody from './TableBody';
+import BookingCalendarTableHead from './BookingCalendarTableHead';
+import BookingCalendarTableBody from './BookingCalendarTableBody';
 import { BookingObject, DayStatus } from "../types";
 
 

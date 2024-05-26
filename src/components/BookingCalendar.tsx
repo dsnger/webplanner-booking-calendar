@@ -6,7 +6,7 @@ import Legend from "./Legend";
 import BookingObjectsTable from "./BookingObjects"
 import BookingCalendarScrollContainer, { ScrollContainerRefs } from "./ScrollContainer";
 import ScrollPaginationButtons from "./ScrollPaginationButtons";
-import BookingCalendarTable from "./TableGrid";
+import BookingCalendarTable from "./BookingCalendarTable";
 import { BookingObjectsProvider } from "../context/BookingObjectsContext";
 import MonthDropdown from "./MonthDropdown";
 import { Progress } from "./ui/progress";

@@ -8,6 +8,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "./ui/tooltip"
+import ArrivalDayIcon from "./icons/ArrivalDayIcon";
+import DepartureDayIcon from "./icons/DepartureDayIcon";
 
 
 
@@ -77,6 +79,8 @@ const BookingCalendarCell: React.FC<BookingCalendarCellProps> = React.memo(({ da
                 <div
                   className={`cell-marker w-full h-full `}
                 >
+                  {isArrival && !isUnavailable ? (<ArrivalDayIcon cellWidth={cellwidth}/>) : ''}
+                  {isDeparture && !isUnavailable ? (<DepartureDayIcon cellWidth={cellwidth}/>) : ''}
                   {content}
                 </div>
               </div>
@@ -90,7 +94,9 @@ const BookingCalendarCell: React.FC<BookingCalendarCellProps> = React.memo(({ da
         <div className="flex">
           <div
             className={`cell-marker w-full h-full`}
-          >
+            >
+            {isArrival && !isUnavailable ? (<ArrivalDayIcon cellWidth={cellwidth}/>) : ''}
+            {isDeparture && !isUnavailable ? (<DepartureDayIcon cellWidth={cellwidth}/>) : ''}
             {content}
           </div>
         </div>

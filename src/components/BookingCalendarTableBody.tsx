@@ -1,7 +1,7 @@
 import React, { RefObject, useRef } from 'react';
 import { BookingObject, CellCoordinates, DayStatus } from '../types';
 import { endOfDay, isBefore, isSameDay } from 'date-fns';
-import BookingCalendarCell from './Cell';
+import BookingCalendarCell from './BookingCalendarCell';
 import { useCellSelection } from '../hooks/useCellSelection';
 import { useCellHighlighting } from '../hooks/useCellHighlight';
 import BlockedRanges from "./BlockedRanges";
