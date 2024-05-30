@@ -1,6 +1,6 @@
-import React, { useState, useMemo, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { getMonth, getYear } from 'date-fns';
-import { generateCalendarDays, preCalculateDaysStatusFlags, setDayCountGlobalVar } from "../utils/dateUtils";
+import { setDayCountGlobalVar } from "../utils/dateUtils";
 import { VisibleMonthYear } from "../types";
 import Legend from "./Legend";
 import BookingObjectsTable from "./BookingObjects";
@@ -8,14 +8,15 @@ import BookingCalendarScrollContainer, { ScrollContainerRefs } from "./ScrollCon
 import ScrollPaginationButtons from "./ScrollPaginationButtons";
 import BookingCalendarTable from "./BookingCalendarTable";
 import { BookingObjectsProvider } from "../context/BookingObjectsContext";
+import { DaysProvider } from "../context/DaysContext";
 import MonthDropdown from "./MonthDropdown";
 import { useSettings } from "@/hooks/useSettings";
-
-
+import { useDays } from "@/hooks/useDays";
 
 const BookingCalendarContent: React.FC = () => {
-
   const { calendarSettings } = useSettings();
+  const { days, daysWithStatus } = useDays();
+
   const [visibleMonths, setVisibleMonths] = useState<VisibleMonthYear[]>([{ month: new Date().getMonth() + 1, year: new Date().getFullYear() }]);
   const [isTodayView, setIsTodayView] = useState(false);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
@@ -23,16 +24,6 @@ const BookingCalendarContent: React.FC = () => {
 
   const bookingCalendarWrapperRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<ScrollContainerRefs>(null);
-
-  const days = useMemo(() => {
-    if (!calendarSettings.length || !calendarSettings[0].calendarRange) return [];
-    return generateCalendarDays(calendarSettings[0].calendarRange);
-  }, [calendarSettings]);
-
-  const daysWithStatus = useMemo(() => {
-    if (!days.length) return [];
-    return preCalculateDaysStatusFlags(calendarSettings[0]?.bookingObjects, days);
-  }, [days, calendarSettings]);
 
   const months = useMemo(() => {
     if (!days.length) return [];
@@ -63,7 +54,6 @@ const BookingCalendarContent: React.FC = () => {
     setCanScrollRight(scrollLeft + clientWidth < scrollWidth - 10);
   };
 
-
   const { bookingObjects } = calendarSettings[0];
 
   return (
@@ -79,6 +69,7 @@ const BookingCalendarContent: React.FC = () => {
               canScrollLeft={canScrollLeft}
               canScrollRight={canScrollRight}
               calendarRange={calendarSettings[0]?.calendarRange}
+              className="py-2"
             />
           </div>
         </div>
@@ -116,9 +107,10 @@ const BookingCalendarContent: React.FC = () => {
 };
 
 const BookingCalendar: React.FC = () => {
-
   return (
-    <BookingCalendarContent />
+    <DaysProvider>
+      <BookingCalendarContent />
+    </DaysProvider>
   );
 };
 

@@ -6,6 +6,14 @@ module.exports = {
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   prefix: "",
+  safelist: [
+    {
+      pattern: /text-day-(arrival|departure|available|closed|unavailable|onrequest|booked|hover|selected)/,
+    },
+    {
+      pattern: /fill-day-(arrival|departure|available|closed|unavailable|onrequest|booked|hover|selected)/,
+    },
+  ],
   theme: {
 
     container: {
@@ -30,6 +38,8 @@ module.exports = {
       },
       colors: {
         'day-available': 'var(--day-available)',
+        'day-arrival': 'var(--day-available)',
+        'day-departure': 'var(--day-available)',
         'day-closed': 'var(--day-closed)',
         'day-unavailable': 'var(--day-unavailable)',
         'day-onrequest': 'var(--day-onrequest)',

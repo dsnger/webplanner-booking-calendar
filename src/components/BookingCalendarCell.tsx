@@ -10,6 +10,7 @@ import {
 } from "./ui/tooltip"
 import ArrivalDayIcon from "./icons/ArrivalDayIcon";
 import DepartureDayIcon from "./icons/DepartureDayIcon";
+import { useSettings } from "@/hooks/useSettings";
 
 
 
@@ -42,9 +43,14 @@ const BookingCalendarCell: React.FC<BookingCalendarCellProps> = React.memo(({ da
 
   const { isUnavailable, isUnavailStartHalf, isUnavailEndHalf, isDisabled, isArrival, isDeparture, isHoveredCell, isInPast } = statusFlags;
 
+  const { calendarSettings} = useSettings();
+  const cellWidth = parseFloat(calendarSettings[0].cellSettings.cellWidth);
+  const iconFillColor = calendarSettings[0].colorSettings.available;
+
+
   const cellClassNames = [
     // 'cell cell-day h-9 min-w-9',
-    isDisabled && !isHoveredCell ? 'is-disabled bg-gray-200 text-gray-30' : (!isUnavailable || !isUnavailStartHalf || !isUnavailEndHalf  ? 'bg-day-available hover:bg-day-hover hover:cursor-pointer' : ''),
+    isDisabled && !isHoveredCell ? 'is-disabled bg-gray-200 text-gray-30' : (!isUnavailable || !isUnavailStartHalf || !isUnavailEndHalf  ? 'bg-day-available opacity-30 hover:bg-day-hover hover:cursor-pointer' : ''),
 
     isArrival ? 'is-available is-arrival hover:cursor-pointer hover:bg-day-hover' : '',
     isDeparture ? 'is-available is-departure hover:cursor-pointer hover:bg-day-hover' : '',
@@ -79,8 +85,8 @@ const BookingCalendarCell: React.FC<BookingCalendarCellProps> = React.memo(({ da
                 <div
                   className={`cell-marker w-full h-full `}
                 >
-                  {isArrival && !isUnavailable ? (<ArrivalDayIcon cellWidth={32}/>) : ''}
-                  {isDeparture && !isUnavailable ? (<DepartureDayIcon cellWidth={32}/>) : ''}
+                  {isArrival && !isUnavailable ? (<ArrivalDayIcon  iconFill={iconFillColor} cellWidth={cellWidth} />) : ''}
+                  {isDeparture && !isUnavailable ? (<DepartureDayIcon iconFill={iconFillColor} cellWidth={cellWidth} />) : ''}
                   {content}
                 </div>
               </div>
@@ -95,8 +101,8 @@ const BookingCalendarCell: React.FC<BookingCalendarCellProps> = React.memo(({ da
           <div
             className={`cell-marker w-full h-full`}
             >
-            {isArrival && !isUnavailable ? (<ArrivalDayIcon cellWidth={32}/>) : ''}
-            {isDeparture && !isUnavailable ? (<DepartureDayIcon cellWidth={32}/>) : ''}
+            {isArrival && !isUnavailable ? (<ArrivalDayIcon iconFill={iconFillColor} cellWidth={cellWidth} />) : ''}
+            {isDeparture && !isUnavailable ? (<DepartureDayIcon iconFill={iconFillColor} cellWidth={cellWidth} />) : ''}
             {content}
           </div>
         </div>

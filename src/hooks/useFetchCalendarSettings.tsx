@@ -1,5 +1,12 @@
 import { useState, useEffect } from 'react';
-import { BookingCalendarSettings } from "../types";
+import { BookingCalendarSettings, CellSettings } from "../types";
+
+
+const defaultCellSettings: CellSettings = {
+  cellWidth: '32px',
+  cellHeight: '32px',
+  cellGap: '1px',
+};
 
 export const useFetchCalendarSettings = (fewoOwnID: number, lang: string) => {
   const [isLoading, setIsLoading] = useState(true);
@@ -28,13 +35,17 @@ export const useFetchCalendarSettings = (fewoOwnID: number, lang: string) => {
 
         const data = await response.json();
         if (!isComponentMounted) return;  // Ensure data is only set if component is still mounted
-        setCalendarSettings(Array.isArray(data) ? data : [data]);
+          // Ensure default cellSettings are added if not present
+          const updatedCalendarSettings = (Array.isArray(data) ? data : [data]).map(setting => ({
+          ...setting,
+          cellSettings: { ...defaultCellSettings, ...setting.cellSettings },
+        }));
         setProgress(80);
-
+        setCalendarSettings(updatedCalendarSettings);
         setProgress(100);
         setTimeout(() => {
           if (isComponentMounted) setIsLoading(false);
-        }, 500);
+        }, 400);
 
       } catch (error) {
         console.error("Failed to fetch calendar settings:", error);

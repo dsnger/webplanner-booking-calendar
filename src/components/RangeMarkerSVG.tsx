@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { differenceInCalendarDays } from 'date-fns';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip";
+import { useSettings } from "@/hooks/useSettings";
 
 interface RangeMarkerProps {
   index: number;
@@ -14,22 +14,12 @@ interface RangeMarkerProps {
 }
 
 
-const RangeMarkerSVG: React.FC<RangeMarkerProps> = ({ index, start, end, tooltip, days }) => {
-  const [cellWidth, setCellWidth] = useState(32);
-  const [cellGap, setCellGap] = useState(1); // Default cell width to 40 if not set in CSS
+const RangeMarkerSVG: React.FC<RangeMarkerProps> = ({ index, start, end, type, days }) => {
+  const { calendarSettings} = useSettings();
+  const cellWidth = parseFloat(calendarSettings[0].cellSettings.cellWidth);
+  const cellGap = parseFloat(calendarSettings[0].cellSettings.cellGap);
 
-  useEffect(() => {
-    const root = document.documentElement;
-    const computedCellWidth = parseFloat(getComputedStyle(root).getPropertyValue('--cell-width'));
-    if (!isNaN(computedCellWidth)) {
-      setCellWidth(computedCellWidth);
-    }
-    const computedCellGap = parseFloat(getComputedStyle(root).getPropertyValue('--cell-gap'));
-    if (!isNaN(computedCellGap)) {
-      setCellGap(computedCellGap);
-    }
-  }, []);
-
+  // console.log(cellWidth)
   const getColumnStart = (date: Date) => days.findIndex(day => differenceInCalendarDays(day, date) === 0) + 1;
   const getColumnEnd = (date: Date) => days.findIndex(day => differenceInCalendarDays(day, date) === 0) + 2;
 
@@ -39,18 +29,8 @@ const RangeMarkerSVG: React.FC<RangeMarkerProps> = ({ index, start, end, tooltip
   const svgWidth = numberOfColumns * cellWidth + (numberOfColumns * cellGap);
   const svgHeight = cellWidth;
 
-  const calculatePath = (cellWidth: number, numberOfColumns: number) => {
-    const scale = cellWidth * (numberOfColumns - 2) + (numberOfColumns * cellGap)
-    const points = [
-      { x: 59.43875 + scale, y: 2 }, // Scaled
-      { x: 31.43875 + scale, y: 30 }, // Unchanged
-      { x: 4.56125, y: 30 }, // Unchanged
-      { x: 32.56125, y: 2 } // Unchanged
-    ];
-    return `M ${points[0].x} ${points[0].y}L ${points[1].x} ${points[1].y}L ${points[2].x} ${points[2].y}L ${points[3].x} ${points[3].y}Z`;
-  };
 
-  const calculateStrokePath = (cellWidth: number, numberOfColumns: number) => {
+  const calculatePath = (cellWidth: number, numberOfColumns: number) => {
     const scale = cellWidth * (numberOfColumns - 2) + (numberOfColumns * cellGap)
     const points = [
       { x: 46 + (scale/2), y: 2 }, // Scaled
@@ -65,7 +45,7 @@ const RangeMarkerSVG: React.FC<RangeMarkerProps> = ({ index, start, end, tooltip
 
   return (
     <div
-      className="h-cell-height relative stroke-current [fill-opacity:0.35] "
+      className={`h-cell-height relative stroke-current pointer-events-auto text-day-${type?.toLowerCase()} fill-day-${type?.toLowerCase()} [fill-opacity:0.65]`}
       style={{
         gridColumnStart: columnStart,
         gridColumnEnd: columnEnd,
@@ -74,27 +54,9 @@ const RangeMarkerSVG: React.FC<RangeMarkerProps> = ({ index, start, end, tooltip
       }}
     >
       <svg className="absolute inset-0 h-full" viewBox={`0 0 ${svgWidth} ${svgHeight}`} xmlns="http://www.w3.org/2000/svg">
-        <path stroke="none" d={calculatePath(cellWidth,numberOfColumns)}></path>
-        <path fill="none" strokeLinejoin="round" strokeWidth="2" d={calculateStrokePath(cellWidth,numberOfColumns)}></path>
+        {/* <path stroke="none" d={calculatePath(cellWidth,numberOfColumns)}></path> */}
+        <path strokeLinejoin="round" strokeWidth="2" d={calculatePath(cellWidth,numberOfColumns)}></path>
       </svg>
-      {tooltip ? (
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <div className="h-8 min-w-8 m-0 p-0 flex">
-                <div
-                  className={`cell-marker w-full h-full `}
-                >
-                  {tooltip}
-                </div>
-              </div>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>{tooltip}</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-      ) : ''}
     </div>
   );
 };

@@ -91,7 +91,7 @@ const ScrollPaginationButtons: React.FC<ScrollPaginationProps> = ({
   const nextDisabled = () => visibleMonths.length === 0 || !canScrollRight;
 
   return (
-    <div className={`py-2 flex justify-end items-center gap-2 ${className}`}>
+    <div className={`flex justify-end items-center gap-2 ${className}`}>
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>

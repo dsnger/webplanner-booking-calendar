@@ -17,7 +17,7 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow: hidden;
-  --day-available: #00ff0050; /* Replace with default or fallback colors */
+  --day-available: #00ff00; /* Replace with default or fallback colors */
   --day-arrival: #006600; /* Replace with default or fallback colors */
   --day-departure: #006600; /* Replace with default or fallback colors */
   --day-unavailable: #FF0000;
@@ -104,9 +104,6 @@ button:focus-visible {
   cursor: grabbing !important;
 }
 
-.overflow-x-auto * {
-  cursor: inherit;
-}
 
 .grabbing {
   opacity: 0.5;
