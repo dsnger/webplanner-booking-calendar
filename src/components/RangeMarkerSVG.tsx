@@ -13,13 +13,11 @@ interface RangeMarkerProps {
   days: Date[];
 }
 
-
 const RangeMarkerSVG: React.FC<RangeMarkerProps> = ({ index, start, end, type, days }) => {
   const { calendarSettings} = useSettings();
   const cellWidth = parseFloat(calendarSettings[0].cellSettings.cellWidth);
   const cellGap = parseFloat(calendarSettings[0].cellSettings.cellGap);
 
-  // console.log(cellWidth)
   const getColumnStart = (date: Date) => days.findIndex(day => differenceInCalendarDays(day, date) === 0) + 1;
   const getColumnEnd = (date: Date) => days.findIndex(day => differenceInCalendarDays(day, date) === 0) + 2;
 
@@ -29,16 +27,15 @@ const RangeMarkerSVG: React.FC<RangeMarkerProps> = ({ index, start, end, type, d
   const svgWidth = numberOfColumns * cellWidth + (numberOfColumns * cellGap);
   const svgHeight = cellWidth;
 
-
   const calculatePath = (cellWidth: number, numberOfColumns: number) => {
     const scale = cellWidth * (numberOfColumns - 2) + (numberOfColumns * cellGap)
     const points = [
-      { x: 46 + (scale/2), y: 2 }, // Scaled
-      { x: 59.43875 + scale, y: 2 }, // Scaled
-      { x: 31.43875 + scale, y: 30 }, // Unchanged
-      { x: 4.56125, y: 30 }, // Unchanged
-      { x: 32.56125, y: 2 }, // Unchanged
-      { x: 46 + (scale/2), y: 2 } // Scaled
+      { x: 46 + (scale/2), y: 2 },
+      { x: 59.43875 + scale, y: 2 },
+      { x: 31.43875 + scale, y: 30 },
+      { x: 4.56125, y: 30 },
+      { x: 32.56125, y: 2 },
+      { x: 46 + (scale/2), y: 2 }
     ];
     return `M ${points[0].x} ${points[0].y}L ${points[1].x} ${points[1].y}L ${points[2].x} ${points[2].y}L ${points[3].x} ${points[3].y}L ${points[4].x} ${points[4].y}L ${points[5].x} ${points[5].y}`;
   };
@@ -54,12 +51,10 @@ const RangeMarkerSVG: React.FC<RangeMarkerProps> = ({ index, start, end, type, d
       }}
     >
       <svg className="absolute inset-0 h-full" viewBox={`0 0 ${svgWidth} ${svgHeight}`} xmlns="http://www.w3.org/2000/svg">
-        {/* <path stroke="none" d={calculatePath(cellWidth,numberOfColumns)}></path> */}
-        <path strokeLinejoin="round" strokeWidth="2" d={calculatePath(cellWidth,numberOfColumns)}></path>
+        <path strokeLinejoin="round" strokeWidth="2" d={calculatePath(cellWidth, numberOfColumns)}></path>
       </svg>
     </div>
   );
 };
-
 
 export default RangeMarkerSVG;

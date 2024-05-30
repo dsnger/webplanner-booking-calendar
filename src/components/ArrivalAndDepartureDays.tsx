@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { differenceInCalendarDays } from "date-fns";
 import ArrivalDayIcon from "./icons/ArrivalDayIcon";
 import DepartureDayIcon from "./icons/DepartureDayIcon"; // Assuming you have a separate icon for departure days
@@ -6,6 +6,8 @@ import { useSettings } from "@/hooks/useSettings";
 import { useDays } from "@/hooks/useDays";
 import { useBookingObjects } from "@/hooks/useBookingObjects";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip";
+import { useSelectedDates } from "@/hooks/useSelectedDates";
+import SelectedRange from "./SelectedRange";
 
 // Define the types for the day types and booking objects
 interface DayTypes {
@@ -19,18 +21,28 @@ interface DayTypes {
 
 
 const ArrivalAndDepartureDays: React.FC = () => {
+  const { calendarSettings } = useSettings();
   const { bookingObjects } = useBookingObjects();
   const { days, daysWithStatus } = useDays();
-  const cellColCount = days.length;
+  const { selectedStartDate, selectedEndDate, handleDayClick } = useSelectedDates();
 
-  const { calendarSettings } = useSettings();
+  const cellColCount = days.length;
   const cellWidth = parseFloat(calendarSettings[0].cellSettings.cellWidth);
   const iconFillColor = calendarSettings[0].colorSettings.available;
+
+  useEffect(() => {
+    console.log('selectedStartDate', selectedStartDate);
+  }, [selectedStartDate]);
+
+  useEffect(() => {
+    console.log('selectedEndDate', selectedEndDate);
+  }, [selectedEndDate]);
 
   if (!Array.isArray(bookingObjects)) {
     console.error('bookingObjects is not an array:', bookingObjects);
     return <div>Invalid booking data</div>;
   }
+
 
   return (
     <div className="grid z-20 relative"
@@ -68,19 +80,21 @@ const ArrivalAndDepartureDays: React.FC = () => {
             return (
               <div
                 key={`${rowIndex}-${dayTypeKey}-${dateIndex}`}
-                className={`h-cell-height relative stroke-current cursor-pointer fill-day-${dayTypeKey.slice(0, -4)} [fill-opacity:0.65]`}
+                className={`h-cell-height relative stroke-current fill-day-${dayTypeKey.slice(0, -4)} [fill-opacity:0.65]`}
                 style={{
                   display: 'block',
                   gridColumnStart: columnStart,
                   gridColumnEnd: columnStart,
                   gridRow: rowIndex + 1,
-                }}>
+                }}
+                onClick={() => handleDayClick(date, dayTypeKey.slice(0, -4) as 'arrival' | 'departure', rowIndex, columnStart)}
+              >
                 {
                   !status || !status.isUnavailable &&
                   <TooltipProvider delayDuration={0}>
                     <Tooltip>
                         <TooltipTrigger asChild>
-                          <div className="h-full mw-full m-0 p-0 flex text-black">
+                          <div className="cursor-pointer h-full mw-full m-0 p-0 flex text-black">
                           {dayTypeKey === 'arrivalDays' ? (
                             <ArrivalDayIcon iconFill={iconFillColor} iconStroke={iconFillColor} cellWidth={cellWidth} />
                           ) : (
@@ -99,6 +113,7 @@ const ArrivalAndDepartureDays: React.FC = () => {
           });
         });
       })}
+      <SelectedRange />
     </div>
   );
 };

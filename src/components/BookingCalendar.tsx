@@ -12,6 +12,7 @@ import { DaysProvider } from "../context/DaysContext";
 import MonthDropdown from "./MonthDropdown";
 import { useSettings } from "@/hooks/useSettings";
 import { useDays } from "@/hooks/useDays";
+import { SelectedDatesProvider } from "@/context/SelectedDatesContext";
 
 const BookingCalendarContent: React.FC = () => {
   const { calendarSettings } = useSettings();
@@ -109,7 +110,9 @@ const BookingCalendarContent: React.FC = () => {
 const BookingCalendar: React.FC = () => {
   return (
     <DaysProvider>
-      <BookingCalendarContent />
+      <SelectedDatesProvider>
+        <BookingCalendarContent />
+      </SelectedDatesProvider>
     </DaysProvider>
   );
 };
