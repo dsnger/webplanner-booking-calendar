@@ -1,4 +1,3 @@
-import React, { useEffect } from 'react';
 import { differenceInCalendarDays } from "date-fns";
 import ArrivalDayIcon from "./icons/ArrivalDayIcon";
 import DepartureDayIcon from "./icons/DepartureDayIcon"; // Assuming you have a separate icon for departure days
@@ -8,6 +7,7 @@ import { useBookingObjects } from "@/hooks/useBookingObjects";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip";
 import { useSelectedDates } from "@/hooks/useSelectedDates";
 import SelectedRange from "./SelectedRange";
+import DynamicRange from "./DynamicRange";
 
 // Define the types for the day types and booking objects
 interface DayTypes {
@@ -24,26 +24,34 @@ const ArrivalAndDepartureDays: React.FC = () => {
   const { calendarSettings } = useSettings();
   const { bookingObjects } = useBookingObjects();
   const { days, daysWithStatus } = useDays();
-  const { selectedStartDate, selectedEndDate, handleDayClick } = useSelectedDates();
+  const { startSelection, finalizeSelection } = useSelectedDates();
 
   const cellColCount = days.length;
   const cellWidth = parseFloat(calendarSettings[0].cellSettings.cellWidth);
   const iconFillColor = calendarSettings[0].colorSettings.available;
 
-  useEffect(() => {
-    console.log('selectedStartDate', selectedStartDate);
-  }, [selectedStartDate]);
+  // useEffect(() => {
+  //   console.log('selectedStartDate', selectedStartDate);
+  // }, [selectedStartDate]);
 
-  useEffect(() => {
-    console.log('selectedEndDate', selectedEndDate);
-  }, [selectedEndDate]);
+  // useEffect(() => {
+  //   console.log('selectedEndDate', selectedEndDate);
+  // }, [selectedEndDate]);
 
   if (!Array.isArray(bookingObjects)) {
     console.error('bookingObjects is not an array:', bookingObjects);
     return <div>Invalid booking data</div>;
   }
 
+  const handleDayClick = (date: Date, type: 'arrival' | 'departure', rowIndex: number, columnIndex: number) => {
+    if (type === 'arrival') {
+      startSelection(date, rowIndex, columnIndex);
+    } else if (type === 'departure') {
+      finalizeSelection(date, rowIndex, columnIndex);
+    }
+  };
 
+  
   return (
     <div className="grid z-20 relative"
       style={{
@@ -114,6 +122,7 @@ const ArrivalAndDepartureDays: React.FC = () => {
         });
       })}
       <SelectedRange />
+      <DynamicRange />
     </div>
   );
 };

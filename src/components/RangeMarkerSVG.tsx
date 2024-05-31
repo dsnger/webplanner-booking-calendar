@@ -1,20 +1,17 @@
 import React from 'react';
 import { differenceInCalendarDays } from 'date-fns';
-import { useSettings } from "@/hooks/useSettings";
+import { useSettings } from '@/hooks/useSettings';
 
 interface RangeMarkerProps {
   index: number;
   start: Date;
   end: Date;
-  starthalf?: boolean;
-  endhalf?: boolean;
-  type?: string;
-  tooltip?: string;
   days: Date[];
+  type?: string;
 }
 
-const RangeMarkerSVG: React.FC<RangeMarkerProps> = ({ index, start, end, type, days }) => {
-  const { calendarSettings} = useSettings();
+const RangeMarkerSVG: React.FC<RangeMarkerProps> = ({ index, start, end, days, type}) => {
+  const { calendarSettings } = useSettings();
   const cellWidth = parseFloat(calendarSettings[0].cellSettings.cellWidth);
   const cellGap = parseFloat(calendarSettings[0].cellSettings.cellGap);
 
@@ -28,14 +25,14 @@ const RangeMarkerSVG: React.FC<RangeMarkerProps> = ({ index, start, end, type, d
   const svgHeight = cellWidth;
 
   const calculatePath = (cellWidth: number, numberOfColumns: number) => {
-    const scale = cellWidth * (numberOfColumns - 2) + (numberOfColumns * cellGap)
+    const scale = cellWidth * (numberOfColumns - 2) + (numberOfColumns * cellGap);
     const points = [
-      { x: 46 + (scale/2), y: 2 },
+      { x: 46 + (scale / 2), y: 2 },
       { x: 59.43875 + scale, y: 2 },
       { x: 31.43875 + scale, y: 30 },
       { x: 4.56125, y: 30 },
       { x: 32.56125, y: 2 },
-      { x: 46 + (scale/2), y: 2 }
+      { x: 46 + (scale / 2), y: 2 }
     ];
     return `M ${points[0].x} ${points[0].y}L ${points[1].x} ${points[1].y}L ${points[2].x} ${points[2].y}L ${points[3].x} ${points[3].y}L ${points[4].x} ${points[4].y}L ${points[5].x} ${points[5].y}`;
   };

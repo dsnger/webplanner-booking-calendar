@@ -98,3 +98,11 @@ export interface VisibleMonthYear {
   month: number;
   year: number;
 }
+
+
+export type ScrollContainerRefs = {
+  scrollToCurrentDay: () => void;
+  scrollLeft: () => void;
+  scrollRight: () => void;
+  scrollToMonth: (year: number, month: number) => void;
+};

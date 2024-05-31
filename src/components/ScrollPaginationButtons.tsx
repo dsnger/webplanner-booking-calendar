@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollContainerRefs } from "./ScrollContainer";
+import { ScrollContainerRefs } from "./BookingCalendarScrollContainer";
 import { Button } from "./ui/button"
 import { FlowbiteChevronLeftSolid, FlowbiteChevronRightSolid } from "./icons/icons";
 import {
@@ -13,7 +13,7 @@ import { isNextMonthWithinRange, isPrevMonthWithinRange } from "@/utils/dateUtil
 
 // Adjust the props interface to include a ref to the scroll container
 interface ScrollPaginationProps {
-  scrollRef: React.RefObject<ScrollContainerRefs>;
+  scrollContainerRef: React.RefObject<ScrollContainerRefs>;
   visibleMonths: VisibleMonthYear[]; // Now an array of visible months and years
   isTodayView: boolean;
   canScrollLeft: boolean;
@@ -29,7 +29,7 @@ interface VisibleMonthYear {
 
 
 const ScrollPaginationButtons: React.FC<ScrollPaginationProps> = ({
-  scrollRef,
+  scrollContainerRef,
   visibleMonths,
   isTodayView,
   canScrollLeft,
@@ -39,15 +39,15 @@ const ScrollPaginationButtons: React.FC<ScrollPaginationProps> = ({
 }) => {
 
   const scrollToCurrentDay = () => {
-    scrollRef.current?.scrollToCurrentDay();
+    scrollContainerRef.current?.scrollToCurrentDay();
   }
 
   // const scrollLeft = () => {
-  //   scrollRef.current?.scrollLeft();
+  //   scrollContainerRef.current?.scrollLeft();
   // };
 
   // const scrollRight = () => {
-  //   scrollRef.current?.scrollRight();
+  //   scrollContainerRef.current?.scrollRight();
   // };
 
   const getNextMonth = (year: number, month: number) => {
@@ -69,7 +69,7 @@ const ScrollPaginationButtons: React.FC<ScrollPaginationProps> = ({
     const lastVisibleMonth = visibleMonths[visibleMonths.length - 1];
     const { year, month } = getNextMonth(lastVisibleMonth.year, lastVisibleMonth.month);
     if (isNextMonthWithinRange(year, month, calendarRange)) {
-      scrollRef.current?.scrollToMonth(year, month);
+      scrollContainerRef.current?.scrollToMonth(year, month);
     }
     console.log('next month ' + month)
   };
@@ -80,7 +80,7 @@ const ScrollPaginationButtons: React.FC<ScrollPaginationProps> = ({
     const firstVisibleMonth = visibleMonths[0];
     const { year, month } = getPrevMonth(firstVisibleMonth.year, firstVisibleMonth.month);
     if (isPrevMonthWithinRange(year, month, calendarRange)) {
-      scrollRef.current?.scrollToMonth(year, month);
+      scrollContainerRef.current?.scrollToMonth(year, month);
     }
     console.log('prev month '+month)
   };

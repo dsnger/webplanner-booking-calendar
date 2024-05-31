@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect,useMemo } from 'react';
 import { getMonth, getYear } from 'date-fns';
 import { setDayCountGlobalVar } from "../utils/dateUtils";
 import { VisibleMonthYear } from "../types";
 import Legend from "./Legend";
 import BookingObjectsTable from "./BookingObjects";
-import BookingCalendarScrollContainer, { ScrollContainerRefs } from "./ScrollContainer";
+import BookingCalendarScrollContainer from "./BookingCalendarScrollContainer";
 import ScrollPaginationButtons from "./ScrollPaginationButtons";
 import BookingCalendarTable from "./BookingCalendarTable";
 import { BookingObjectsProvider } from "../context/BookingObjectsContext";
@@ -13,18 +13,20 @@ import MonthDropdown from "./MonthDropdown";
 import { useSettings } from "@/hooks/useSettings";
 import { useDays } from "@/hooks/useDays";
 import { SelectedDatesProvider } from "@/context/SelectedDatesContext";
+import { RefsProvider } from "@/context/RefsContext";
+import { useRefs } from "@/hooks/useRefs";
 
 const BookingCalendarContent: React.FC = () => {
   const { calendarSettings } = useSettings();
   const { days, daysWithStatus } = useDays();
-
   const [visibleMonths, setVisibleMonths] = useState<VisibleMonthYear[]>([{ month: new Date().getMonth() + 1, year: new Date().getFullYear() }]);
   const [isTodayView, setIsTodayView] = useState(false);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
+  // const bookingCalendarWrapperRef = useRef<HTMLDivElement>(null);
+  // const scrollRef = useRef<ScrollContainerRefs>(null);
 
-  const bookingCalendarWrapperRef = useRef<HTMLDivElement>(null);
-  const scrollRef = useRef<ScrollContainerRefs>(null);
+  const { bookingCalendarWrapperRef, scrollContainerRef } = useRefs();
 
   const months = useMemo(() => {
     if (!days.length) return [];
@@ -62,9 +64,9 @@ const BookingCalendarContent: React.FC = () => {
       <BookingObjectsProvider bookingObjects={bookingObjects}>
         <div className="hidden lg:flex">
           <div className="flex flex-1 flex-row sm:justify-between items-center gap-2 ml-0 mr-2 w-max-full">
-            <MonthDropdown scrollRef={scrollRef} months={months} />
+            <MonthDropdown scrollContainerRef={scrollContainerRef} months={months} />
             <ScrollPaginationButtons
-              scrollRef={scrollRef}
+              scrollContainerRef={scrollContainerRef}
               visibleMonths={visibleMonths}
               isTodayView={isTodayView}
               canScrollLeft={canScrollLeft}
@@ -77,7 +79,7 @@ const BookingCalendarContent: React.FC = () => {
         <div className="flex relative">
           <BookingObjectsTable bookingObjects={bookingObjects} />
           <ScrollPaginationButtons
-            scrollRef={scrollRef}
+            scrollContainerRef={scrollContainerRef}
             visibleMonths={visibleMonths}
             isTodayView={isTodayView}
             canScrollLeft={canScrollLeft}
@@ -86,7 +88,7 @@ const BookingCalendarContent: React.FC = () => {
             className="absolute top-0 right-0 z-10 m-0 py-0 bg-slate-100 lg:hidden"
           />
           <BookingCalendarScrollContainer
-            ref={scrollRef}
+            ref={scrollContainerRef}
             updateVisibleMonthsAndYears={updateVisibleMonthsAndYears}
             updateIsTodayView={setIsTodayView}
             updateScrollState={updateScrollState}
@@ -111,7 +113,9 @@ const BookingCalendar: React.FC = () => {
   return (
     <DaysProvider>
       <SelectedDatesProvider>
-        <BookingCalendarContent />
+        <RefsProvider>
+          <BookingCalendarContent />
+        </RefsProvider>
       </SelectedDatesProvider>
     </DaysProvider>
   );

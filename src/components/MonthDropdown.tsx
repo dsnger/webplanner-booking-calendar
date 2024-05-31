@@ -1,13 +1,13 @@
-import { ScrollContainerRefs } from "./ScrollContainer";
+import { ScrollContainerRefs } from "./BookingCalendarScrollContainer";
 import { Button } from "./ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
 
 interface MonthDropdownProps {
-  scrollRef: React.RefObject<ScrollContainerRefs>;
+  scrollContainerRef: React.RefObject<ScrollContainerRefs>;
   months: { year: number; month: number; count: number }[]; // Assuming this structure from earlier discussions
 }
 
-const MonthDropdown: React.FC<MonthDropdownProps> = ({ scrollRef, months }) => {
+const MonthDropdown: React.FC<MonthDropdownProps> = ({ scrollContainerRef, months }) => {
 
   return (
     <div className="flex w-full sm:w-auto justify-center items-center">
@@ -19,7 +19,7 @@ const MonthDropdown: React.FC<MonthDropdownProps> = ({ scrollRef, months }) => {
         <DropdownMenuContent className="max-h-[200px] overflow-auto" >
           {months.map(({ year, month }) => (
             <DropdownMenuItem  key={`${year}-${month + 1}`}
-            onClick={() => scrollRef.current?.scrollToMonth(year, month + 1)}>
+            onClick={() => scrollContainerRef.current?.scrollToMonth(year, month + 1)}>
               {new Date(year, month).toLocaleString('default', { month: 'short' })} {year}
             </DropdownMenuItem>
           ))}

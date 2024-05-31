@@ -64,11 +64,10 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({ children, fe
     return <div>Error: {error}</div>;
   }
 
-  console.log(calendarSettings)
+
   if (!calendarSettings || !calendarSettings[0]?.calendarRange) {
     return <div>No calendar settings available.</div>;
   }
-
 
   return (
     <SettingsContext.Provider value={{ calendarSettings }}>
