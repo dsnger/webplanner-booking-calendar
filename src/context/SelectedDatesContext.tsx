@@ -1,4 +1,5 @@
-import React, { createContext, useState, ReactNode, useCallback } from 'react';
+import { useRefs } from "@/hooks/useRefs";
+import React, { createContext, useState, ReactNode, useCallback, useEffect } from 'react';
 
 interface SelectedDateInfo {
   date: Date | null;
@@ -9,12 +10,11 @@ interface SelectedDateInfo {
 interface SelectedDatesContextType {
   selectedStartDate: SelectedDateInfo;
   selectedEndDate: SelectedDateInfo;
-  tempEndDate: SelectedDateInfo;
   setSelectedStartDate: (info: SelectedDateInfo) => void;
   setSelectedEndDate: (info: SelectedDateInfo) => void;
   resetDates: () => void;
+  isSelecting: boolean;
   startSelection: (date: Date, rowIndex: number, columnIndex: number) => void;
-  updateTempSelection: (date: Date, columnIndex: number) => void;
   finalizeSelection: (date: Date, rowIndex: number, columnIndex: number) => void;
 }
 
@@ -31,44 +31,57 @@ export const SelectedDatesProvider: React.FC<{ children: ReactNode }> = ({ child
     rowIndex: null,
     columnIndex: null,
   });
-  const [tempEndDate, setTempEndDate] = useState<SelectedDateInfo>({
-    date: null,
-    rowIndex: null,
-    columnIndex: null,
-  });
+  const [isSelecting, setIsSelecting] = useState(false);
+  const { bookingCalendarWrapperRef } = useRefs();
 
   const resetDates = useCallback(() => {
     setSelectedStartDate({ date: null, rowIndex: null, columnIndex: null });
     setSelectedEndDate({ date: null, rowIndex: null, columnIndex: null });
-    setTempEndDate({ date: null, rowIndex: null, columnIndex: null });
   }, []);
 
   const startSelection = useCallback((date: Date, rowIndex: number, columnIndex: number) => {
     resetDates();
     setSelectedStartDate({ date, rowIndex, columnIndex });
-    setTempEndDate({ date, rowIndex, columnIndex });
+    setIsSelecting(true);
   }, [resetDates]);
 
-  const updateTempSelection = useCallback((date: Date, columnIndex: number) => {
-    setTempEndDate((prev) => ({ ...prev, date, columnIndex }));
-  }, []);
 
-  const finalizeSelection = useCallback((date: Date, rowIndex: number, columnIndex: number) => {
-    if (selectedStartDate.rowIndex === rowIndex && selectedStartDate.date && date > selectedStartDate.date) {
-      setSelectedEndDate({ date, rowIndex, columnIndex });
-    }
-  }, [selectedStartDate]);
+  const finalizeSelection = (date: Date, rowIndex: number, columnIndex: number) => {
+    setSelectedEndDate({ date, rowIndex, columnIndex });
+    setIsSelecting(false);
+  };
+
+  useEffect(() => {
+    const handleOutsideClick = (event: MouseEvent) => {
+      if (
+        bookingCalendarWrapperRef.current &&
+        !bookingCalendarWrapperRef.current.contains(event.target as Node)
+      ) {
+        resetDates();
+      }
+    };
+
+    // Attach the mousedown listener to the whole document
+    document.addEventListener('mousedown', handleOutsideClick);
+
+    // Cleanup function to remove both event listeners
+    return () => {
+      document.removeEventListener('mousedown', handleOutsideClick);
+    };
+  }, [bookingCalendarWrapperRef,resetDates]);
+
+
+
 
   return (
     <SelectedDatesContext.Provider value={{
       selectedStartDate,
       selectedEndDate,
-      tempEndDate,
       setSelectedStartDate,
       setSelectedEndDate,
       resetDates,
+      isSelecting,
       startSelection,
-      updateTempSelection,
       finalizeSelection
     }}>
       {children}

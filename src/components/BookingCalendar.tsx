@@ -1,25 +1,27 @@
-import React, { useState, useEffect,useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { getMonth, getYear } from 'date-fns';
-import { setDayCountGlobalVar } from "../utils/dateUtils";
-import { VisibleMonthYear } from "../types";
-import Legend from "./Legend";
-import BookingObjectsTable from "./BookingObjects";
-import BookingCalendarScrollContainer from "./BookingCalendarScrollContainer";
-import ScrollPaginationButtons from "./ScrollPaginationButtons";
-import BookingCalendarTable from "./BookingCalendarTable";
-import { BookingObjectsProvider } from "../context/BookingObjectsContext";
-import { DaysProvider } from "../context/DaysContext";
-import MonthDropdown from "./MonthDropdown";
-import { useSettings } from "@/hooks/useSettings";
-import { useDays } from "@/hooks/useDays";
-import { SelectedDatesProvider } from "@/context/SelectedDatesContext";
-import { RefsProvider } from "@/context/RefsContext";
-import { useRefs } from "@/hooks/useRefs";
+import { setDayCountGlobalVar } from '../utils/dateUtils';
+import { VisibleMonthYear } from '../types';
+import Legend from './Legend';
+import BookingObjectsTable from './BookingObjects';
+import BookingCalendarScrollContainer from './BookingCalendarScrollContainer';
+import ScrollPaginationButtons from './ScrollPaginationButtons';
+import BookingCalendarTable from './BookingCalendarTable';
+import { BookingObjectsProvider } from '../context/BookingObjectsContext';
+import { DaysProvider } from '../context/DaysContext';
+import MonthDropdown from './MonthDropdown';
+import { useSettings } from '@/hooks/useSettings';
+import { useDays } from '@/hooks/useDays';
+import { SelectedDatesProvider } from '@/context/SelectedDatesContext';
+import { RefsProvider } from '@/context/RefsContext';
+import { useRefs } from '@/hooks/useRefs';
 
 const BookingCalendarContent: React.FC = () => {
   const { calendarSettings } = useSettings();
   const { days, daysWithStatus } = useDays();
-  const [visibleMonths, setVisibleMonths] = useState<VisibleMonthYear[]>([{ month: new Date().getMonth() + 1, year: new Date().getFullYear() }]);
+  const [visibleMonths, setVisibleMonths] = useState<VisibleMonthYear[]>([
+    { month: new Date().getMonth() + 1, year: new Date().getFullYear() },
+  ]);
   const [isTodayView, setIsTodayView] = useState(false);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
@@ -31,7 +33,7 @@ const BookingCalendarContent: React.FC = () => {
   const months = useMemo(() => {
     if (!days.length) return [];
     const monthMap = new Map();
-    days.forEach(date => {
+    days.forEach((date) => {
       const yearMonthKey = `${getYear(date)}-${getMonth(date)}`;
       const count = monthMap.get(yearMonthKey) || 0;
       monthMap.set(yearMonthKey, count + 1);
@@ -52,7 +54,11 @@ const BookingCalendarContent: React.FC = () => {
     setVisibleMonths(months);
   };
 
-  const updateScrollState = (scrollLeft: number, scrollWidth: number, clientWidth: number) => {
+  const updateScrollState = (
+    scrollLeft: number,
+    scrollWidth: number,
+    clientWidth: number
+  ) => {
     setCanScrollLeft(scrollLeft > 10);
     setCanScrollRight(scrollLeft + clientWidth < scrollWidth - 10);
   };
@@ -60,11 +66,17 @@ const BookingCalendarContent: React.FC = () => {
   const { bookingObjects } = calendarSettings[0];
 
   return (
-    <div className="booking-calendar-wrapper w-full overflow-hidden animate-fadeIn relative" ref={bookingCalendarWrapperRef}>
+    <div
+      className="booking-calendar-wrapper w-full overflow-hidden animate-fadeIn relative"
+      ref={bookingCalendarWrapperRef}
+    >
       <BookingObjectsProvider bookingObjects={bookingObjects}>
         <div className="hidden lg:flex">
           <div className="flex flex-1 flex-row sm:justify-between items-center gap-2 ml-0 mr-2 w-max-full">
-            <MonthDropdown scrollContainerRef={scrollContainerRef} months={months} />
+            <MonthDropdown
+              scrollContainerRef={scrollContainerRef}
+              months={months}
+            />
             <ScrollPaginationButtons
               scrollContainerRef={scrollContainerRef}
               visibleMonths={visibleMonths}
@@ -112,11 +124,11 @@ const BookingCalendarContent: React.FC = () => {
 const BookingCalendar: React.FC = () => {
   return (
     <DaysProvider>
-      <SelectedDatesProvider>
-        <RefsProvider>
+      <RefsProvider>
+        <SelectedDatesProvider>
           <BookingCalendarContent />
-        </RefsProvider>
-      </SelectedDatesProvider>
+        </SelectedDatesProvider>
+      </RefsProvider>
     </DaysProvider>
   );
 };

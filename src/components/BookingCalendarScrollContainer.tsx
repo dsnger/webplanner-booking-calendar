@@ -9,7 +9,7 @@ type BookingCalendarScrollContainerProps = {
   updateScrollState: (scrollLeft: number, scrollWidth: number, clientWidth: number) => void;
 };
 
-const BookingCalendarScrollContainer = forwardRef<ScrollContainerRefs, BookingCalendarScrollContainerProps>(
+const BookingCalendarScrollContainer = forwardRef<ScrollContainerRefs & {element: HTMLDivElement | null}, BookingCalendarScrollContainerProps>(
   ({ children, updateVisibleMonthsAndYears, updateIsTodayView, updateScrollState }, ref) => {
     const scrollParentRef = useRef<HTMLDivElement>(null);
     const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -46,6 +46,9 @@ const BookingCalendarScrollContainer = forwardRef<ScrollContainerRefs, BookingCa
           monthStartElem.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
       },
+      get element() {
+        return scrollContainerRef.current;
+      }
     }));
 
     // Function to handle the update based on the most visible months

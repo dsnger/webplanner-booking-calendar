@@ -8,9 +8,10 @@ interface RangeMarkerProps {
   end: Date;
   days: Date[];
   type?: string;
+  isSelecting: boolean;
 }
 
-const RangeMarkerSVG: React.FC<RangeMarkerProps> = ({ index, start, end, days, type}) => {
+const RangeMarkerSVG: React.FC<RangeMarkerProps> = ({ index, start, end, days, type, isSelecting = false}) => {
   const { calendarSettings } = useSettings();
   const cellWidth = parseFloat(calendarSettings[0].cellSettings.cellWidth);
   const cellGap = parseFloat(calendarSettings[0].cellSettings.cellGap);
@@ -39,7 +40,7 @@ const RangeMarkerSVG: React.FC<RangeMarkerProps> = ({ index, start, end, days, t
 
   return (
     <div
-      className={`h-cell-height relative stroke-current pointer-events-auto text-day-${type?.toLowerCase()} fill-day-${type?.toLowerCase()} [fill-opacity:0.65]`}
+      className={`h-cell-height relative stroke-current text-day-${type?.toLowerCase()} fill-day-${type?.toLowerCase()} [fill-opacity:0.65] ${isSelecting ? 'cursor-col-resize' : 'cursor-default pointer-events-none '}`}
       style={{
         gridColumnStart: columnStart,
         gridColumnEnd: columnEnd,

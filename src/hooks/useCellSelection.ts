@@ -47,7 +47,7 @@ export const useCellSelection = (
     return () => {
       document.removeEventListener('mousedown', handleOutsideClick);
     };
-  }, []);
+  }, [bookingCalendarWrapperRef]);
 
   const handleCellSelection = useCallback(
     (clickedDate: Date, rowIndex: number, cellIndex: number) => {

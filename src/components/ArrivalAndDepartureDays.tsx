@@ -6,7 +6,7 @@ import { useDays } from "@/hooks/useDays";
 import { useBookingObjects } from "@/hooks/useBookingObjects";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip";
 import { useSelectedDates } from "@/hooks/useSelectedDates";
-import SelectedRange from "./SelectedRange";
+// import SelectedRange from "./SelectedRange";
 import DynamicRange from "./DynamicRange";
 
 // Define the types for the day types and booking objects
@@ -19,24 +19,15 @@ interface DayTypes {
   };
 }
 
-
 const ArrivalAndDepartureDays: React.FC = () => {
   const { calendarSettings } = useSettings();
   const { bookingObjects } = useBookingObjects();
   const { days, daysWithStatus } = useDays();
-  const { startSelection, finalizeSelection } = useSelectedDates();
+  const { startSelection, finalizeSelection,selectedStartDate, isSelecting } = useSelectedDates();
 
   const cellColCount = days.length;
   const cellWidth = parseFloat(calendarSettings[0].cellSettings.cellWidth);
   const iconFillColor = calendarSettings[0].colorSettings.available;
-
-  // useEffect(() => {
-  //   console.log('selectedStartDate', selectedStartDate);
-  // }, [selectedStartDate]);
-
-  // useEffect(() => {
-  //   console.log('selectedEndDate', selectedEndDate);
-  // }, [selectedEndDate]);
 
   if (!Array.isArray(bookingObjects)) {
     console.error('bookingObjects is not an array:', bookingObjects);
@@ -51,7 +42,7 @@ const ArrivalAndDepartureDays: React.FC = () => {
     }
   };
 
-  
+
   return (
     <div className="grid z-20 relative"
       style={{
@@ -60,6 +51,8 @@ const ArrivalAndDepartureDays: React.FC = () => {
         gridTemplateRows: `repeat(${bookingObjects.length}, var(--cell-height))`,
         rowGap: `var(--cell-gap)`,
       }}>
+
+      <DynamicRange />
       {bookingObjects.map((bookingObject, rowIndex) => {
         const dayTypes: (keyof DayTypes)[] = ['arrivalDays', 'departureDays'];
 
@@ -84,6 +77,7 @@ const ArrivalAndDepartureDays: React.FC = () => {
             // Find the index of the date in the days array
             const dayIndex = days.findIndex(day => differenceInCalendarDays(day, date) === 0);
             const status = dayIndex !== -1 ? daysWithStatus[rowIndex][dayIndex] : null;
+            const isSelectingRow = isSelecting && selectedStartDate.rowIndex === rowIndex
 
             return (
               <div
@@ -104,7 +98,7 @@ const ArrivalAndDepartureDays: React.FC = () => {
                         <TooltipTrigger asChild>
                           <div className="cursor-pointer h-full mw-full m-0 p-0 flex text-black">
                           {dayTypeKey === 'arrivalDays' ? (
-                            <ArrivalDayIcon iconFill={iconFillColor} iconStroke={iconFillColor} cellWidth={cellWidth} />
+                            <ArrivalDayIcon iconFill={iconFillColor} iconStroke={iconFillColor} cellWidth={cellWidth} className={`${isSelectingRow ? 'opacity-25' : ''}`} />
                           ) : (
                             <DepartureDayIcon iconFill={iconFillColor} iconStroke={iconFillColor} cellWidth={cellWidth} />
                               )}
@@ -121,8 +115,6 @@ const ArrivalAndDepartureDays: React.FC = () => {
           });
         });
       })}
-      <SelectedRange />
-      <DynamicRange />
     </div>
   );
 };
