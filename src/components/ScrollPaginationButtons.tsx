@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollContainerRefs } from "./BookingCalendarScrollContainer";
+
 import { Button } from "./ui/button"
 import { FlowbiteChevronLeftSolid, FlowbiteChevronRightSolid } from "./icons/icons";
 import {
@@ -8,7 +8,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "./ui/tooltip"
-import { CalendarRange } from "@/types";
+import { CalendarRange, ScrollContainerRefs } from "@/types";
 import { isNextMonthWithinRange, isPrevMonthWithinRange } from "@/utils/dateUtils";
 
 // Adjust the props interface to include a ref to the scroll container

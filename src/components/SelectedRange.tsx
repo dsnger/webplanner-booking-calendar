@@ -22,8 +22,11 @@ const SelectedRange: React.FC = () => {
       index={selectedStartDate.rowIndex}
       start={selectedStartDate.date}
       end={selectedEndDate.date}
+      starthalf={true}
+      endhalf={true}
       days={days}
-      type="selected" // You can use a custom type for styling if needed
+      type="selected"
+      isSelecting={false}
     />
   );
 };

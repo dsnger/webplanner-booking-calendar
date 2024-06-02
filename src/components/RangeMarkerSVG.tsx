@@ -6,6 +6,8 @@ interface RangeMarkerProps {
   index: number;
   start: Date;
   end: Date;
+  starthalf: boolean;
+  endhalf: boolean;
   days: Date[];
   type?: string;
   isSelecting: boolean;

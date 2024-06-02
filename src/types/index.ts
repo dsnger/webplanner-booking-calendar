@@ -1,4 +1,4 @@
-export interface DayColumnProps { 
+export interface DayColumnProps {
   date: Date
   onClick: (date: Date) => void
 }

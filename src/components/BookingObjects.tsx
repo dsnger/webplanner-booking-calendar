@@ -7,7 +7,7 @@ interface BookingObjectsTableProps {
 
 const BookingObjectsTable: React.FC<BookingObjectsTableProps> = ({ bookingObjects }) => {
   return (
-    <div className="objects-table flex flex-col justify-end items-end ml-[-1px] m-[1px] min-w-[80px] max-w-[220px] w-[15vw] absolute bottom-0 h-full z-20">
+    <div className="objects-table flex flex-col justify-end items-end ml-[-1px] m-[1px] min-w-[80px] max-w-[220px] w-[15vw] absolute bottom-0 h-full z-40">
       <div className="w-full grid gap-cell-gap">
         {bookingObjects.map((bookingObject) => (
           <div key={bookingObject.objId}>
@@ -25,6 +25,6 @@ const BookingObjectsTable: React.FC<BookingObjectsTableProps> = ({ bookingObject
       </div>
     </div>
   );
-};
+}
 
 export default BookingObjectsTable

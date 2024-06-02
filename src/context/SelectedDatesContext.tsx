@@ -16,6 +16,9 @@ interface SelectedDatesContextType {
   isSelecting: boolean;
   startSelection: (date: Date, rowIndex: number, columnIndex: number) => void;
   finalizeSelection: (date: Date, rowIndex: number, columnIndex: number) => void;
+  handleDayHover: (date: Date, rowIndex: number, columnIndex: number) => void;
+  hoveredDay: SelectedDateInfo;
+  resetHoveredDay: () => void;
 }
 
 const SelectedDatesContext = createContext<SelectedDatesContextType | undefined>(undefined);
@@ -31,6 +34,13 @@ export const SelectedDatesProvider: React.FC<{ children: ReactNode }> = ({ child
     rowIndex: null,
     columnIndex: null,
   });
+
+  const [hoveredDay, setHoveredDay] = useState<SelectedDateInfo>({
+    date: null,
+    rowIndex: null,
+    columnIndex: null,
+  });
+
   const [isSelecting, setIsSelecting] = useState(false);
   const { bookingCalendarWrapperRef } = useRefs();
 
@@ -50,6 +60,21 @@ export const SelectedDatesProvider: React.FC<{ children: ReactNode }> = ({ child
     setSelectedEndDate({ date, rowIndex, columnIndex });
     setIsSelecting(false);
   };
+
+
+  const resetHoveredDay = useCallback(() => {
+    setHoveredDay({ date: null, rowIndex: null, columnIndex: null });
+  }, [])
+
+
+  const handleDayHover = useCallback((date: Date, rowIndex: number, columnIndex: number) => {
+    if (isSelecting === false) {
+      setHoveredDay({ date, rowIndex, columnIndex });
+    } else {
+      resetHoveredDay();
+    }
+  },[resetHoveredDay,isSelecting]);
+
 
   useEffect(() => {
     const handleOutsideClick = (event: MouseEvent) => {
@@ -71,8 +96,6 @@ export const SelectedDatesProvider: React.FC<{ children: ReactNode }> = ({ child
   }, [bookingCalendarWrapperRef,resetDates]);
 
 
-
-
   return (
     <SelectedDatesContext.Provider value={{
       selectedStartDate,
@@ -82,7 +105,10 @@ export const SelectedDatesProvider: React.FC<{ children: ReactNode }> = ({ child
       resetDates,
       isSelecting,
       startSelection,
-      finalizeSelection
+      finalizeSelection,
+      handleDayHover,
+      hoveredDay,
+      resetHoveredDay
     }}>
       {children}
     </SelectedDatesContext.Provider>

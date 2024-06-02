@@ -1,4 +1,5 @@
-import { ScrollContainerRefs } from "./BookingCalendarScrollContainer";
+
+import { ScrollContainerRefs } from "@/types";
 import { Button } from "./ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
 

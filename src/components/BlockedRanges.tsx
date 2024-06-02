@@ -1,12 +1,14 @@
-import { BookingObject } from "../types"; // Ensure this type matches your data structure/ Correct the import path as needed
-import RangeMarkerSVG from "./RangeMarkerSVG";
-
+import { BookingObject } from '../types'; // Ensure this type matches your data structure/ Correct the import path as needed
+import RangeMarkerSVG from './RangeMarkerSVG';
 interface BlockedRangesProps {
   bookingObjects: BookingObject[];
   days: Date[];
 }
 
-const BlockedRanges: React.FC<BlockedRangesProps> = ({ bookingObjects, days }) => {
+const BlockedRanges: React.FC<BlockedRangesProps> = ({
+  bookingObjects,
+  days,
+}) => {
   const cellColCount = days.length;
 
   // console.log( bookingObjects)
@@ -17,22 +19,26 @@ const BlockedRanges: React.FC<BlockedRangesProps> = ({ bookingObjects, days }) =
   }
 
   return (
-      <div className="grid absolute top-0 left-0 bottom-0 pointer-events-none z-10 "
-        style={{
-          width: `calc(${cellColCount} * (var(--cell-width) + var(--cell-gap))`,
-          gridTemplateColumns: `repeat(${cellColCount}, 2fr)`,
-          gridTemplateRows: `repeat(${bookingObjects.length}, var(--cell-height))`,
-          rowGap: `var(--cell-gap)`,
-        }}>
-
-        {bookingObjects.map((bookingObject, rowIndex) => {
+    <div
+      className="grid absolute top-0 left-0 bottom-0 pointer-events-all z-10 "
+      style={{
+        width: `calc(${cellColCount} * (var(--cell-width) + var(--cell-gap))`,
+        gridTemplateColumns: `repeat(${cellColCount}, 2fr)`,
+        gridTemplateRows: `repeat(${bookingObjects.length}, var(--cell-height))`,
+        rowGap: `var(--cell-gap)`,
+      }}
+    >
+      {bookingObjects.map((bookingObject, rowIndex) => {
         if (!bookingObject || !Array.isArray(bookingObject.blockedDateRanges)) {
           return null;
         }
 
         return bookingObject.blockedDateRanges.map((range, rangeIndex) => {
           if (!range) {
-            console.error(`Invalid range at index ${rangeIndex} in bookingObject ${rowIndex}:`, bookingObject);
+            console.error(
+              `Invalid range at index ${rangeIndex} in bookingObject ${rowIndex}:`,
+              bookingObject
+            );
             return null;
           }
 
@@ -45,8 +51,8 @@ const BlockedRanges: React.FC<BlockedRangesProps> = ({ bookingObjects, days }) =
               starthalf={range.starthalf}
               endhalf={range.endhalf}
               type={range.type}
-              tooltip={range.tooltip}
               days={days}
+              isSelecting={false}
             />
           );
         });

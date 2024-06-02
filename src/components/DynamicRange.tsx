@@ -3,12 +3,11 @@ import RangeMarkerSVG from './RangeMarkerSVG';
 import { useDays } from '@/hooks/useDays';
 import { useSettings } from '@/hooks/useSettings';
 import { useSelectedDates } from "@/hooks/useSelectedDates";
-import { differenceInCalendarDays } from 'date-fns';
 import { useRefs } from "@/hooks/useRefs";
 
 const DynamicRange: React.FC = () => {
   const { scrollContainerRef } = useRefs();
-  const { selectedStartDate, isSelecting } = useSelectedDates();
+  const { selectedStartDate, isSelecting, hoveredDay } = useSelectedDates();
   const { days } = useDays();
   const { calendarSettings } = useSettings();
   const cellWidth = parseFloat(calendarSettings[0].cellSettings.cellWidth);
@@ -16,12 +15,6 @@ const DynamicRange: React.FC = () => {
   const [currentEndDate, setCurrentEndDate] = useState<Date | null>(null);
 
 
-
-  // Ensure the initial selection spans two cell widths
-  // let initialEndDateIndex = days.findIndex(day => differenceInCalendarDays(day, selectedStartDate.date!) === 0) + 1;
-  // if (initialEndDateIndex >= days.length) {
-  //   initialEndDateIndex = days.length - 1;
-  // }
 
   const getXPositionRelativeToContainer = (event: MouseEvent): number => {
     const container = scrollContainerRef.current?.element;
@@ -59,23 +52,55 @@ const DynamicRange: React.FC = () => {
   }, [handleMouseMove]);
 
 
-  if (!selectedStartDate.date || selectedStartDate.rowIndex === null || selectedStartDate.columnIndex === null) {
-    return null; // Only render if start date is selected and row index is valid
+  // if (!selectedStartDate.date || selectedStartDate.rowIndex === null || selectedStartDate.columnIndex === null) {
+  //   return null; // Only render if start date is selected and row index is valid
+  // }
+
+  // let initialEndDateIndex = selectedStartDate.columnIndex;
+  // if (initialEndDateIndex >= days.length) {
+  //   initialEndDateIndex = days.length - 1;
+  // }
+  // const initialEndDate = days[initialEndDateIndex];
+
+
+  // Determine the start and end dates based on selection or hover state
+  let startDate: Date | null = null;
+  let endDate: Date | null = null;
+  let rowIndex: number | null = null;
+
+  if (selectedStartDate.date && selectedStartDate.rowIndex !== null && selectedStartDate.columnIndex !== null) {
+    startDate = selectedStartDate.date;
+    rowIndex = selectedStartDate.rowIndex;
+    endDate = currentEndDate;
+
+    if (!endDate) {
+      let initialEndDateIndex = selectedStartDate.columnIndex;
+      if (initialEndDateIndex >= days.length) {
+        initialEndDateIndex = days.length - 1;
+      }
+      endDate = days[initialEndDateIndex];
+    }
+
+  } else if (hoveredDay !== null) {
+    startDate = hoveredDay.date;
+    rowIndex = hoveredDay.rowIndex;
+    if (hoveredDay.columnIndex != null) {
+      endDate = days[hoveredDay.columnIndex];
+    }
   }
 
-  let initialEndDateIndex = selectedStartDate.columnIndex;
-  if (initialEndDateIndex >= days.length) {
-    initialEndDateIndex = days.length - 1;
+  if (!startDate || !endDate || rowIndex === null) {
+    return null;
   }
-  const initialEndDate = days[initialEndDateIndex];
-
 
 
   return (
     <RangeMarkerSVG
-      index={selectedStartDate.rowIndex}
-      start={selectedStartDate.date}
-      end={currentEndDate ? currentEndDate : initialEndDate}
+      index={rowIndex}
+      start={startDate}
+      end={endDate}
+      starthalf={true}
+      endhalf={true}
       days={days}
       type="selected"
       isSelecting={isSelecting}
