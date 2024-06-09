@@ -7,7 +7,7 @@ import { useRefs } from "@/hooks/useRefs";
 
 const DynamicRange: React.FC = () => {
   const { scrollContainerRef } = useRefs();
-  const { selectedStartDate, isSelecting, hoveredDay } = useSelectedDates();
+  const { selectedStartDate, isSelecting } = useSelectedDates();
   const { days } = useDays();
   const { calendarSettings } = useSettings();
   const cellWidth = parseFloat(calendarSettings[0].cellSettings.cellWidth);
@@ -41,8 +41,7 @@ const DynamicRange: React.FC = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cellWidth, cellGap, days, isSelecting, selectedStartDate]);
-
-
+ 
 
   useEffect(() => {
     window.addEventListener('mousemove', handleMouseMove);
@@ -50,17 +49,6 @@ const DynamicRange: React.FC = () => {
       window.removeEventListener('mousemove', handleMouseMove);
     };
   }, [handleMouseMove]);
-
-
-  // if (!selectedStartDate.date || selectedStartDate.rowIndex === null || selectedStartDate.columnIndex === null) {
-  //   return null; // Only render if start date is selected and row index is valid
-  // }
-
-  // let initialEndDateIndex = selectedStartDate.columnIndex;
-  // if (initialEndDateIndex >= days.length) {
-  //   initialEndDateIndex = days.length - 1;
-  // }
-  // const initialEndDate = days[initialEndDateIndex];
 
 
   // Determine the start and end dates based on selection or hover state
@@ -73,20 +61,14 @@ const DynamicRange: React.FC = () => {
     rowIndex = selectedStartDate.rowIndex;
     endDate = currentEndDate;
 
-    if (!endDate) {
+    if (!endDate || endDate <= startDate) {
       let initialEndDateIndex = selectedStartDate.columnIndex;
       if (initialEndDateIndex >= days.length) {
         initialEndDateIndex = days.length - 1;
       }
-      endDate = days[initialEndDateIndex];
+      endDate = days[initialEndDateIndex + 1];
     }
 
-  } else if (hoveredDay !== null) {
-    startDate = hoveredDay.date;
-    rowIndex = hoveredDay.rowIndex;
-    if (hoveredDay.columnIndex != null) {
-      endDate = days[hoveredDay.columnIndex];
-    }
   }
 
   if (!startDate || !endDate || rowIndex === null) {

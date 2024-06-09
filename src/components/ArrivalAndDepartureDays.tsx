@@ -1,55 +1,74 @@
-import ArrivalDayIcon from "./icons/ArrivalDayIcon";
-import DepartureDayIcon from "./icons/DepartureDayIcon"; // Assuming you have a separate icon for departure days
-import { useSettings } from "@/hooks/useSettings";
-import { useDays } from "@/hooks/useDays";
 import { useBookingObjects } from "@/hooks/useBookingObjects";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip";
+import { useDays } from "@/hooks/useDays";
 import { useSelectedDates } from "@/hooks/useSelectedDates";
+import { useState } from "react";
 import DynamicRange from "./DynamicRange";
+import DayContent from "./DayContent";
+import RangeMarkerSVG from "./RangeMarkerSVG";
 
 const ArrivalAndDepartureDays: React.FC = () => {
-  const { calendarSettings } = useSettings();
   const { bookingObjects } = useBookingObjects();
   const { days, daysWithStatus } = useDays();
-  const { startSelection, finalizeSelection, selectedStartDate, isSelecting, handleDayHover, resetHoveredDay } = useSelectedDates();
+  const { startSelection, finalizeSelection, selectedStartDate, isSelecting, selectedEndDate } = useSelectedDates();
+
+  // Local state for hover
+  const [hoveredDay, setHoveredDay] = useState<{ date: Date, rowIndex: number, columnIndex: number } | null>(null);
 
   const cellColCount = days.length;
-  const cellWidth = parseFloat(calendarSettings[0].cellSettings.cellWidth);
-  const iconFillColor = calendarSettings[0].colorSettings.available;
 
   if (!Array.isArray(bookingObjects)) {
     console.error('bookingObjects is not an array:', bookingObjects);
     return <div>Invalid booking data</div>;
   }
 
-  const handleDayClick = (date: Date, rowIndex: number, columnIndex: number, hasArrivalOnly: boolean, hasNoExplicitDays: boolean) => {
-    if (hasArrivalOnly || hasNoExplicitDays) {
+  const handleDayClick = (date: Date, rowIndex: number, columnIndex: number, hasArrivalOnly: boolean, hasNoExplicitDays: boolean, isArrivalDay: boolean, isDepartureDay: boolean) => {
+    if (hasNoExplicitDays) {
       if (!isSelecting) {
         startSelection(date, rowIndex, columnIndex);
       } else {
         finalizeSelection(date, rowIndex, columnIndex);
       }
-    } else {
-      const dayType = bookingObjects[rowIndex].dayTypes?.arrivalDays?.dates.includes(date.toISOString().split('T')[0]) ? 'arrival' : 'departure';
-      if (dayType === 'arrival') {
+
+    } else if(hasArrivalOnly){
+      if (!isSelecting && isArrivalDay) {
         startSelection(date, rowIndex, columnIndex);
-      } else if (dayType === 'departure') {
+      } else {
+        finalizeSelection(date, rowIndex, columnIndex);
+      }
+
+    } else {
+      if ( isArrivalDay) {
+        startSelection(date, rowIndex, columnIndex);
+      } else if ( isDepartureDay ) {
         finalizeSelection(date, rowIndex, columnIndex);
       }
     }
   };
 
   const handleHover = (date: Date, rowIndex: number, columnIndex: number, hasNoExplicitDays: boolean, isArrivalDay: boolean) => {
-    if (isArrivalDay || hasNoExplicitDays) {
-      handleDayHover(date, rowIndex, columnIndex);
+    if (isSelecting) return null;
+    if ((isArrivalDay || hasNoExplicitDays)) {
+      setHoveredDay({ date, rowIndex, columnIndex });
+    } else {
+      setHoveredDay(null);
     }
   };
 
-
-
   const handleMouseLeave = () => {
-    resetHoveredDay();
+    setHoveredDay(null);
   };
+
+
+  let startDate: Date | null = null;
+  let endDate: Date | null = null;
+
+  if (hoveredDay !== null) {
+    startDate = hoveredDay.date;
+    if (hoveredDay.columnIndex !== null ) {
+      endDate = days[hoveredDay.columnIndex + 1];
+    }
+  }
+
 
   return (
     <div
@@ -62,6 +81,18 @@ const ArrivalAndDepartureDays: React.FC = () => {
       }}
     >
       <DynamicRange />
+      {hoveredDay && startDate && endDate && (!isSelecting || selectedEndDate) && (
+        <RangeMarkerSVG
+          index={hoveredDay.rowIndex}
+          start={startDate}
+          end={endDate}
+          starthalf={true}
+          endhalf={true}
+          days={days}
+          type="selected"
+          isSelecting={isSelecting}
+        />
+      )}
       {bookingObjects.map((bookingObject, rowIndex) => {
         const arrivalDates = bookingObject.dayTypes?.arrivalDays?.dates || [];
         const departureDates = bookingObject.dayTypes?.departureDays?.dates || [];
@@ -80,44 +111,24 @@ const ArrivalAndDepartureDays: React.FC = () => {
             return null;
           }
 
-          // Get the column start index for the day
-          const columnStart = dayIndex + 1;
+          // Determine if the row is currently being selected
           const isSelectingRow = isSelecting && selectedStartDate.rowIndex === rowIndex;
 
           return (
-            <div
+            <DayContent
               key={`${rowIndex}-${dateString}-${dayIndex}`}
-              className={`h-cell-height relative stroke-current fill-day [fill-opacity:0.65]`}
-              style={{
-                display: 'block',
-                gridColumnStart: columnStart,
-                gridColumnEnd: columnStart,
-                gridRow: rowIndex + 1,
-              }}
-              onClick={() => handleDayClick(day, rowIndex, columnStart, hasArrivalOnly, hasNoExplicitDays)}
-              onMouseEnter={() => handleHover(day, rowIndex, columnStart, hasNoExplicitDays, isArrivalDay)}
-              onMouseLeave={handleMouseLeave}
-            >
-              {
-                (!status || !status.isUnavailable) &&
-                <TooltipProvider delayDuration={0}>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <div className={`${isSelectingRow || isArrivalDay || hasNoExplicitDays? 'cursor-pointer' : ''}  h-full mw-full m-0 p-0 flex text-black`}>
-                        {isArrivalDay ? (
-                          <ArrivalDayIcon iconFill={iconFillColor} iconStroke={iconFillColor} cellWidth={cellWidth} className={`${isSelectingRow || isDepartureDay ? 'opacity-25' : ''}`} />
-                        ) : isDepartureDay ? (
-                          <DepartureDayIcon iconFill={iconFillColor} iconStroke={iconFillColor} cellWidth={cellWidth} className={`${!isSelectingRow ? 'opacity-25' : ''}`}/>
-                        ) : null}
-                      </div>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>{isArrivalDay ? 'Anreisetag' : isDepartureDay ? 'Abreisetag' : ''}</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              }
-            </div>
+              day={day}
+              rowIndex={rowIndex}
+              columnIndex={dayIndex}
+              isArrivalDay={isArrivalDay}
+              isDepartureDay={isDepartureDay}
+              hasArrivalOnly={hasArrivalOnly}
+              hasNoExplicitDays={hasNoExplicitDays}
+              isSelectingRow={isSelectingRow}
+              handleDayClick={handleDayClick}
+              handleHover={handleHover}
+              handleMouseLeave={handleMouseLeave}
+            />
           );
         });
       })}

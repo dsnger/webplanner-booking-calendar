@@ -42,7 +42,7 @@ const RangeMarkerSVG: React.FC<RangeMarkerProps> = ({ index, start, end, days, t
 
   return (
     <div
-      className={`h-cell-height relative stroke-current text-day-${type?.toLowerCase()} fill-day-${type?.toLowerCase()} [fill-opacity:0.65] ${isSelecting ? 'cursor-col-resize' : 'cursor-default pointer-events-none '}`}
+      className={`h-cell-height relative stroke-current text-day-${type?.toLowerCase()} fill-day-${type?.toLowerCase()} [fill-opacity:0.65] ${isSelecting ? 'cursor-col-resize z-5' : 'cursor-default pointer-events-none'}`}
       style={{
         gridColumnStart: columnStart,
         gridColumnEnd: columnEnd,

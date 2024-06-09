@@ -16,9 +16,9 @@ interface SelectedDatesContextType {
   isSelecting: boolean;
   startSelection: (date: Date, rowIndex: number, columnIndex: number) => void;
   finalizeSelection: (date: Date, rowIndex: number, columnIndex: number) => void;
-  handleDayHover: (date: Date, rowIndex: number, columnIndex: number) => void;
-  hoveredDay: SelectedDateInfo;
-  resetHoveredDay: () => void;
+  // handleDayHover: (date: Date, rowIndex: number, columnIndex: number) => void;
+  // hoveredDay: SelectedDateInfo;
+  // resetHoveredDay: () => void;
 }
 
 const SelectedDatesContext = createContext<SelectedDatesContextType | undefined>(undefined);
@@ -29,17 +29,18 @@ export const SelectedDatesProvider: React.FC<{ children: ReactNode }> = ({ child
     rowIndex: null,
     columnIndex: null,
   });
+
   const [selectedEndDate, setSelectedEndDate] = useState<SelectedDateInfo>({
     date: null,
     rowIndex: null,
     columnIndex: null,
   });
 
-  const [hoveredDay, setHoveredDay] = useState<SelectedDateInfo>({
-    date: null,
-    rowIndex: null,
-    columnIndex: null,
-  });
+  // const [hoveredDay, setHoveredDay] = useState<SelectedDateInfo>({
+  //   date: null,
+  //   rowIndex: null,
+  //   columnIndex: null,
+  // });
 
   const [isSelecting, setIsSelecting] = useState(false);
   const { bookingCalendarWrapperRef } = useRefs();
@@ -62,18 +63,18 @@ export const SelectedDatesProvider: React.FC<{ children: ReactNode }> = ({ child
   };
 
 
-  const resetHoveredDay = useCallback(() => {
-    setHoveredDay({ date: null, rowIndex: null, columnIndex: null });
-  }, [])
+  // const resetHoveredDay = useCallback(() => {
+  //   setHoveredDay({ date: null, rowIndex: null, columnIndex: null });
+  // }, [])
 
 
-  const handleDayHover = useCallback((date: Date, rowIndex: number, columnIndex: number) => {
-    if (isSelecting === false) {
-      setHoveredDay({ date, rowIndex, columnIndex });
-    } else {
-      resetHoveredDay();
-    }
-  },[resetHoveredDay,isSelecting]);
+  // const handleDayHover = useCallback((date: Date, rowIndex: number, columnIndex: number) => {
+  //   if (isSelecting === false) {
+  //     setHoveredDay({ date, rowIndex, columnIndex });
+  //   } else {
+  //     resetHoveredDay();
+  //   }
+  // },[resetHoveredDay,isSelecting]);
 
 
   useEffect(() => {
@@ -106,9 +107,9 @@ export const SelectedDatesProvider: React.FC<{ children: ReactNode }> = ({ child
       isSelecting,
       startSelection,
       finalizeSelection,
-      handleDayHover,
-      hoveredDay,
-      resetHoveredDay
+      // handleDayHover,
+      // hoveredDay,
+      // resetHoveredDay
     }}>
       {children}
     </SelectedDatesContext.Provider>
