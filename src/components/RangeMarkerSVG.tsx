@@ -22,7 +22,7 @@ const RangeMarkerSVG: React.FC<RangeMarkerProps> = ({ index, start, end, startha
   const getColumnEnd = (date: Date) => days.findIndex(day => differenceInCalendarDays(day, date) === 0) + 2;
 
   const columnStart = getColumnStart(start);
-  const columnEnd = getColumnEnd(end);
+  const columnEnd = end ? getColumnEnd(end) : columnStart + 1;
   const numberOfColumns = columnEnd - columnStart;
   const svgWidth = numberOfColumns * cellWidth + (numberOfColumns * cellGap);
   const svgHeight = cellWidth;

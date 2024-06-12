@@ -13,7 +13,9 @@ interface SelectedDatesContextType {
   setSelectedStartDate: (info: SelectedDateInfo) => void;
   setSelectedEndDate: (info: SelectedDateInfo) => void;
   resetDates: () => void;
+  // resetCurrentEndDate: () => void;
   isSelecting: boolean;
+  finalizedSelection: boolean;
   startSelection: (date: Date, rowIndex: number, columnIndex: number) => void;
   finalizeSelection: (date: Date, rowIndex: number, columnIndex: number) => void;
   // handleDayHover: (date: Date, rowIndex: number, columnIndex: number) => void;
@@ -37,12 +39,15 @@ export const SelectedDatesProvider: React.FC<{ children: ReactNode }> = ({ child
   });
 
   const [isSelecting, setIsSelecting] = useState(false);
+  const [finalizedSelection, setFinalizedSelection] = useState(false);
   const { bookingCalendarWrapperRef } = useRefs();
+
 
   const resetDates = useCallback(() => {
     setSelectedStartDate({ date: null, rowIndex: null, columnIndex: null });
     setSelectedEndDate({ date: null, rowIndex: null, columnIndex: null });
   }, []);
+
 
   const startSelection = useCallback((date: Date, rowIndex: number, columnIndex: number) => {
     resetDates();
@@ -54,9 +59,11 @@ export const SelectedDatesProvider: React.FC<{ children: ReactNode }> = ({ child
   const finalizeSelection = (date: Date, rowIndex: number, columnIndex: number) => {
     setSelectedEndDate({ date, rowIndex, columnIndex });
     setIsSelecting(false);
+    setFinalizedSelection(true);
   };
 
   useEffect(() => {
+
     const handleOutsideClick = (event: MouseEvent) => {
       if (
         bookingCalendarWrapperRef.current &&
@@ -83,12 +90,10 @@ export const SelectedDatesProvider: React.FC<{ children: ReactNode }> = ({ child
       setSelectedStartDate,
       setSelectedEndDate,
       resetDates,
+      finalizedSelection,
       isSelecting,
       startSelection,
       finalizeSelection,
-      // handleDayHover,
-      // hoveredDay,
-      // resetHoveredDay
     }}>
       {children}
     </SelectedDatesContext.Provider>

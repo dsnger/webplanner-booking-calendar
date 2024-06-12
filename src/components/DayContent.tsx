@@ -1,19 +1,18 @@
+import React from 'react';
 import { useSettings } from "@/hooks/useSettings";
 import ArrivalDayIcon from "./icons/ArrivalDayIcon";
 import DepartureDayIcon from "./icons/DepartureDayIcon";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip";
-
+import { DayStatus } from "@/types";
 
 interface DayContentProps {
   day: Date;
   rowIndex: number;
   columnIndex: number;
-  isArrivalDay: boolean;
-  isDepartureDay: boolean;
-  hasArrivalOnly: boolean;
-  isAvailable: boolean;
-  hasNoExplicitDays: boolean;
+  status: DayStatus;
   isSelectingRow: boolean;
+  hasArrivalOnly: boolean;
+  hasNoExplicitDays: boolean;
   handleDayClick: (date: Date, rowIndex: number, columnIndex: number, hasArrivalOnly: boolean, hasNoExplicitDays: boolean, isArrivalDay: boolean, isDepartureDay: boolean) => void;
   handleHover: (date: Date, rowIndex: number, columnIndex: number, hasNoExplicitDays: boolean, isArrivalDay: boolean) => void;
   handleMouseLeave: () => void;
@@ -23,43 +22,50 @@ const DayContent: React.FC<DayContentProps> = ({
   day,
   rowIndex,
   columnIndex,
-  isArrivalDay,
-  isDepartureDay,
-  hasArrivalOnly,
-  isAvailable,
-  hasNoExplicitDays,
+  status,
   isSelectingRow,
+  hasArrivalOnly,
+  hasNoExplicitDays,
   handleDayClick,
   handleHover,
   handleMouseLeave
 }) => {
-  const iconFillColor = useSettings().calendarSettings[0].colorSettings.available;
-  const cellWidth = parseFloat(useSettings().calendarSettings[0].cellSettings.cellWidth);
+  const { calendarSettings } = useSettings();
 
+  const iconFillColor = calendarSettings[0].colorSettings.available;
+  const iconFillColorUnavailable = calendarSettings[0].colorSettings.notAvailable;
+  const cellWidth = parseFloat(calendarSettings[0].cellSettings.cellWidth);
   const dayContent = (
     <div
-      className={`h-cell-height relative stroke-current fill-day [fill-opacity:0.65] ${isSelectingRow ? 'cursor-col-resize' : 'cursor-pointer'} ${isAvailable ? 'is-available' : 'is-unavailable'}`}
+      className={`h-cell-height relative ${isSelectingRow ? 'cursor-col-resize' : ''}
+      ${(!isSelectingRow && hasArrivalOnly && status.isArrival) || (!isSelectingRow && hasNoExplicitDays) ? 'cursor-pointer' : ''}
+      ${!isSelectingRow && hasArrivalOnly && !status.isArrival ? 'cursor-not-allowed' : ''}
+      ${!isSelectingRow && !hasArrivalOnly && (status.isArrival || hasNoExplicitDays) ? 'cursor-pointer' : 'cursor-pointer'}
+      ${isSelectingRow && !hasNoExplicitDays && status.isDeparture ? 'cursor-pointer' : ''}
+      ${!isSelectingRow && !hasNoExplicitDays && status.isDeparture ? 'cursor-not-allowed' : ''}
+      ${status.isUnavailable ? 'is-unavailable' : 'is-available'} ${status.isArrival ? 'is-arrival' : ''}
+      ${status.isDeparture ? 'is-departure' : ''}`}
       style={{
         display: 'block',
         gridColumnStart: columnIndex + 1,
         gridColumnEnd: columnIndex + 1,
         gridRow: rowIndex + 1,
       }}
-      onClick={() => handleDayClick(day, rowIndex, columnIndex, hasArrivalOnly, hasNoExplicitDays, isArrivalDay, isDepartureDay)}
-      onMouseEnter={() => handleHover(day, rowIndex, columnIndex, hasNoExplicitDays, isArrivalDay)}
+      onClick={() => handleDayClick(day, rowIndex, columnIndex, hasArrivalOnly, hasNoExplicitDays, status.isArrival, status.isDeparture)}
+      onMouseEnter={() => handleHover(day, rowIndex, columnIndex, hasNoExplicitDays, status.isArrival)}
       onMouseLeave={handleMouseLeave}
     >
-      <div className="h-full mw-full m-0 p-0 flex text-black">
-        {isArrivalDay ? (
-          <ArrivalDayIcon iconFill={iconFillColor} iconStroke={iconFillColor} cellWidth={cellWidth} className={`${isSelectingRow ? 'opacity-25' : ''}`} />
-        ) : isDepartureDay ? (
-          <DepartureDayIcon iconFill={iconFillColor} iconStroke={iconFillColor} cellWidth={cellWidth} className={`${!isSelectingRow ? 'opacity-25' : ''}`}/>
+      <div className="h-full mw-full m-0 p-0 flex text-black [fill-opacity:0.65]">
+        {status.isArrival ? (
+          <ArrivalDayIcon iconFill={`${!isSelectingRow || hasArrivalOnly ? iconFillColor : iconFillColorUnavailable }`} iconStroke={`${!isSelectingRow || hasArrivalOnly ? iconFillColor : iconFillColorUnavailable }`} cellWidth={cellWidth} className={`${isSelectingRow ? 'opacity-15' : ''}`} />
+        ) : status.isDeparture ? (
+          <DepartureDayIcon iconFill={`${isSelectingRow ? iconFillColor : iconFillColorUnavailable }`} iconStroke={`${isSelectingRow ? iconFillColor : iconFillColorUnavailable}`} cellWidth={cellWidth} className={`${isSelectingRow ? '' : 'opacity-15'}`} />
         ) : null}
       </div>
     </div>
   );
 
-  if (isArrivalDay || isDepartureDay) {
+  if (status.isArrival || status.isDeparture) {
     return (
       <TooltipProvider delayDuration={0}>
         <Tooltip>
@@ -67,7 +73,7 @@ const DayContent: React.FC<DayContentProps> = ({
             {dayContent}
           </TooltipTrigger>
           <TooltipContent>
-            <p>{isArrivalDay ? 'Anreisetag' : 'Abreisetag'}</p>
+            <p>{status.isArrival ? 'Anreisetag' : 'Abreisetag'}</p>
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
@@ -76,6 +82,5 @@ const DayContent: React.FC<DayContentProps> = ({
 
   return dayContent;
 };
-
 
 export default DayContent;

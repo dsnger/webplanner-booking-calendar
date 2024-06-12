@@ -7,19 +7,48 @@ import { useRefs } from "@/hooks/useRefs";
 
 const DynamicRange: React.FC = () => {
   const { scrollContainerRef } = useRefs();
-  const { selectedStartDate, isSelecting } = useSelectedDates();
+  const { bookingCalendarWrapperRef } = useRefs();
+  const { selectedStartDate, isSelecting} = useSelectedDates();
   const { days } = useDays();
   const { calendarSettings } = useSettings();
   const cellWidth = parseFloat(calendarSettings[0].cellSettings.cellWidth);
   const cellGap = parseFloat(calendarSettings[0].cellSettings.cellGap);
   const [currentEndDate, setCurrentEndDate] = useState<Date | null>(null);
 
-  // Added useEffect to reset currentEndDate when selectedStartDate changes
   useEffect(() => {
-    if (selectedStartDate.date) {
-      setCurrentEndDate(null);
-    }
-  }, [selectedStartDate]);
+    const handleOutsideClick = (event: MouseEvent) => {
+      if (
+        bookingCalendarWrapperRef.current &&
+        !bookingCalendarWrapperRef.current.contains(event.target as Node)
+      ) {
+        setCurrentEndDate(null);
+      }
+    };
+
+    const handleDayClick = (event: MouseEvent) => {
+      if (isSelecting ) return;
+
+      if (
+        bookingCalendarWrapperRef.current &&
+        bookingCalendarWrapperRef.current.contains(event.target as Node)
+      ) {
+        setCurrentEndDate(null);
+        selectedStartDate.date = null
+      }
+    };
+
+    // Attach the mousedown listener to the whole document
+    document.addEventListener('mousedown', handleOutsideClick);
+    document.addEventListener('mousedown', handleDayClick);
+
+    // Cleanup function to remove both event listeners
+    return () => {
+      document.removeEventListener('mousedown', handleOutsideClick);
+      document.removeEventListener('mousedown', handleDayClick);
+    };
+  }, [bookingCalendarWrapperRef, setCurrentEndDate, isSelecting, selectedStartDate]);
+
+
 
   const getXPositionRelativeToContainer = (event: MouseEvent): number => {
     const container = scrollContainerRef.current?.element;
@@ -32,7 +61,8 @@ const DynamicRange: React.FC = () => {
 
 
   const handleMouseMove = useCallback((e: MouseEvent) => {
-    if (!isSelecting || selectedStartDate.columnIndex === null) return;
+    if (!isSelecting || selectedStartDate.columnIndex === null) return null;
+
     const xPos = getXPositionRelativeToContainer(e);
     const currentColumnIndex = Math.floor(xPos / (cellWidth + cellGap));
     const startIndex = selectedStartDate.columnIndex;
@@ -48,12 +78,41 @@ const DynamicRange: React.FC = () => {
   }, [cellWidth, cellGap, days, isSelecting, selectedStartDate]);
 
 
+  //Added useEffect to reset currentEndDate when selectedStartDate changes
+  useEffect(() => {
+    if (selectedStartDate.date) {
+      setCurrentEndDate(null);
+    }
+  }, [selectedStartDate]);
+
+
   useEffect(() => {
     window.addEventListener('mousemove', handleMouseMove);
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
     };
   }, [handleMouseMove]);
+
+
+  useEffect(() => {
+    const handleOutsideClick = (event: MouseEvent) => {
+      if (
+        bookingCalendarWrapperRef.current &&
+        !bookingCalendarWrapperRef.current.contains(event.target as Node)
+      ) {
+        setCurrentEndDate(null);
+      }
+    };
+
+    // Attach the mousedown listener to the whole document
+    document.addEventListener('mousedown', handleOutsideClick);
+    // Cleanup function to remove both event listeners
+    return () => {
+      document.removeEventListener('mousedown', handleOutsideClick);
+    };
+  }, [bookingCalendarWrapperRef, setCurrentEndDate]);
+
+
 
 
   // Determine the start and end dates based on selection or hover state

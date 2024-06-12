@@ -9,7 +9,7 @@ import RangeMarkerSVG from "./RangeMarkerSVG";
 const ArrivalAndDepartureDays: React.FC = () => {
   const { bookingObjects } = useBookingObjects();
   const { days, daysWithStatus } = useDays();
-  const { startSelection, finalizeSelection, selectedStartDate, isSelecting, selectedEndDate } = useSelectedDates();
+  const { startSelection, finalizeSelection, selectedStartDate, isSelecting, finalizedSelection } = useSelectedDates();
 
   // Local state for hover
   const [hoveredDay, setHoveredDay] = useState<{ date: Date, rowIndex: number, columnIndex: number } | null>(null);
@@ -24,13 +24,12 @@ const ArrivalAndDepartureDays: React.FC = () => {
     if (hasNoExplicitDays) {
       if (!isSelecting ) {
         startSelection(date, rowIndex, columnIndex);
-        // console.log('selectedEndDate after startSelection:', selectedEndDate);
       } else {
         finalizeSelection(date, rowIndex, columnIndex);
       }
 
     } else if(hasArrivalOnly){
-      if ((!isSelecting ) && isArrivalDay) {
+      if (!isSelecting && isArrivalDay) {
         startSelection(date, rowIndex, columnIndex);
       } else {
         finalizeSelection(date, rowIndex, columnIndex);
@@ -73,7 +72,7 @@ const ArrivalAndDepartureDays: React.FC = () => {
 
   return (
     <div
-      className="grid z-20 relative"
+      className="grid z-20 relative days"
       style={{
         width: `calc(${cellColCount} * (var(--cell-width) + var(--cell-gap)))`,
         gridTemplateColumns: `repeat(${cellColCount}, 1fr)`,
@@ -81,8 +80,10 @@ const ArrivalAndDepartureDays: React.FC = () => {
         rowGap: `var(--cell-gap)`,
       }}
     >
+
       <DynamicRange />
-      {hoveredDay && startDate && endDate && (!isSelecting || selectedEndDate) && (
+
+      {hoveredDay && startDate && endDate && (!isSelecting || finalizedSelection) && (
         <RangeMarkerSVG
           index={hoveredDay.rowIndex}
           start={startDate}
@@ -102,14 +103,11 @@ const ArrivalAndDepartureDays: React.FC = () => {
 
         return days.map((day, dayIndex) => {
           const dateString = day.toISOString().split('T')[0];
-          const isArrivalDay = arrivalDates.includes(dateString);
-          const isDepartureDay = departureDates.includes(dateString);
-
           // Skip rendering days that are neither arrival nor departure, except for rows with only arrival days or no explicit days
           // Also skip unavailable days
           const status = daysWithStatus[rowIndex][dayIndex];
-          const isAvailable = !status?.isUnavailable;
-          if ((!isArrivalDay && !isDepartureDay && !hasArrivalOnly && !hasNoExplicitDays) || status?.isUnavailable || status?.isUnavailStartHalf) {
+
+          if ((!status.isArrival && !status.isDeparture && !hasArrivalOnly && !hasNoExplicitDays) || status?.isUnavailable || status?.isUnavailStartHalf) {
             return null;
           }
 
@@ -122,10 +120,8 @@ const ArrivalAndDepartureDays: React.FC = () => {
               day={day}
               rowIndex={rowIndex}
               columnIndex={dayIndex}
-              isArrivalDay={isArrivalDay}
-              isDepartureDay={isDepartureDay}
+              status={status}
               hasArrivalOnly={hasArrivalOnly}
-              isAvailable={isAvailable}
               hasNoExplicitDays={hasNoExplicitDays}
               isSelectingRow={isSelectingRow}
               handleDayClick={handleDayClick}

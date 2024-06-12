@@ -89,9 +89,11 @@ export interface DayStatus {
   isUnavailEndHalf: boolean;
   isDisabled: boolean;
   isArrival: boolean;
-  hasDepartureDays: boolean;
   isDeparture: boolean;
-  hasArrivalDays: boolean;
+  isBeforeUnavailableStart?: boolean;
+  isAfterUnavailableEnd?: boolean;
+  isBeforeUnavailableStartHalf?: boolean;
+  isAfterUnavailableEndHalf?: boolean;
 }
 
 export interface VisibleMonthYear {

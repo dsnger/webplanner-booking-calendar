@@ -7,9 +7,10 @@
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
+  --grid-divider: rgba(0, 0, 0, 0.1);
 
   color-scheme: light dark;
-  color: rgba(0, 0, 0, 0.87);
+  color: var(--text-color);
   background-color: #fff;
 
   font-synthesis: none;
@@ -94,106 +95,33 @@ button:focus-visible {
   overflow: hidden;
 }
 
-
-/* styles.css or your stylesheet file */
-/* .cell {
-  @apply border-l border-b border-gray-500 p-0 m-0 hover:cursor-pointer;
+/* .days {
+  background: repeating-linear-gradient(
+    90deg,
+    transparent 0,
+    transparent calc(var(--cell-width) + var(--cell-gap) - 1px),
+    var(--grid-divider) calc(var(--cell-width) + var(--cell-gap)),
+    var(--grid-divider) calc(var(--cell-width) + var(--cell-gap) - 1px)
+  ) no-repeat;
 } */
 
-.grabbing, .grabbing * {
-  cursor: grabbing !important;
+.days::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(
+    90deg,
+    transparent 0,
+    transparent calc(var(--cell-width) + var(--cell-gap) - 1px),
+    var(--grid-divider) calc(var(--cell-width) + var(--cell-gap)),
+    var(--grid-divider) calc(var(--cell-width) + var(--cell-gap) - 1px)
+  );
+  mix-blend-mode: soft-light;
+  pointer-events: none;
 }
-
-
-.grabbing {
-  opacity: 0.5;
-}
-
-
-.highlight {
-  background-color: lightblue; /* Style for highlighted cells */
-}
-
-.is-end {
-  clip-path: polygon(0 0, 0% 100%, 100% 0);
-}
-
-/* .is-selected .cell-marker {
-  @apply bg-green-600
-} */
-
-.is-selected.has-selection-left {
-  clip-path: polygon(0 0, 0% 100%, 100% 0);
-}
-
-.is-selected.has-selection-right {
-  clip-path: polygon(100% 0, 0% 100%, 100% 100%);
-}
-
-/* .cell:hover .cell-marker{
-  background-color: var(--day-hover);
-  clip-path: polygon(100% 0, 0% 100%, 100% 100%);
-} */
-
-.cell.is-start {
-  background-color: transparent!important;
-
-}
-
-
-.cell.is-start .cell-marker{
-  background-color: var(--day-selected);
-  clip-path: polygon(100% 0, 0% 100%, 100% 100%);
-  margin-right: -3px!important;
-}
-
-
-.cell.is-end .cell-marker{
-  background-color: var(--day-selected);
-  clip-path: polygon(0 0, 0% 100%, 100% 0);
-}
-
-
-/* .is-available.is-departure:not(.is-unavailable) .cell-marker {
-  background-color: var(--day-departure);
-  clip-path: polygon(0 0, 0% 100%, 100% 0);
-} */
-
-/* .is-available.is-arrival:not(.is-unavailable) .cell-marker {
-  background-color: var(--day-arrival);
-  clip-path: polygon(100% 0, 0% 100%, 100% 100%);
-} */
-
-.is-unavailable .cell-marker {
-  background-color: var(--day-unavailable,red);
-  z-index: 1;
-}
-
-.is-unavail-starthalf .cell-marker{
-  clip-path: polygon(100% 0, 0% 100%, 100% 100%);
-  margin-right: -1px;
-}
-
-.is-unavail-endhalf .cell-marker{
-  clip-path: polygon(0 0, 0% 100%, 100% 0);
-  margin-left: -1px;
-}
-
-
-.is-unavailable.is-booked:not(.is-start) .cell-marker {
-  background-color: var(--day-booked);
-}
-
-
-
-.is-closed .cell-marker{
-  background-color: var(--day-closed);
-}
-
-.is-onrequest .cell-marker{
-  background-color: var(--day-onrequest);
-}
-
 
 /* Add custom CSS for smooth scrolling and touch-friendly scrollbar */
 .overflow-x-auto {

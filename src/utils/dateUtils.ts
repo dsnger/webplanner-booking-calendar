@@ -11,6 +11,10 @@ import {
   isWithinInterval,
   subMonths,
   addMonths,
+  isBefore,
+  isAfter,
+  addDays,
+  subDays,
 } from 'date-fns';
 import { de } from 'date-fns/locale';
 import {
@@ -142,17 +146,6 @@ const isBlockedDateRange = (
   let rangeType: DateRangeType | null = null;
   let rangeTooltip: string | null = null;
 
-  // if (!bookingObject) {
-  //   return {
-  //     isUnavailable,
-  //     type: null,
-  //     tooltip: null,
-  //     isUnavailStart,
-  //     isUnavailEnd,
-  //     isUnavailStartHalf,
-  //     isUnavailEndHalf,
-  //   };
-  // }
 
   bookingObject.blockedDateRanges?.find((range) => {
     const startDay = new Date(range.start);
@@ -189,7 +182,7 @@ const isBlockedDateRange = (
       return true;
     }
 
-    if (isUnavailStart && isUnavailEnd) {
+    if (isUnavailStart || isUnavailEnd) {
       isUnavailable = true;
     }
 
@@ -215,36 +208,38 @@ const isDateType = (
   if (!bookingObject) {
     return false;
   }
-  // Using a fallback to an empty array if dateStrings are undefined
-  const dateStrings =
-    type === 'arrival'
-      ? bookingObject.dayTypes.arrivalDays.dates || []
-      : bookingObject.dayTypes.departureDays.dates || [];
 
-  return dateStrings.some((dateString) =>
-    isSameDay(date, parseISO(dateString))
-  );
-};
+  const dateStrings = type === 'arrival'
+    ? bookingObject.dayTypes.arrivalDays.dates
+    : bookingObject.dayTypes.departureDays.dates;
 
-const hasDepartureDays = (bookingObject: BookingObject): boolean => {
-  if (!bookingObject) {
+  if (!dateStrings || dateStrings.length === 0) {
     return false;
   }
-  // Access the departure days; use a fallback to an empty array if undefined
-  const departureDates = bookingObject.dayTypes.departureDays.dates || [];
-  // Check if the array of departure dates is not empty
-  return departureDates.length > 0;
+
+  return dateStrings.some(dateString => isSameDay(date, parseISO(dateString)));
 };
 
-const hasArrivalDays = (bookingObject: BookingObject): boolean => {
-  if (!bookingObject) {
-    return false;
-  }
-  // Access the departure days; use a fallback to an empty array if undefined
-  const arrivalDates = bookingObject.dayTypes.arrivalDays.dates || [];
-  // Check if the array of departure dates is not empty
-  return arrivalDates.length > 0;
-};
+
+// const hasDepartureDays = (bookingObject: BookingObject): boolean => {
+//   if (!bookingObject) {
+//     return false;
+//   }
+//   // Access the departure days; use a fallback to an empty array if undefined
+//   const departureDates = bookingObject.dayTypes.departureDays.dates || [];
+//   // Check if the array of departure dates is not empty
+//   return departureDates.length > 0;
+// };
+
+// const hasArrivalDays = (bookingObject: BookingObject): boolean => {
+//   if (!bookingObject) {
+//     return false;
+//   }
+//   // Access the departure days; use a fallback to an empty array if undefined
+//   const arrivalDates = bookingObject.dayTypes.arrivalDays.dates || [];
+//   // Check if the array of departure dates is not empty
+//   return arrivalDates.length > 0;
+// };
 
 const hasExclusiveDateTypes = (
   bookingObject: BookingObject,
@@ -274,6 +269,35 @@ const hasExclusiveDateTypes = (
 
   // Fallback in case the type doesn't match 'arrival' or 'departure'
   return false;
+};
+
+
+const isBeforeUnavailableStart = (date: Date, bookingObject: BookingObject): boolean => {
+  return bookingObject.blockedDateRanges?.some(range => {
+    const startDay = new Date(range.start);
+    return isBefore(date, startDay) && isSameDay(startDay, addDays(date, 1));
+  }) || false;
+};
+
+const isAfterUnavailableEnd = (date: Date, bookingObject: BookingObject): boolean => {
+  return bookingObject.blockedDateRanges?.some(range => {
+    const endDay = new Date(range.end);
+    return isAfter(date, endDay) && isSameDay(endDay, subDays(date, 1));
+  }) || false;
+};
+
+const isBeforeUnavailableStartHalf = (date: Date, bookingObject: BookingObject): boolean => {
+  return bookingObject.blockedDateRanges?.some(range => {
+    const startDay = new Date(range.start);
+    return range.starthalf && isBefore(date, startDay) && isSameDay(startDay, addDays(date, 1));
+  }) || false;
+};
+
+const isAfterUnavailableEndHalf = (date: Date, bookingObject: BookingObject): boolean => {
+  return bookingObject.blockedDateRanges?.some(range => {
+    const endDay = new Date(range.end);
+    return range.endhalf && isAfter(date, endDay) && isSameDay(endDay, subDays(date, 1));
+  }) || false;
 };
 
 export const preCalculateDaysStatusFlags = (
@@ -309,10 +333,13 @@ export const preCalculateDaysStatusFlags = (
         isUnavailStart: blockedInfo.isUnavailStart,
         isUnavailEnd: blockedInfo.isUnavailEnd,
         isDisabled: isDisabled,
-        isArrival: isDateType(bookingObject, day, 'arrival'),
-        hasDepartureDays: hasDepartureDays(bookingObject),
-        isDeparture: isDateType(bookingObject, day, 'departure'),
-        hasArrivalDays: hasArrivalDays(bookingObject),
+        isArrival: isArrivalDay,
+        isDeparture: isDepartureDay,
+        isBeforeUnavailableStart: isBeforeUnavailableStart(day, bookingObject),
+        isAfterUnavailableEnd: isAfterUnavailableEnd(day, bookingObject),
+        isBeforeUnavailableStartHalf: isBeforeUnavailableStartHalf(day, bookingObject),
+        isAfterUnavailableEndHalf: isAfterUnavailableEndHalf(day, bookingObject),
+
       };
     })
   );
