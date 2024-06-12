@@ -14,7 +14,12 @@ const DynamicRange: React.FC = () => {
   const cellGap = parseFloat(calendarSettings[0].cellSettings.cellGap);
   const [currentEndDate, setCurrentEndDate] = useState<Date | null>(null);
 
-
+  // Added useEffect to reset currentEndDate when selectedStartDate changes
+  useEffect(() => {
+    if (selectedStartDate.date) {
+      setCurrentEndDate(null);
+    }
+  }, [selectedStartDate]);
 
   const getXPositionRelativeToContainer = (event: MouseEvent): number => {
     const container = scrollContainerRef.current?.element;
@@ -41,7 +46,7 @@ const DynamicRange: React.FC = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cellWidth, cellGap, days, isSelecting, selectedStartDate]);
- 
+
 
   useEffect(() => {
     window.addEventListener('mousemove', handleMouseMove);

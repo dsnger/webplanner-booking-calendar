@@ -11,6 +11,7 @@ interface DayContentProps {
   isArrivalDay: boolean;
   isDepartureDay: boolean;
   hasArrivalOnly: boolean;
+  isAvailable: boolean;
   hasNoExplicitDays: boolean;
   isSelectingRow: boolean;
   handleDayClick: (date: Date, rowIndex: number, columnIndex: number, hasArrivalOnly: boolean, hasNoExplicitDays: boolean, isArrivalDay: boolean, isDepartureDay: boolean) => void;
@@ -25,6 +26,7 @@ const DayContent: React.FC<DayContentProps> = ({
   isArrivalDay,
   isDepartureDay,
   hasArrivalOnly,
+  isAvailable,
   hasNoExplicitDays,
   isSelectingRow,
   handleDayClick,
@@ -36,7 +38,7 @@ const DayContent: React.FC<DayContentProps> = ({
 
   const dayContent = (
     <div
-      className={`h-cell-height relative stroke-current fill-day [fill-opacity:0.65] ${isSelectingRow ? 'cursor-col-resize' : 'cursor-pointer'}`}
+      className={`h-cell-height relative stroke-current fill-day [fill-opacity:0.65] ${isSelectingRow ? 'cursor-col-resize' : 'cursor-pointer'} ${isAvailable ? 'is-available' : 'is-unavailable'}`}
       style={{
         display: 'block',
         gridColumnStart: columnIndex + 1,

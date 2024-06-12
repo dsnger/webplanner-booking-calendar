@@ -10,8 +10,8 @@ type SvgProps = {
 
 const DepartureDayIcon = React.forwardRef<SVGSVGElement, SvgProps>(
   ({ iconFill, iconStroke, cellWidth, className }, ref) => {
-  const viewBoxWidth = 31.2;
-  const viewBoxHeight = 30.5;
+  const viewBoxWidth = 32;
+  const viewBoxHeight = 32;
   const scale = cellWidth / 32;
 
   return (
@@ -22,8 +22,9 @@ const DepartureDayIcon = React.forwardRef<SVGSVGElement, SvgProps>(
       height={viewBoxHeight * scale}
       overflow="visible"
       className={cn(className)}
+
     >
-      <path stroke={iconStroke} fill={iconFill} d="M4 4.1L4 18.1 18 4.1z"></path>
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" stroke={iconStroke} fill={iconFill} d="M2 6L2 22 20 6z"></path>
     </svg>
   );
   }

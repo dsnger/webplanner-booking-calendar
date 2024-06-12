@@ -36,12 +36,6 @@ export const SelectedDatesProvider: React.FC<{ children: ReactNode }> = ({ child
     columnIndex: null,
   });
 
-  // const [hoveredDay, setHoveredDay] = useState<SelectedDateInfo>({
-  //   date: null,
-  //   rowIndex: null,
-  //   columnIndex: null,
-  // });
-
   const [isSelecting, setIsSelecting] = useState(false);
   const { bookingCalendarWrapperRef } = useRefs();
 
@@ -61,21 +55,6 @@ export const SelectedDatesProvider: React.FC<{ children: ReactNode }> = ({ child
     setSelectedEndDate({ date, rowIndex, columnIndex });
     setIsSelecting(false);
   };
-
-
-  // const resetHoveredDay = useCallback(() => {
-  //   setHoveredDay({ date: null, rowIndex: null, columnIndex: null });
-  // }, [])
-
-
-  // const handleDayHover = useCallback((date: Date, rowIndex: number, columnIndex: number) => {
-  //   if (isSelecting === false) {
-  //     setHoveredDay({ date, rowIndex, columnIndex });
-  //   } else {
-  //     resetHoveredDay();
-  //   }
-  // },[resetHoveredDay,isSelecting]);
-
 
   useEffect(() => {
     const handleOutsideClick = (event: MouseEvent) => {

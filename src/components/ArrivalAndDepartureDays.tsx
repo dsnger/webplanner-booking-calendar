@@ -13,7 +13,6 @@ const ArrivalAndDepartureDays: React.FC = () => {
 
   // Local state for hover
   const [hoveredDay, setHoveredDay] = useState<{ date: Date, rowIndex: number, columnIndex: number } | null>(null);
-
   const cellColCount = days.length;
 
   if (!Array.isArray(bookingObjects)) {
@@ -23,27 +22,29 @@ const ArrivalAndDepartureDays: React.FC = () => {
 
   const handleDayClick = (date: Date, rowIndex: number, columnIndex: number, hasArrivalOnly: boolean, hasNoExplicitDays: boolean, isArrivalDay: boolean, isDepartureDay: boolean) => {
     if (hasNoExplicitDays) {
-      if (!isSelecting) {
+      if (!isSelecting ) {
         startSelection(date, rowIndex, columnIndex);
+        // console.log('selectedEndDate after startSelection:', selectedEndDate);
       } else {
         finalizeSelection(date, rowIndex, columnIndex);
       }
 
     } else if(hasArrivalOnly){
-      if (!isSelecting && isArrivalDay) {
+      if ((!isSelecting ) && isArrivalDay) {
         startSelection(date, rowIndex, columnIndex);
       } else {
         finalizeSelection(date, rowIndex, columnIndex);
       }
 
     } else {
-      if ( isArrivalDay) {
+      if (isArrivalDay) {
         startSelection(date, rowIndex, columnIndex);
       } else if ( isDepartureDay ) {
         finalizeSelection(date, rowIndex, columnIndex);
       }
     }
   };
+
 
   const handleHover = (date: Date, rowIndex: number, columnIndex: number, hasNoExplicitDays: boolean, isArrivalDay: boolean) => {
     if (isSelecting) return null;
@@ -107,7 +108,8 @@ const ArrivalAndDepartureDays: React.FC = () => {
           // Skip rendering days that are neither arrival nor departure, except for rows with only arrival days or no explicit days
           // Also skip unavailable days
           const status = daysWithStatus[rowIndex][dayIndex];
-          if ((!isArrivalDay && !isDepartureDay && !hasArrivalOnly && !hasNoExplicitDays) || status?.isUnavailable) {
+          const isAvailable = !status?.isUnavailable;
+          if ((!isArrivalDay && !isDepartureDay && !hasArrivalOnly && !hasNoExplicitDays) || status?.isUnavailable || status?.isUnavailStartHalf) {
             return null;
           }
 
@@ -123,6 +125,7 @@ const ArrivalAndDepartureDays: React.FC = () => {
               isArrivalDay={isArrivalDay}
               isDepartureDay={isDepartureDay}
               hasArrivalOnly={hasArrivalOnly}
+              isAvailable={isAvailable}
               hasNoExplicitDays={hasNoExplicitDays}
               isSelectingRow={isSelectingRow}
               handleDayClick={handleDayClick}
