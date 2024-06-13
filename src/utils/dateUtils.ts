@@ -182,7 +182,7 @@ const isBlockedDateRange = (
       return true;
     }
 
-    if (isUnavailStart || isUnavailEnd) {
+    if (isUnavailStart && !isUnavailStartHalf || isUnavailEnd && !isUnavailEndHalf) {
       isUnavailable = true;
     }
 
@@ -220,26 +220,6 @@ const isDateType = (
   return dateStrings.some(dateString => isSameDay(date, parseISO(dateString)));
 };
 
-
-// const hasDepartureDays = (bookingObject: BookingObject): boolean => {
-//   if (!bookingObject) {
-//     return false;
-//   }
-//   // Access the departure days; use a fallback to an empty array if undefined
-//   const departureDates = bookingObject.dayTypes.departureDays.dates || [];
-//   // Check if the array of departure dates is not empty
-//   return departureDates.length > 0;
-// };
-
-// const hasArrivalDays = (bookingObject: BookingObject): boolean => {
-//   if (!bookingObject) {
-//     return false;
-//   }
-//   // Access the departure days; use a fallback to an empty array if undefined
-//   const arrivalDates = bookingObject.dayTypes.arrivalDays.dates || [];
-//   // Check if the array of departure dates is not empty
-//   return arrivalDates.length > 0;
-// };
 
 const hasExclusiveDateTypes = (
   bookingObject: BookingObject,

@@ -5,6 +5,7 @@ import { useState } from "react";
 import DynamicRange from "./DynamicRange";
 import DayContent from "./DayContent";
 import RangeMarkerSVG from "./RangeMarkerSVG";
+import { DayStatus } from "@/types";
 
 const ArrivalAndDepartureDays: React.FC = () => {
   const { bookingObjects } = useBookingObjects();
@@ -45,9 +46,9 @@ const ArrivalAndDepartureDays: React.FC = () => {
   };
 
 
-  const handleHover = (date: Date, rowIndex: number, columnIndex: number, hasNoExplicitDays: boolean, isArrivalDay: boolean) => {
+  const handleHover = (date: Date, rowIndex: number, columnIndex: number, hasNoExplicitDays: boolean, status: DayStatus) => {
     if (isSelecting) return null;
-    if ((isArrivalDay || hasNoExplicitDays)) {
+    if ((status.isArrival || hasNoExplicitDays) && !status.isUnavailStartHalf) {
       setHoveredDay({ date, rowIndex, columnIndex });
     } else {
       setHoveredDay(null);
@@ -80,9 +81,7 @@ const ArrivalAndDepartureDays: React.FC = () => {
         rowGap: `var(--cell-gap)`,
       }}
     >
-
       <DynamicRange />
-
       {hoveredDay && startDate && endDate && (!isSelecting || finalizedSelection) && (
         <RangeMarkerSVG
           index={hoveredDay.rowIndex}
@@ -107,7 +106,7 @@ const ArrivalAndDepartureDays: React.FC = () => {
           // Also skip unavailable days
           const status = daysWithStatus[rowIndex][dayIndex];
 
-          if ((!status.isArrival && !status.isDeparture && !hasArrivalOnly && !hasNoExplicitDays) || status?.isUnavailable || status?.isUnavailStartHalf) {
+          if ((!status.isArrival && !status.isDeparture && !hasArrivalOnly && !hasNoExplicitDays) || status?.isUnavailable) {
             return null;
           }
 
