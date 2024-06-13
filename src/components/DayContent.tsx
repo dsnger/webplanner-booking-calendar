@@ -56,12 +56,16 @@ const DayContent: React.FC<DayContentProps> = ({
 
   const getCursorClass = useMemo(() => {
     if (isSelectingRow) return 'cursor-col-resize';
-    if (hasArrivalOnly && status.isArrival) return 'cursor-pointer';
-    if (hasArrivalOnly && !status.isArrival) return 'cursor-not-allowed';
+    if (hasArrivalOnly) {
+      if (status.isArrival) return 'cursor-pointer';
+      return 'cursor-not-allowed';
+    }
     if (status.isUnavailStartHalf) return 'cursor-not-allowed';
-    if (!hasArrivalOnly && (status.isArrival || hasNoExplicitDays))
-      return 'cursor-pointer';
-    if (!hasNoExplicitDays && status.isDeparture) return 'cursor-not-allowed';
+    if (!hasArrivalOnly) {
+      if (status.isArrival || hasNoExplicitDays) return 'cursor-pointer';
+      if (!hasNoExplicitDays && status.isDeparture) return 'cursor-not-allowed';
+      if (isSelectingRow && !hasNoExplicitDays && status.isDeparture) return 'cursor-not-allowed';
+    }
     return 'cursor-pointer';
   }, [
     isSelectingRow,
@@ -87,6 +91,7 @@ const DayContent: React.FC<DayContentProps> = ({
       [
         'h-cell-height',
         'relative',
+        'pointer-events-auto',
         getCursorClass,
         status.isUnavailable ? 'is-unavailable' : 'is-available',
         status.isArrival && 'is-arrival',

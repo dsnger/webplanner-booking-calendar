@@ -74,7 +74,7 @@ const ArrivalAndDepartureDays: React.FC = () => {
 
   return (
     <div
-      className="grid z-20 relative days"
+      className="grid z-20 relative days pointer-events-none"
       style={{
         width: `calc(${cellColCount} * (var(--cell-width) + var(--cell-gap)))`,
         gridTemplateColumns: `repeat(${cellColCount}, 1fr)`,

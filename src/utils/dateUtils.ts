@@ -255,14 +255,14 @@ const hasExclusiveDateTypes = (
 const isBeforeUnavailableStart = (date: Date, bookingObject: BookingObject): boolean => {
   return bookingObject.blockedDateRanges?.some(range => {
     const startDay = parseISO(range.start);
-    return isBefore(date, startDay) && isSameDay(startDay, addDays(date, 1));
+    return isBefore(date, startDay) && isSameDay(startDay, addDays(date, 1)) && !range.starthalf
   }) || false;
 };
 
 const isAfterUnavailableEnd = (date: Date, bookingObject: BookingObject): boolean => {
   return bookingObject.blockedDateRanges?.some(range => {
     const endDay = new Date(range.end);
-    return isAfter(date, endDay) && isSameDay(endDay, subDays(date, 1));
+    return isAfter(date, endDay) && isSameDay(endDay, subDays(date, 1)) && !range.endhalf
   }) || false;
 };
 
