@@ -254,7 +254,7 @@ const hasExclusiveDateTypes = (
 
 const isBeforeUnavailableStart = (date: Date, bookingObject: BookingObject): boolean => {
   return bookingObject.blockedDateRanges?.some(range => {
-    const startDay = new Date(range.start);
+    const startDay = parseISO(range.start);
     return isBefore(date, startDay) && isSameDay(startDay, addDays(date, 1));
   }) || false;
 };
@@ -319,7 +319,6 @@ export const preCalculateDaysStatusFlags = (
         isAfterUnavailableEnd: isAfterUnavailableEnd(day, bookingObject),
         isBeforeUnavailableStartHalf: isBeforeUnavailableStartHalf(day, bookingObject),
         isAfterUnavailableEndHalf: isAfterUnavailableEndHalf(day, bookingObject),
-
       };
     })
   );

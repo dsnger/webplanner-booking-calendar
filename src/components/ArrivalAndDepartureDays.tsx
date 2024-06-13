@@ -25,6 +25,7 @@ const ArrivalAndDepartureDays: React.FC = () => {
     if (hasNoExplicitDays) {
       if (!isSelecting && !status.isUnavailStartHalf ) {
         startSelection(date, rowIndex, columnIndex);
+        // console.log(daysWithStatus[rowIndex][columnIndex])
       } else {
         finalizeSelection(date, rowIndex, columnIndex);
       }
@@ -106,7 +107,7 @@ const ArrivalAndDepartureDays: React.FC = () => {
           // Also skip unavailable days
           const status = daysWithStatus[rowIndex][dayIndex];
 
-          if ((!status.isArrival && !status.isDeparture && !hasArrivalOnly && !hasNoExplicitDays) || status?.isUnavailable) {
+          if ((!status.isArrival && !status.isDeparture && !hasArrivalOnly && !hasNoExplicitDays) || status.isUnavailable || status.isBeforeUnavailableStart) {
             return null;
           }
 

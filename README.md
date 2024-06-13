@@ -1,76 +1,182 @@
 # WebPlanner Booking Calendar
 
-The WebPlanner Booking Calendar is a React-based component designed to offer a dynamic and interactive booking calendar experience. It integrates seamlessly into web applications, providing functionalities for displaying availability, handling bookings, and visualizing custom date ranges and settings.
+The WebPlanner Booking Calendar is a highly customizable and dynamic booking calendar component built using React, TypeScript, and TailwindCSS. This component is designed to seamlessly integrate into web applications, offering an interactive booking experience. It provides functionalities such as date selection, tooltips, displaying availability, handling bookings, and visualizing custom date ranges and settings. Additionally, it features dynamic range markers and interacts with a backend API for real-time updates and data synchronization.
 
-## Demo
-http://webplanner.smilefx.de/bookingcalendar/
+## Table of Contents
+
+- [WebPlanner Booking Calendar](#webplanner-booking-calendar)
+  - [Table of Contents](#table-of-contents)
+  - [Features](#features)
+  - [Demo](#demo)
+  - [Installation](#installation)
+  - [Usage](#usage)
+  - [Configuration](#configuration)
+  - [Components](#components)
+    - [DynamicRange](#dynamicrange)
+    - [DayContent](#daycontent)
+    - [ArrivalAndDepartureDays](#arrivalanddeparturedays)
+  - [Hooks](#hooks)
+    - [useDays](#usedays)
+    - [useSelectedDates](#useselecteddates)
+  - [Utils](#utils)
+  - [Development](#development)
 
 ## Features
 
-- Dynamic calendar generation based on provided settings.
-- Customizable color schemes for different booking states.
-- Support for multiple languages.
-- Interactive date selection for booking ranges.
-- Utilizes `date-fns` for comprehensive date operations.
+- Date selection with dynamic range marking
+- Handling of blocked dates to prevent invalid selections
+- Tooltips for arrival and departure days
+- Customizable through context and settings
+- Responsive design using TailwindCSS
 
-## Todo:
-- [x] ~~Calendar start option (today|date)~~
-- [x] ~~Calendar end option (today|date)~~
-- [x] ~~Calendar Date Range (years | year | months)~~
-- [x] ~~Color Settings~~
-- [x] ~~Legend Settings (Unavailable States)~~
-- [x] Submitting Selection
-- [ ] Localization
-- [x] ~~das Ende des scrollens muss begrenzt sein auf Jahr/Monat-Basis.~~
-- [x] ~~Standard ist das aktuelles Jahr + 2 volle Jahre. Manche Kunden aber 3 Jahre und andere nur 1~~
-- [x] Tage können 'disabled' sein. Unabhängig von Ihrer Farbe sind diese dann blasser und nicht klickbar.
-- [x] Tage können als Anreisetag gekennzeichnet sein (eigene Klasse, die dann einfach nen Rahmen um den Tag setzt). Dies ist nur eine optische Kennzeichnung, die Funktion kommt über disabled.
-- [ ] Neu, da ja jetzt das Nacheinander-Klicken von Anfangsdatum und Enddatum kommt: Tage können Anreisetag aber ggf kein Abreisetag sein. Da brauchts 2 Disabled-Zustände.
-Und der Modus Nacheinander-Klicken oder Einmal-klick und direkt Formular öffnen muss im Script setzbar sein. Manche Kunden bieten Party-Locations oä an, die man nur einen Tag bucht.
-- [x] Kalender-Auswahl übergeben
-- [x] Mobile Support / Responsiv
-- [x] Verlinkung der Objekte
-- [x] Monate blättern
-- [x] Halber geblockter Tag, trotzdem Anreisetag
+## Demo
 
-
-
-
+Check out a live demo of the component [here](http://webplanner.smilefx.de/bookingcalendar/v2)
 
 ## Installation
 
-```
+To install the necessary dependencies, run:
+
+```bash
 npm install
-npm run build
+```
+
+or
+
+```bash
+yarn install`
 ```
 
 ## Usage
-To use the booking calendar, import the component into your React project and provide the necessary props.
 
+To use the WebPlanner Booking Calendar component in your project, follow these steps:
 
+1. **Import the necessary components and providers:**
+
+```bash
+import React from 'react';
+import { DaysProvider } from '@/context/DaysContext';
+import { SelectedDatesProvider } from '@/context/SelectedDatesContext';
+import ArrivalAndDepartureDays from '@/components/ArrivalAndDepartureDays';
+import DynamicRange from '@/components/DynamicRange';
 ```
-import BookingCalendar from 'path-to-BookingCalendar';
 
-const App = () => {
-  return (
-    <BookingCalendar fewoOwnID={123} lang="en" />
-  );
-};
+1. **Wrap your component with the providers:**
+
+```bash
+const App: React.FC = () => (
+  <SelectedDatesProvider>
+    <DaysProvider>
+      <ArrivalAndDepartureDays />
+      <DynamicRange />
+    </DaysProvider>
+  </SelectedDatesProvider>
+);
 
 export default App;
+
 ```
 
-## Props
-- fewoOwnID: (number) Unique identifier for the booking entity.
-- lang: (string) Language code for localization.
+## Configuration
 
-## Customization
-You can customize the calendar's appearance and behavior by modifying the color settings and adapting the calendar settings fetching logic as per your backend structure.
+Configuration is handled through the `useSettings` hook and context providers. Ensure your settings are correctly defined and passed to the components.
 
-## Contributing
-Contributions are welcome! Feel free to open issues or submit pull requests to enhance the functionality or documentation of the WebPlanner Booking Calendar.
+```bash
+const { calendarSettings } = useSettings();
 
-## License
-This project is licensed under the MIT License - see the LICENSE file for details.
+const settings = {
+  cellSettings: {
+    cellWidth: '32px',
+    cellHeight: '32px',
+    cellGap: '4px',
+  },
+  colorSettings: {
+    available: '#00FF00',
+    notAvailable: '#FF0000',
+  },
+  calendarRange: {
+    startDate: '2023-01-01',
+    endDate: '2023-12-31',
+  },
+  bookingObjects: [
+    {
+      id: 1,
+      dayTypes: {
+        arrivalDays: { dates: ['2023-05-01', '2023-05-15'] },
+        departureDays: { dates: ['2023-05-10', '2023-05-20'] },
+      },
+      blockedDateRanges: [
+        {
+          start: '2023-06-01',
+          end: '2023-06-10',
+          starthalf: false,
+          endhalf: false,
+          type: 'blocked',
+          tooltip: 'Maintenance',
+        },
+      ],
+    },
+  ],
+};
 
+```
 
+## Components
+
+### DynamicRange
+
+Handles the dynamic range selection and rendering of range markers.
+
+### DayContent
+
+Renders individual days, handling clicks, hover states, and tooltips.
+
+### ArrivalAndDepartureDays
+
+Renders the arrival and departure days, integrating with the booking objects and day statuses.
+
+## Hooks
+
+### useDays
+
+Provides the days and their statuses, calculated from the booking objects and settings.
+
+### useSelectedDates
+
+Manages the selected dates, including starting and finalizing selections and handling hover states.
+
+## Utils
+
+Utility functions for date manipulation and status calculations are located in `dateUtils.ts`. Key functions include:
+
+- `generateCalendarDays`
+- `preCalculateDaysStatusFlags`
+- `isBlockedDateRange`
+- `isDateType`
+- `hasExclusiveDateTypes`
+
+## Development
+
+To start the development server, run:
+
+```bash
+npm run dev
+```
+
+or
+
+```bash
+yarn dev
+```
+
+To build the project for production, run:
+
+```bash
+npm run build
+```
+
+or
+
+```bash
+yarn build
+```

@@ -4,12 +4,13 @@ import { useDays } from '@/hooks/useDays';
 import { useSettings } from '@/hooks/useSettings';
 import { useSelectedDates } from "@/hooks/useSelectedDates";
 import { useRefs } from "@/hooks/useRefs";
+import { eachDayOfInterval, isAfter, isBefore } from "date-fns";
 
 const DynamicRange: React.FC = () => {
   const { scrollContainerRef } = useRefs();
   const { bookingCalendarWrapperRef } = useRefs();
   const { selectedStartDate, isSelecting} = useSelectedDates();
-  const { days } = useDays();
+  const { days, daysWithStatus } = useDays();
   const { calendarSettings } = useSettings();
   const cellWidth = parseFloat(calendarSettings[0].cellSettings.cellWidth);
   const cellGap = parseFloat(calendarSettings[0].cellSettings.cellGap);
@@ -50,33 +51,42 @@ const DynamicRange: React.FC = () => {
 
 
 
-  const getXPositionRelativeToContainer = (event: MouseEvent): number => {
-    const container = scrollContainerRef.current?.element;
-    if (container) {
-      const boundingRect = container.getBoundingClientRect();
-      return event.clientX - boundingRect.left + container.scrollLeft;
-    }
-    return 0;
-  };
-
-
   const handleMouseMove = useCallback((e: MouseEvent) => {
-    if (!isSelecting || selectedStartDate.columnIndex === null) return null;
+
+    const getXPositionRelativeToContainer = (event: MouseEvent): number => {
+      const container = scrollContainerRef.current?.element;
+      if (container) {
+        const boundingRect = container.getBoundingClientRect();
+        return event.clientX - boundingRect.left + container.scrollLeft;
+      }
+      return 0;
+    };
+
+    if (!isSelecting || selectedStartDate.columnIndex === null || !selectedStartDate.date || selectedStartDate.rowIndex === null) return;
 
     const xPos = getXPositionRelativeToContainer(e);
     const currentColumnIndex = Math.floor(xPos / (cellWidth + cellGap));
     const startIndex = selectedStartDate.columnIndex;
-
     const effectiveColumnIndex = Math.max(currentColumnIndex, startIndex);
 
-    // console.log(getXPositionRelativeToContainer(e));
     const currentDate = days[effectiveColumnIndex];
     if (currentDate) {
-      setCurrentEndDate(currentDate);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [cellWidth, cellGap, days, isSelecting, selectedStartDate]);
+      const interval = eachDayOfInterval({
+        start: isBefore(selectedStartDate.date, currentDate) ? selectedStartDate.date : currentDate,
+        end: isAfter(selectedStartDate.date, currentDate) ? selectedStartDate.date : currentDate
+      });
 
+      const isBlocked = interval.some(day => {
+        const dayIndex = days.findIndex(d => d.getTime() === day.getTime());
+        if (dayIndex === -1 || selectedStartDate.rowIndex === null) return false;
+        return daysWithStatus[selectedStartDate.rowIndex]?.[dayIndex]?.isUnavailable ?? false;
+      });
+
+      if (!isBlocked) {
+        setCurrentEndDate(currentDate);
+      }
+    }
+  }, [scrollContainerRef, cellWidth, cellGap, days, isSelecting, selectedStartDate, daysWithStatus]);
 
   //Added useEffect to reset currentEndDate when selectedStartDate changes
   useEffect(() => {
@@ -113,8 +123,6 @@ const DynamicRange: React.FC = () => {
   }, [bookingCalendarWrapperRef, setCurrentEndDate]);
 
 
-
-
   // Determine the start and end dates based on selection or hover state
   let startDate: Date | null = null;
   let endDate: Date | null = null;
@@ -132,13 +140,11 @@ const DynamicRange: React.FC = () => {
       }
       endDate = days[initialEndDateIndex + 1];
     }
-
   }
 
   if (!startDate || !endDate || rowIndex === null) {
     return null;
   }
-
 
   return (
     <RangeMarkerSVG
