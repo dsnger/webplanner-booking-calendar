@@ -1,4 +1,6 @@
+import { useDays } from "@/hooks/useDays";
 import { useRefs } from "@/hooks/useRefs";
+import { eachDayOfInterval, isAfter, isBefore } from "date-fns";
 import React, { createContext, useState, ReactNode, useCallback, useEffect } from 'react';
 
 interface SelectedDateInfo {
@@ -13,14 +15,10 @@ interface SelectedDatesContextType {
   setSelectedStartDate: (info: SelectedDateInfo) => void;
   setSelectedEndDate: (info: SelectedDateInfo) => void;
   resetDates: () => void;
-  // resetCurrentEndDate: () => void;
   isSelecting: boolean;
   finalizedSelection: boolean;
   startSelection: (date: Date, rowIndex: number, columnIndex: number) => void;
   finalizeSelection: (date: Date, rowIndex: number, columnIndex: number) => void;
-  // handleDayHover: (date: Date, rowIndex: number, columnIndex: number) => void;
-  // hoveredDay: SelectedDateInfo;
-  // resetHoveredDay: () => void;
 }
 
 const SelectedDatesContext = createContext<SelectedDatesContextType | undefined>(undefined);
@@ -41,6 +39,7 @@ export const SelectedDatesProvider: React.FC<{ children: ReactNode }> = ({ child
   const [isSelecting, setIsSelecting] = useState(false);
   const [finalizedSelection, setFinalizedSelection] = useState(false);
   const { bookingCalendarWrapperRef } = useRefs();
+  const { days, daysWithStatus } = useDays();
 
 
   const resetDates = useCallback(() => {
@@ -56,11 +55,28 @@ export const SelectedDatesProvider: React.FC<{ children: ReactNode }> = ({ child
   }, [resetDates]);
 
 
-  const finalizeSelection = (date: Date, rowIndex: number, columnIndex: number) => {
-    setSelectedEndDate({ date, rowIndex, columnIndex });
+  const finalizeSelection = useCallback((date: Date, rowIndex: number, columnIndex: number) => {
+    if (!selectedStartDate.date) return;
+
+    const interval = eachDayOfInterval({
+      start: isBefore(selectedStartDate.date, date) ? selectedStartDate.date : date,
+      end: isAfter(selectedStartDate.date, date) ? selectedStartDate.date : date
+    });
+
+    const isBlocked = interval.some(day => {
+      const dayStatus = daysWithStatus[rowIndex]?.[days.findIndex(d => d.getTime() === day.getTime())];
+      return dayStatus?.isUnavailable;
+    });
+
+    if (isBlocked) {
+      resetDates();
+    } else {
+      setSelectedEndDate({ date, rowIndex, columnIndex });
+      setFinalizedSelection(true);
+    }
+
     setIsSelecting(false);
-    setFinalizedSelection(true);
-  };
+  }, [selectedStartDate, days, daysWithStatus, resetDates]);
 
   useEffect(() => {
 
