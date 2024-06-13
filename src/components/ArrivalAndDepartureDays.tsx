@@ -21,25 +21,25 @@ const ArrivalAndDepartureDays: React.FC = () => {
     return <div>Invalid booking data</div>;
   }
 
-  const handleDayClick = (date: Date, rowIndex: number, columnIndex: number, hasArrivalOnly: boolean, hasNoExplicitDays: boolean, isArrivalDay: boolean, isDepartureDay: boolean) => {
+  const handleDayClick = (date: Date, rowIndex: number, columnIndex: number, hasArrivalOnly: boolean, hasNoExplicitDays: boolean, status: DayStatus) => {
     if (hasNoExplicitDays) {
-      if (!isSelecting ) {
+      if (!isSelecting && !status.isUnavailStartHalf ) {
         startSelection(date, rowIndex, columnIndex);
       } else {
         finalizeSelection(date, rowIndex, columnIndex);
       }
 
     } else if(hasArrivalOnly){
-      if (!isSelecting && isArrivalDay) {
+      if (!isSelecting && status.isArrival) {
         startSelection(date, rowIndex, columnIndex);
       } else {
         finalizeSelection(date, rowIndex, columnIndex);
       }
 
     } else {
-      if (isArrivalDay) {
+      if (status.isArrival) {
         startSelection(date, rowIndex, columnIndex);
-      } else if ( isDepartureDay ) {
+      } else if ( status.isDeparture ) {
         finalizeSelection(date, rowIndex, columnIndex);
       }
     }

@@ -24,8 +24,7 @@ interface DayContentProps {
     columnIndex: number,
     hasArrivalOnly: boolean,
     hasNoExplicitDays: boolean,
-    isArrivalDay: boolean,
-    isDepartureDay: boolean
+    status: DayStatus,
   ) => void;
   handleHover: (
     date: Date,
@@ -59,6 +58,7 @@ const DayContent: React.FC<DayContentProps> = ({
     if (isSelectingRow) return 'cursor-col-resize';
     if (hasArrivalOnly && status.isArrival) return 'cursor-pointer';
     if (hasArrivalOnly && !status.isArrival) return 'cursor-not-allowed';
+    if (status.isUnavailStartHalf) return 'cursor-not-allowed';
     if (!hasArrivalOnly && (status.isArrival || hasNoExplicitDays))
       return 'cursor-pointer';
     if (!hasNoExplicitDays && status.isDeparture) return 'cursor-not-allowed';
@@ -69,6 +69,7 @@ const DayContent: React.FC<DayContentProps> = ({
     status.isArrival,
     status.isDeparture,
     hasNoExplicitDays,
+    status.isUnavailStartHalf
   ]);
 
   const iconFill = status.isArrival
@@ -114,8 +115,7 @@ const DayContent: React.FC<DayContentProps> = ({
           columnIndex,
           hasArrivalOnly,
           hasNoExplicitDays,
-          status.isArrival,
-          status.isDeparture
+          status
         )
       }
       onMouseEnter={() =>
