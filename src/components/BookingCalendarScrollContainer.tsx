@@ -1,6 +1,6 @@
 import { ScrollContainerRefs, VisibleMonthYear } from "@/types";
 import { calculateMostVisibleMonths, isElementInViewport } from "@/utils/scrollUtils";
-import React, { forwardRef, useRef, useImperativeHandle, useEffect } from 'react';
+import React, { forwardRef, useRef, useImperativeHandle, useEffect, useCallback } from 'react';
 
 type BookingCalendarScrollContainerProps = {
   children: React.ReactNode;
@@ -9,34 +9,66 @@ type BookingCalendarScrollContainerProps = {
   updateScrollState: (scrollLeft: number, scrollWidth: number, clientWidth: number) => void;
 };
 
-const BookingCalendarScrollContainer = forwardRef<ScrollContainerRefs & {element: HTMLDivElement | null}, BookingCalendarScrollContainerProps>(
+const BookingCalendarScrollContainer = forwardRef<ScrollContainerRefs & { element: HTMLDivElement | null }, BookingCalendarScrollContainerProps>(
   ({ children, updateVisibleMonthsAndYears, updateIsTodayView, updateScrollState }, ref) => {
     const scrollParentRef = useRef<HTMLDivElement>(null);
     const scrollContainerRef = useRef<HTMLDivElement>(null);
 
-    // Define a reusable function for scrolling
-    const scrollToToday = () => {
+    const scrollToToday = useCallback(() => {
       const dayElement = scrollContainerRef.current?.querySelector('#isToday');
       if (dayElement) {
+        console.log(dayElement)
         dayElement.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
       }
-    };
+    }, []);
+
+
+    const handleUpdate = useCallback((container: HTMLElement) => {
+      const { months } = calculateMostVisibleMonths(container);
+      if (months.length > 0) {
+        updateVisibleMonthsAndYears(months);
+      }
+    }, [updateVisibleMonthsAndYears]);
+
+
+    const handleScroll = useCallback(() => {
+      const container = scrollContainerRef.current;
+      if (!container) return;
+
+      handleUpdate(container);
+
+      const dayElement = container.querySelector('#isToday') as HTMLElement | null;
+      if (dayElement && isElementInViewport(dayElement, container)) {
+        updateIsTodayView(true);
+      } else {
+        updateIsTodayView(false);
+      }
+
+      const { scrollLeft, scrollWidth, clientWidth } = container;
+      updateScrollState(scrollLeft, scrollWidth, clientWidth);
+    }, [handleUpdate, updateIsTodayView, updateScrollState]);
+
 
     useEffect(() => {
-      scrollToToday();
-    }, []);
+      // scrollToToday();
+      const container = scrollContainerRef.current;
+      if (container) {
+        handleScroll();
+      }
+    }, [scrollToToday, handleScroll, handleUpdate]);
+
 
     useImperativeHandle(ref, () => ({
       scrollToCurrentDay: scrollToToday,
       scrollLeft: () => {
         if (scrollContainerRef.current && scrollParentRef.current) {
-          const newScrollPosition = -scrollParentRef.current.offsetWidth / 2; // Adjust the scroll step size as needed
+          const newScrollPosition = -scrollParentRef.current.offsetWidth / 2;
           scrollContainerRef.current.scrollBy({ left: newScrollPosition, behavior: 'smooth' });
         }
       },
       scrollRight: () => {
         if (scrollContainerRef.current && scrollParentRef.current) {
-          const newScrollPosition = scrollParentRef.current.offsetWidth / 2; // Adjust the scroll step size as needed
+          const newScrollPosition = scrollParentRef.current.offsetWidth / 2;
           scrollContainerRef.current.scrollBy({ left: newScrollPosition, behavior: 'smooth' });
         }
       },
@@ -50,33 +82,6 @@ const BookingCalendarScrollContainer = forwardRef<ScrollContainerRefs & {element
         return scrollContainerRef.current;
       }
     }));
-
-    // Function to handle the update based on the most visible months
-    const handleUpdate = (container: HTMLElement) => {
-      const { months } = calculateMostVisibleMonths(container);
-      if (months.length > 0) {
-        updateVisibleMonthsAndYears(months);
-      }
-    };
-
-    const handleScroll = () => {
-      const container = scrollContainerRef.current;
-      if (!container) return;
-
-      // Calculate the most visible month
-      handleUpdate(container);
-
-      // Check if the 'dayElement' is in the viewport
-      const dayElement = container.querySelector('#isToday') as HTMLElement | null;
-      if (dayElement && isElementInViewport(dayElement, container)) {
-        updateIsTodayView(true);
-      } else {
-        updateIsTodayView(false);
-      }
-
-      const { scrollLeft, scrollWidth, clientWidth } = container;
-      updateScrollState(scrollLeft, scrollWidth, clientWidth);
-    };
 
     return (
       <div ref={scrollParentRef} className="flex-1 w-1/2">

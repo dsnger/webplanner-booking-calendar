@@ -8,7 +8,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "./ui/tooltip"
-import { CalendarRange, ScrollContainerRefs } from "@/types";
+import { CalendarRange, ScrollContainerRefs, VisibleMonthYear } from "@/types";
 import { isNextMonthWithinRange, isPrevMonthWithinRange } from "@/utils/dateUtils";
 
 // Adjust the props interface to include a ref to the scroll container
@@ -20,11 +20,6 @@ interface ScrollPaginationProps {
   canScrollRight: boolean;
   calendarRange: CalendarRange;
   className?: string;
-}
-
-interface VisibleMonthYear {
-  month: number;
-  year: number;
 }
 
 
@@ -40,15 +35,8 @@ const ScrollPaginationButtons: React.FC<ScrollPaginationProps> = ({
 
   const scrollToCurrentDay = () => {
     scrollContainerRef.current?.scrollToCurrentDay();
-  }
+  };
 
-  // const scrollLeft = () => {
-  //   scrollContainerRef.current?.scrollLeft();
-  // };
-
-  // const scrollRight = () => {
-  //   scrollContainerRef.current?.scrollRight();
-  // };
 
   const getNextMonth = (year: number, month: number) => {
     const nextYear = month === 12 ? year + 1 : year;
@@ -71,7 +59,6 @@ const ScrollPaginationButtons: React.FC<ScrollPaginationProps> = ({
     if (isNextMonthWithinRange(year, month, calendarRange)) {
       scrollContainerRef.current?.scrollToMonth(year, month);
     }
-    console.log('next month ' + month)
   };
 
 
@@ -79,16 +66,18 @@ const ScrollPaginationButtons: React.FC<ScrollPaginationProps> = ({
     if (visibleMonths.length === 0) return;
     const firstVisibleMonth = visibleMonths[0];
     const { year, month } = getPrevMonth(firstVisibleMonth.year, firstVisibleMonth.month);
+
     if (isPrevMonthWithinRange(year, month, calendarRange)) {
       scrollContainerRef.current?.scrollToMonth(year, month);
     }
-    console.log('prev month '+month)
   };
 
 
    // Assuming isNextMonthWithinRange and isPrevMonthWithinRange can accept the last or first month respectively.
   const prevDisabled = () => visibleMonths.length === 0 || !canScrollLeft;
   const nextDisabled = () => visibleMonths.length === 0 || !canScrollRight;
+
+
 
   return (
     <div className={`flex justify-end items-center gap-2 ${className}`}>
@@ -102,25 +91,7 @@ const ScrollPaginationButtons: React.FC<ScrollPaginationProps> = ({
           </TooltipContent>
         </Tooltip>
 
-        {/* <Tooltip>
-          <TooltipTrigger asChild>
-            <Button variant="secondary" size="sm" onClick={scrollLeft} disabled={!canScrollLeft}><FlowbiteChevronLeftSolid /></Button>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>zurück</p>
-          </TooltipContent>
-        </Tooltip> */}
-
         <Button className="h-cell-height" variant="secondary" size="sm" onClick={scrollToCurrentDay} disabled={isTodayView}>Heute</Button>
-
-        {/* <Tooltip>
-          <TooltipTrigger asChild>
-            <Button variant="secondary" size="sm" onClick={scrollRight} disabled={!canScrollRight}><FlowbiteChevronRightSolid /></Button>
-            </TooltipTrigger>
-          <TooltipContent>
-            <p>vor</p>
-          </TooltipContent>
-        </Tooltip> */}
 
         <Tooltip>
           <TooltipTrigger asChild>

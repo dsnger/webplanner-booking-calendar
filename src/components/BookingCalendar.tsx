@@ -25,9 +25,6 @@ const BookingCalendarContent: React.FC = () => {
   const [isTodayView, setIsTodayView] = useState(false);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
-  // const bookingCalendarWrapperRef = useRef<HTMLDivElement>(null);
-  // const scrollRef = useRef<ScrollContainerRefs>(null);
-
   const { bookingCalendarWrapperRef, scrollContainerRef } = useRefs();
 
   const months = useMemo(() => {
@@ -59,9 +56,10 @@ const BookingCalendarContent: React.FC = () => {
     scrollWidth: number,
     clientWidth: number
   ) => {
-    setCanScrollLeft(scrollLeft > 10);
-    setCanScrollRight(scrollLeft + clientWidth < scrollWidth - 10);
+    setCanScrollLeft(scrollLeft > 20);
+    setCanScrollRight(scrollLeft + clientWidth < scrollWidth - 20);
   };
+
 
   const { bookingObjects } = calendarSettings[0];
 

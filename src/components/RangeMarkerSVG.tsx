@@ -62,7 +62,7 @@ const RangeMarkerSVG: React.FC<RangeMarkerProps> = ({ index, start, end, startha
     ? calculateHalfStartHalfEndPath(cellWidth, numberOfColumns)
     : calculateFullStartFullEndPath(cellWidth, numberOfColumns);
 
-  const formatDate = (date: Date) => format(date, 'dd.MM');
+  const formatDate = (date: Date) => format(date, 'dd.MM.');
 
 
   return (
