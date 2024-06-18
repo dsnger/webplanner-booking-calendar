@@ -62,13 +62,12 @@ const RangeMarkerSVG: React.FC<RangeMarkerProps> = ({ index, start, end, startha
     ? calculateHalfStartHalfEndPath(cellWidth, numberOfColumns)
     : calculateFullStartFullEndPath(cellWidth, numberOfColumns);
 
-  
   const formatDate = (date: Date) => format(date, 'dd.MM');
 
 
   return (
     <div
-      className={`h-cell-height relative stroke-current  text-day-${type?.toLowerCase()} fill-day-${type?.toLowerCase()} ${isSelecting ? '[stroke-opacity:0.95] [fill-opacity:0.35] backdrop-blur-sm drop-shadow'  : '[fill-opacity:0.55]'}  ${isSelecting ? 'cursor-col-resize z-5' : 'cursor-not-allowed'}`}
+      className={`h-cell-height relative stroke-current z-10 text-day-${type?.toLowerCase()} fill-day-${type?.toLowerCase()} ${isSelecting ? '[stroke-opacity:0.95] [fill-opacity:0.4] drop-shadow'  : '[fill-opacity:0.6]'}  ${isSelecting ? 'cursor-col-resize z-5' : 'cursor-not-allowed'}`}
       style={{
         gridColumnStart: columnStart,
         gridColumnEnd: columnEnd,
@@ -80,7 +79,7 @@ const RangeMarkerSVG: React.FC<RangeMarkerProps> = ({ index, start, end, startha
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d={pathData}></path>
       </svg>
       {(isSelecting || finalizedSelection) && (
-        <div className="absolute top-0 left-0 right-0  w-auto max-w-100 flex justify-center p-2 px-8 text-xs text-white font-medium truncate z-10">
+        <div className="absolute top-0 left-0 right-0  w-auto max-w-100 flex justify-center p-2 px-8 text-xs text-white font-medium truncate z-20">
           <span className="truncate">{formatDate(start)}</span><span className="mx-1 truncate">–</span>
           <span className="truncate">{formatDate(end)}</span>
         </div>
