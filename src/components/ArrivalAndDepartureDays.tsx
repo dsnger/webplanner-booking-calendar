@@ -1,7 +1,7 @@
 import { useBookingObjects } from "@/hooks/useBookingObjects";
 import { useDays } from "@/hooks/useDays";
 import { useSelectedDates } from "@/hooks/useSelectedDates";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import DynamicRange from "./DynamicRange";
 import DayContent from "./DayContent";
 import RangeMarkerSVG from "./RangeMarkerSVG";
@@ -11,23 +11,52 @@ const ArrivalAndDepartureDays: React.FC = () => {
   const { bookingObjects } = useBookingObjects();
   const { days, daysWithStatus } = useDays();
   const { startSelection, finalizeSelection, selectedStartDate, isSelecting, finalizedSelection } = useSelectedDates();
+  const openedWindowRef = useRef<Window | null>(null); // Ref to keep track of the opened window
+
 
   // Local state for hover
   const [hoveredDay, setHoveredDay] = useState<{ date: Date, rowIndex: number, columnIndex: number } | null>(null);
   const cellColCount = days.length;
+
 
   if (!Array.isArray(bookingObjects)) {
     console.error('bookingObjects is not an array:', bookingObjects);
     return <div>Invalid booking data</div>;
   }
 
+
+
   const handleDayClick = (date: Date, rowIndex: number, columnIndex: number, hasArrivalOnly: boolean, hasNoExplicitDays: boolean, status: DayStatus) => {
+    const objId = bookingObjects[rowIndex].objId;
+
+    const openWindow = (startDate: Date, endDate: Date) => {
+      const baseUrl = bookingObjects.find(obj => obj.objId === objId)?.bookingLink || '';
+      const startDateString = startDate ? startDate.toISOString().split('T')[0] : '';
+      const endDateString = endDate ? endDate.toISOString().split('T')[0] : '';
+      const url = `${baseUrl}&startDate=${startDateString}&endDate=${endDateString}`;
+
+      setTimeout(() => {
+        if (openedWindowRef.current && !openedWindowRef.current.closed) {
+          // Window is open, so reuse it by loading the new URL
+          openedWindowRef.current.location.href = url;
+        } else {
+          // Window is not open, so open a new one and assign it to openedWindowRef.current
+          openedWindowRef.current = window.open(url, '_blank', 'width=785,height=720');
+        }
+        // Optional: Bring the reused window to the front
+        openedWindowRef.current?.focus();
+      }, 1000);
+    };
+
     if (hasNoExplicitDays) {
       if (!isSelecting && !status.isUnavailStartHalf ) {
         startSelection(date, rowIndex, columnIndex);
         // console.log(daysWithStatus[rowIndex][columnIndex])
       } else {
         finalizeSelection(date, rowIndex, columnIndex);
+        if (selectedStartDate.date) {
+          openWindow(selectedStartDate.date, date);
+        }
       }
 
     } else if(hasArrivalOnly){
@@ -35,6 +64,9 @@ const ArrivalAndDepartureDays: React.FC = () => {
         startSelection(date, rowIndex, columnIndex);
       } else {
         finalizeSelection(date, rowIndex, columnIndex);
+        if (selectedStartDate.date) {
+          openWindow(selectedStartDate.date, date);
+        }
       }
 
     } else {
@@ -42,9 +74,14 @@ const ArrivalAndDepartureDays: React.FC = () => {
         startSelection(date, rowIndex, columnIndex);
       } else if ( status.isDeparture ) {
         finalizeSelection(date, rowIndex, columnIndex);
+        if (selectedStartDate.date) {
+          openWindow(selectedStartDate.date, date);
+        }
       }
     }
   };
+
+
 
 
   const handleHover = (date: Date, rowIndex: number, columnIndex: number, hasNoExplicitDays: boolean, status: DayStatus) => {
@@ -93,6 +130,7 @@ const ArrivalAndDepartureDays: React.FC = () => {
           days={days}
           type="selected"
           isSelecting={isSelecting}
+          finalizedSelection={finalizedSelection}
         />
       )}
       {bookingObjects.map((bookingObject, rowIndex) => {

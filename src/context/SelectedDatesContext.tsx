@@ -57,6 +57,7 @@ export const SelectedDatesProvider: React.FC<{ children: ReactNode }> = ({ child
   }, [resetDates]);
 
 
+
   const finalizeSelection = useCallback((date: Date, rowIndex: number, columnIndex: number) => {
     if (!selectedStartDate.date) return;
 
@@ -80,7 +81,7 @@ export const SelectedDatesProvider: React.FC<{ children: ReactNode }> = ({ child
     setIsSelecting(false);
   }, [selectedStartDate, days, daysWithStatus, resetDates]);
 
-  
+
   useEffect(() => {
 
     const handleOutsideClick = (event: MouseEvent) => {

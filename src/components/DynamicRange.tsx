@@ -9,12 +9,14 @@ import { eachDayOfInterval, isAfter, isBefore } from "date-fns";
 const DynamicRange: React.FC = () => {
   const { scrollContainerRef } = useRefs();
   const { bookingCalendarWrapperRef } = useRefs();
-  const { selectedStartDate, isSelecting} = useSelectedDates();
+  const { selectedStartDate, isSelecting, setSelectedStartDate, finalizedSelection } = useSelectedDates();
   const { days, daysWithStatus } = useDays();
   const { calendarSettings } = useSettings();
   const cellWidth = parseFloat(calendarSettings[0].cellSettings.cellWidth);
   const cellGap = parseFloat(calendarSettings[0].cellSettings.cellGap);
   const [currentEndDate, setCurrentEndDate] = useState<Date | null>(null);
+
+
 
   useEffect(() => {
     const handleOutsideClick = (event: MouseEvent) => {
@@ -34,7 +36,8 @@ const DynamicRange: React.FC = () => {
         bookingCalendarWrapperRef.current.contains(event.target as Node)
       ) {
         setCurrentEndDate(null);
-        selectedStartDate.date = null
+        // selectedStartDate.date = null
+        setSelectedStartDate({ date: null, rowIndex: null, columnIndex: null });
       }
     };
 
@@ -47,11 +50,22 @@ const DynamicRange: React.FC = () => {
       document.removeEventListener('mousedown', handleOutsideClick);
       document.removeEventListener('mousedown', handleDayClick);
     };
-  }, [bookingCalendarWrapperRef, setCurrentEndDate, isSelecting, selectedStartDate]);
+  }, [bookingCalendarWrapperRef, setCurrentEndDate, isSelecting, selectedStartDate,setSelectedStartDate]);
 
 
 
   const handleMouseMove = useCallback((e: MouseEvent) => {
+
+    const findNextDepartureDate = (startDate: Date, rowIndex: number) => {
+      for (let i = days.findIndex(d => d.getTime() === startDate.getTime()); i < days.length; i++) {
+        const day = days[i];
+        const status = daysWithStatus[rowIndex]?.[i];
+        if (status?.isDeparture) {
+          return day;
+        }
+      }
+      return null;
+    };
 
     const getXPositionRelativeToContainer = (event: MouseEvent): number => {
       const container = scrollContainerRef.current?.element;
@@ -83,10 +97,16 @@ const DynamicRange: React.FC = () => {
       });
 
       if (!isBlocked) {
-        setCurrentEndDate(currentDate);
+        const nextDepartureDate = findNextDepartureDate(currentDate, selectedStartDate.rowIndex);
+        if (!nextDepartureDate ) {
+          setCurrentEndDate(currentDate);
+        } else {
+          setCurrentEndDate(nextDepartureDate);
+        }
       }
     }
   }, [scrollContainerRef, cellWidth, cellGap, days, isSelecting, selectedStartDate, daysWithStatus]);
+
 
   //Added useEffect to reset currentEndDate when selectedStartDate changes
   useEffect(() => {
@@ -103,24 +123,6 @@ const DynamicRange: React.FC = () => {
     };
   }, [handleMouseMove]);
 
-
-  useEffect(() => {
-    const handleOutsideClick = (event: MouseEvent) => {
-      if (
-        bookingCalendarWrapperRef.current &&
-        !bookingCalendarWrapperRef.current.contains(event.target as Node)
-      ) {
-        setCurrentEndDate(null);
-      }
-    };
-
-    // Attach the mousedown listener to the whole document
-    document.addEventListener('mousedown', handleOutsideClick);
-    // Cleanup function to remove both event listeners
-    return () => {
-      document.removeEventListener('mousedown', handleOutsideClick);
-    };
-  }, [bookingCalendarWrapperRef, setCurrentEndDate]);
 
 
   // Determine the start and end dates based on selection or hover state
@@ -156,6 +158,7 @@ const DynamicRange: React.FC = () => {
       days={days}
       type="selected"
       isSelecting={isSelecting}
+      finalizedSelection={finalizedSelection}
     />
   );
 };
