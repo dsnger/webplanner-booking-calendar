@@ -53,6 +53,7 @@ const BlockedRanges: React.FC<BlockedRangesProps> = ({
               type={range.type}
               days={days}
               isSelecting={false}
+              finalizedSelection={false}
             />
           );
         });

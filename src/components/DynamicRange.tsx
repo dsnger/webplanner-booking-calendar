@@ -14,7 +14,20 @@ const DynamicRange: React.FC = () => {
   const { calendarSettings } = useSettings();
   const cellWidth = parseFloat(calendarSettings[0].cellSettings.cellWidth);
   const cellGap = parseFloat(calendarSettings[0].cellSettings.cellGap);
-  const [currentEndDate, setCurrentEndDate] = useState<Date | null>(null);
+  const selectionKey =
+    selectedStartDate.date &&
+    selectedStartDate.rowIndex !== null &&
+    selectedStartDate.columnIndex !== null
+      ? `${selectedStartDate.rowIndex}:${selectedStartDate.columnIndex}:${selectedStartDate.date.getTime()}`
+      : null;
+  const [hoverEndState, setHoverEndState] = useState<{
+    selectionKey: string;
+    date: Date;
+  } | null>(null);
+  const currentEndDate =
+    selectionKey && hoverEndState?.selectionKey === selectionKey
+      ? hoverEndState.date
+      : null;
 
 
 
@@ -24,7 +37,7 @@ const DynamicRange: React.FC = () => {
         bookingCalendarWrapperRef.current &&
         !bookingCalendarWrapperRef.current.contains(event.target as Node)
       ) {
-        setCurrentEndDate(null);
+        setHoverEndState(null);
       }
     };
 
@@ -35,7 +48,7 @@ const DynamicRange: React.FC = () => {
         bookingCalendarWrapperRef.current &&
         bookingCalendarWrapperRef.current.contains(event.target as Node)
       ) {
-        setCurrentEndDate(null);
+        setHoverEndState(null);
         // selectedStartDate.date = null
         setSelectedStartDate({ date: null, rowIndex: null, columnIndex: null });
       }
@@ -50,7 +63,7 @@ const DynamicRange: React.FC = () => {
       document.removeEventListener('mousedown', handleOutsideClick);
       document.removeEventListener('mousedown', handleDayClick);
     };
-  }, [bookingCalendarWrapperRef, setCurrentEndDate, isSelecting, selectedStartDate,setSelectedStartDate]);
+  }, [bookingCalendarWrapperRef, isSelecting, setSelectedStartDate]);
 
 
 
@@ -96,24 +109,13 @@ const DynamicRange: React.FC = () => {
         return daysWithStatus[selectedStartDate.rowIndex]?.[dayIndex]?.isUnavailable ?? false;
       });
 
-      if (!isBlocked) {
+      if (!isBlocked && selectionKey) {
         const nextDepartureDate = findNextDepartureDate(currentDate, selectedStartDate.rowIndex);
-        if (!nextDepartureDate ) {
-          setCurrentEndDate(currentDate);
-        } else {
-          setCurrentEndDate(nextDepartureDate);
-        }
+        const endDate = nextDepartureDate ?? currentDate;
+        setHoverEndState({ selectionKey, date: endDate });
       }
     }
-  }, [scrollContainerRef, cellWidth, cellGap, days, isSelecting, selectedStartDate, daysWithStatus]);
-
-
-  //Added useEffect to reset currentEndDate when selectedStartDate changes
-  useEffect(() => {
-    if (selectedStartDate.date) {
-      setCurrentEndDate(null);
-    }
-  }, [selectedStartDate]);
+  }, [scrollContainerRef, cellWidth, cellGap, days, isSelecting, selectedStartDate, daysWithStatus, selectionKey]);
 
 
   useEffect(() => {

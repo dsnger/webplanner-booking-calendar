@@ -27,6 +27,7 @@ const SelectedRange: React.FC = () => {
       days={days}
       type="selected"
       isSelecting={false}
+      finalizedSelection={false}
     />
   );
 };
